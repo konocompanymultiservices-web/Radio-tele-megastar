@@ -185,11 +185,14 @@ function changeVolume(val) {
 // ============================================
 document.querySelectorAll('a[href^="#"]').forEach(function(lyen) {
   lyen.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (href === '#') return;
     e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
+    const target = document.querySelector(href);
     if (target) target.scrollIntoView({ behavior: 'smooth' });
   });
 });
+
 
 // ============================================
 // FÒÒM KONTAKT
