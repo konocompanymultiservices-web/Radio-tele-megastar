@@ -2,110 +2,41 @@
 // RADIO TÉLÉ MEGA STAR — script.js
 // ============================================
 
-// Verifye si audio egziste sou paj sa a
-const audio = document.getElementById('audio-player');
+var audio = document.getElementById('audio-player');
 
 // ============================================
 // LÈ PAJ LA CHAJE
 // ============================================
 window.addEventListener('load', function() {
-
   if (audio) {
-    const estateJwe = localStorage.getItem('radioJwe');
-
+    var estateJwe = localStorage.getItem('radioJwe');
     if (estateJwe === 'wi') {
-      // Eseye jwe — si Chrome bloke li
-      // montre yon ti bann ki mande pèmisyon
       audio.play().then(function() {
-        // Chrome pèmèt li — jwe nòmalman
         meteEtatPlay();
       }).catch(function() {
-        // Chrome bloke li — montre notifikasyon
         montreNotifikasyon();
       });
     } else {
       meteEtatPause();
     }
-
-    // Koute chanjman localStorage
     window.addEventListener('storage', function(e) {
       if (e.key === 'radioJwe') {
-        if (e.newValue === 'wi') {
-          audio.play();
-          meteEtatPlay();
-        } else {
-          audio.pause();
-          meteEtatPause();
-        }
+        if (e.newValue === 'wi') { audio.play(); meteEtatPlay(); }
+        else { audio.pause(); meteEtatPause(); }
       }
     });
-
   } else {
-    const estateJwe = localStorage.getItem('radioJwe');
-    if (estateJwe === 'wi') {
-      meteEtatPlay();
-    } else {
-      meteEtatPause();
-    }
+    var estateJwe = localStorage.getItem('radioJwe');
+    if (estateJwe === 'wi') meteEtatPlay();
+    else meteEtatPause();
   }
 });
-
-// ============================================
-// NOTIFIKASYON — Mande pèmisyon jwe
-// ============================================
-function montreNotifikasyon() {
-  // Kreye yon ti bann anwo paj la
-  const bann = document.createElement('div');
-  bann.id = 'notif-play';
-  bann.innerHTML = `
-    <span>📻 Radio te ap jwe — Klike pou kontinye koute!</span>
-    <button onclick="kontinuePlay()">▶ Kontinye</button>
-    <button onclick="fèmenNotif()">✕</button>
-  `;
-  bann.style.cssText = `
-    position: fixed;
-    top: 0; left: 0; width: 100%;
-    background: var(--rouge);
-    color: white;
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    z-index: 9999;
-    font-size: 14px;
-    font-weight: 700;
-  `;
-  bann.querySelector('button').style.cssText = `
-    background: white;
-    color: var(--rouge);
-    border: none;
-    padding: 6px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: 700;
-  `;
-  document.body.prepend(bann);
-}
-
-function kontinuePlay() {
-  audio.play();
-  meteEtatPlay();
-  fèmenNotif();
-}
-
-function fèmenNotif() {
-  const notif = document.getElementById('notif-play');
-  if (notif) notif.remove();
-}
 
 // ============================================
 // TOGGLE PLAY/PAUSE
 // ============================================
 function togglePlay() {
-
   if (audio) {
-    // Sou index.html — kontwole dirèkteman
     if (audio.paused) {
       audio.play();
       localStorage.setItem('radioJwe', 'wi');
@@ -115,10 +46,8 @@ function togglePlay() {
       localStorage.setItem('radioJwe', 'non');
       meteEtatPause();
     }
-
   } else {
-    // Sou programmes.html — voye kòmand bay index.html
-    const estateJwe = localStorage.getItem('radioJwe');
+    var estateJwe = localStorage.getItem('radioJwe');
     if (estateJwe === 'wi') {
       localStorage.setItem('radioJwe', 'non');
       meteEtatPause();
@@ -133,44 +62,40 @@ function togglePlay() {
 // ETAT PLAY
 // ============================================
 function meteEtatPlay() {
-  if (document.getElementById('play-icon'))
-    document.getElementById('play-icon').textContent = '⏸';
-  if (document.getElementById('play-text'))
-    document.getElementById('play-text').textContent = 'Pause';
-  if (document.getElementById('stream-status')) {
-    document.getElementById('stream-status').textContent = '🔴 En direct — Radio Télé Mega Star';
-    document.getElementById('stream-status').style.color = '#cc0000';
-  }
-  if (document.getElementById('bar-play-icon'))
-    document.getElementById('bar-play-icon').textContent = '⏸';
-  if (document.getElementById('bar-play-text'))
-    document.getElementById('bar-play-text').textContent = 'Pause';
-  if (document.getElementById('bar-status')) {
-    document.getElementById('bar-status').textContent = '🔴 En direct maintenant';
-    document.getElementById('bar-status').style.color = '#cc0000';
-  }
+  var fi = document.getElementById('float-icon');
+  if (fi) fi.textContent = '\u23F8';
+  var ss = document.getElementById('stream-status');
+  if (ss) { ss.textContent = 'En direct — Radio Tele Mega Star'; ss.style.color = '#cc0000'; }
+  var pi = document.getElementById('play-icon');
+  if (pi) pi.textContent = '\u23F8';
+  var pt = document.getElementById('play-text');
+  if (pt) pt.textContent = 'Pause';
+  var bi = document.getElementById('bar-play-icon');
+  if (bi) bi.textContent = '\u23F8';
+  var bt = document.getElementById('bar-play-text');
+  if (bt) bt.textContent = 'Pause';
+  var bs = document.getElementById('bar-status');
+  if (bs) { bs.textContent = 'En direct maintenant'; bs.style.color = '#cc0000'; }
 }
 
 // ============================================
 // ETAT PAUSE
 // ============================================
 function meteEtatPause() {
-  if (document.getElementById('play-icon'))
-    document.getElementById('play-icon').textContent = '▶';
-  if (document.getElementById('play-text'))
-    document.getElementById('play-text').textContent = 'Écouter maintenant';
-  if (document.getElementById('stream-status')) {
-    document.getElementById('stream-status').textContent = 'Cliquez pour écouter';
-    document.getElementById('stream-status').style.color = '#888';
-  }
-  if (document.getElementById('bar-play-icon'))
-    document.getElementById('bar-play-icon').textContent = '▶';
-  if (document.getElementById('bar-play-text'))
-    document.getElementById('bar-play-text').textContent = 'Écouter';
-  if (document.getElementById('bar-status')) {
-    document.getElementById('bar-status').textContent = 'En direct — 97.3 FM';
-    document.getElementById('bar-status').style.color = '#888';
-  }
+  var fi = document.getElementById('float-icon');
+  if (fi) fi.textContent = '\u25B6';
+  var ss = document.getElementById('stream-status');
+  if (ss) { ss.textContent = 'Cliquez pour ecouter'; ss.style.color = '#aaa'; }
+  var pi = document.getElementById('play-icon');
+  if (pi) pi.textContent = '\u25B6';
+  var pt = document.getElementById('play-text');
+  if (pt) pt.textContent = 'Ecouter maintenant';
+  var bi = document.getElementById('bar-play-icon');
+  if (bi) bi.textContent = '\u25B6';
+  var bt = document.getElementById('bar-play-text');
+  if (bt) bt.textContent = 'Ecouter';
+  var bs = document.getElementById('bar-status');
+  if (bs) { bs.textContent = 'En direct - 97.3 FM'; bs.style.color = '#888'; }
 }
 
 // ============================================
@@ -181,27 +106,112 @@ function changeVolume(val) {
 }
 
 // ============================================
+// MENU OVERLAY
+// ============================================
+function ouvrirMenu() {
+  var overlay = document.getElementById('menu-overlay');
+  if (overlay) {
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function fermerMenu() {
+  var overlay = document.getElementById('menu-overlay');
+  if (overlay) {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+function fermerMenuOverlay(e) {
+  if (e.target === document.getElementById('menu-overlay')) {
+    fermerMenu();
+  }
+}
+
+// ============================================
+// MODAL KREYE KONT
+// ============================================
+function ouvrirModal() {
+  fermerMenu();
+  setTimeout(function() {
+    var modal = document.getElementById('modal-overlay');
+    if (modal) {
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  }, 300);
+}
+
+function fermerModal() {
+  var modal = document.getElementById('modal-overlay');
+  if (modal) {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+function fermerModalOverlay(e) {
+  if (e.target === document.getElementById('modal-overlay')) {
+    fermerModal();
+  }
+}
+
+function soumettreFormulaire(e) {
+  e.preventDefault();
+  fermerModal();
+  setTimeout(function() {
+    alert('Bienvenue dans la famille Radio Tele Mega Star! Votre compte a ete cree avec succes.');
+  }, 300);
+  e.target.reset();
+}
+
+function soumettreContact(e) {
+  e.preventDefault();
+  alert('Merci pour votre message! Nous vous repondrons tres bientot.');
+  e.target.reset();
+}
+
+// ============================================
+// NOTIFIKASYON AUTOPLAY
+// ============================================
+function montreNotifikasyon() {
+  var notif = document.getElementById('notif-play');
+  if (notif) notif.style.display = 'flex';
+}
+
+function kontinuePlay() {
+  if (audio) { audio.play(); meteEtatPlay(); }
+  fermerNotif();
+}
+
+function fermerNotif() {
+  var notif = document.getElementById('notif-play');
+  if (notif) notif.style.display = 'none';
+}
+
+// ============================================
 // NAVIGASYON SMOOTH
 // ============================================
 document.querySelectorAll('a[href^="#"]').forEach(function(lyen) {
   lyen.addEventListener('click', function(e) {
-    const href = this.getAttribute('href');
-    if (href === '#') return;
+    var href = this.getAttribute('href');
+    if (!href || href === '#') return;
     e.preventDefault();
-    const target = document.querySelector(href);
+    var target = document.querySelector(href);
     if (target) target.scrollIntoView({ behavior: 'smooth' });
   });
 });
 
-
 // ============================================
-// FÒÒM KONTAKT
+// FOMULAIRE CONTACT
 // ============================================
-const form = document.querySelector('form');
-if (form) {
-  form.addEventListener('submit', function(e) {
+var contactForm = document.querySelector('.contact-form');
+if (contactForm) {
+  contactForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    alert('Merci pour votre message! Nous vous répondrons très bientôt. 🙏');
+    alert('Merci pour votre message! Nous vous repondrons tres bientot.');
     this.reset();
   });
 }

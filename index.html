@@ -10,13 +10,10 @@
 </head>
 <body>
 
-  <!-- ==========================================
-    HEADER — Tèt paj la
-  =========================================== -->
+  <!-- HEADER -->
   <header>
     <div class="header-inner">
 
-      <!-- LOGO -->
       <a href="index.html" class="logo">
         <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="logo-img"/>
         <div class="logo-text">
@@ -25,13 +22,12 @@
         </div>
       </a>
 
-      <!-- RECHÈCH -->
       <div class="search-box">
         <span>🔍</span>
         <input type="text" placeholder="Rechercher une émission..." class="search-input"/>
       </div>
 
-      <!-- BOUTON MENU -->
+      <!-- ouvrirMenu reste pareil — li deja nan script.js -->
       <button class="menu-btn" onclick="ouvrirMenu()">
         <span class="menu-btn-icon">☰</span>
         Menu
@@ -41,13 +37,12 @@
   </header>
 
 
-  <!-- ==========================================
-    MENU OVERLAY — Ouvri lè ou klike Menu
-  =========================================== -->
-  <div class="menu-overlay" id="menu-overlay" onclick="fèmenMenuOverlay(event)">
+  <!-- MENU OVERLAY -->
+  <!-- fermerMenuOverlay ak fermerMenu remplace fèmenMenuOverlay ak fèmenMenu -->
+  <div class="menu-overlay" id="menu-overlay" onclick="fermerMenuOverlay(event)">
     <div class="menu-panel">
 
-      <button class="menu-close" onclick="fèmenMenu()">✕</button>
+      <button class="menu-close" onclick="fermerMenu()">✕</button>
 
       <div class="menu-logo">
         <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo"/>
@@ -71,9 +66,9 @@
 
       <div class="menu-divider"></div>
 
-      <!-- SEKSYON KONT -->
       <div class="menu-auth">
         <p class="menu-auth-title">Rejoignez notre communauté</p>
+        <!-- ouvrirModal reste pareil -->
         <button class="menu-auth-btn menu-signup" onclick="ouvrirModal()">
           Créer un compte
         </button>
@@ -91,13 +86,13 @@
   </div>
 
 
-  <!-- ==========================================
-    MODAL KREYE KONT
-  =========================================== -->
-  <div class="modal-overlay" id="modal-overlay" onclick="fèmenModalOverlay(event)">
+  <!-- MODAL KREYE KONT -->
+  <!-- fermerModalOverlay ak fermerModal remplace fèmenModalOverlay ak fèmenModal -->
+  <!-- soumettreFormulaire remplace soumèt -->
+  <div class="modal-overlay" id="modal-overlay" onclick="fermerModalOverlay(event)">
     <div class="modal">
 
-      <button class="modal-close" onclick="fèmenModal()">✕</button>
+      <button class="modal-close" onclick="fermerModal()">✕</button>
 
       <div class="modal-header">
         <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="modal-logo"/>
@@ -105,7 +100,7 @@
         <p class="modal-sub">Rejoignez la famille Radio Télé Mega Star</p>
       </div>
 
-      <form class="modal-form" onsubmit="soumèt(event)">
+      <form class="modal-form" onsubmit="soumettreFormulaire(event)">
 
         <div class="modal-field">
           <label>Nom complet</label>
@@ -142,9 +137,7 @@
   </div>
 
 
-  <!-- ==========================================
-    HERO — Seksyon dakèy prensipal
-  =========================================== -->
+  <!-- HERO -->
   <section id="ecouter" class="hero">
 
     <div class="hero-banner">
@@ -159,7 +152,6 @@
       </div>
     </div>
 
-    <!-- PLAYER SENP -->
     <div class="player-strip">
       <div class="player-strip-left">
         <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="player-strip-logo"/>
@@ -184,9 +176,7 @@
          preload="none"></audio>
 
 
-  <!-- ==========================================
-    PIBLISITE #1
-  =========================================== -->
+  <!-- PIBLISITE #1 -->
   <div class="ad-zone">
     <span class="ad-tag">PUBLICITÉ</span>
     <div class="ad-content">
@@ -195,9 +185,7 @@
   </div>
 
 
-  <!-- ==========================================
-    EMISYON — Kart wonn tankou Audacy
-  =========================================== -->
+  <!-- EMISYON -->
   <section class="emissions-section">
     <div class="section-top">
       <h2 class="section-heading">Nos émissions</h2>
@@ -246,9 +234,7 @@
   </section>
 
 
-  <!-- ==========================================
-    PIBLISITE #2
-  =========================================== -->
+  <!-- PIBLISITE #2 -->
   <div class="ad-zone ad-zone-large">
     <span class="ad-tag">PUBLICITÉ</span>
     <div class="ad-content">
@@ -257,9 +243,7 @@
   </div>
 
 
-  <!-- ==========================================
-    KREYE KONT — Seksyon enskripsyon
-  =========================================== -->
+  <!-- KREYE KONT -->
   <section class="signup-section">
     <div class="signup-inner">
       <div class="signup-text">
@@ -274,7 +258,8 @@
       </div>
       <div class="signup-form-box">
         <h3 class="signup-form-title">Créer un compte gratuit</h3>
-        <form class="signup-form" onsubmit="soumèt(event)">
+        <!-- soumettreFormulaire remplace soumèt -->
+        <form class="signup-form" onsubmit="soumettreFormulaire(event)">
           <input type="text" placeholder="Nom complet" required/>
           <input type="email" placeholder="Adresse email" required/>
           <input type="tel" placeholder="Numéro de téléphone"/>
@@ -289,9 +274,7 @@
   </section>
 
 
-  <!-- ==========================================
-    FOOTER
-  =========================================== -->
+  <!-- FOOTER -->
   <footer>
     <div class="footer-inner">
       <div class="footer-logo-box">
@@ -312,9 +295,7 @@
   </footer>
 
 
-  <!-- ==========================================
-    BOUTON PLAY FLÒTAN — Anba adwat
-  =========================================== -->
+  <!-- BOUTON PLAY FLÒTAN -->
   <button class="float-play" id="float-play" onclick="togglePlay()" title="Écouter Radio Télé Mega Star">
     <span id="float-icon">▶</span>
   </button>
