@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Radio Télé Mega Star — 97.3 FM · La voix d'Haïti</title>
+  <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- ==========================================
+    HEADER — Tèt paj la
+  =========================================== -->
+  <header>
+    <div class="header-inner">
+
+      <!-- LOGO -->
+      <a href="index.html" class="logo">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="logo-img"/>
+        <div class="logo-text">
+          <h1>Radio Télé Mega Star</h1>
+          <p>97.3 FM · CH. 60 · Cable 116</p>
+        </div>
+      </a>
+
+      <!-- RECHÈCH -->
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" placeholder="Rechercher une émission..." class="search-input"/>
+      </div>
+
+      <!-- BOUTON MENU -->
+      <button class="menu-btn" onclick="ouvrirMenu()">
+        <span class="menu-btn-icon">☰</span>
+        Menu
+      </button>
+
+    </div>
+  </header>
+
+
+  <!-- ==========================================
+    MENU OVERLAY — Ouvri lè ou klike Menu
+  =========================================== -->
+  <div class="menu-overlay" id="menu-overlay" onclick="fèmenMenuOverlay(event)">
+    <div class="menu-panel">
+
+      <button class="menu-close" onclick="fèmenMenu()">✕</button>
+
+      <div class="menu-logo">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo"/>
+        <p>Radio Télé Mega Star</p>
+      </div>
+
+      <nav class="menu-nav">
+        <a href="index.html" class="menu-nav-link">
+          <span>🏠</span> Accueil
+        </a>
+        <a href="programmes.html" class="menu-nav-link">
+          <span>📋</span> Programmes
+        </a>
+        <a href="about.html" class="menu-nav-link">
+          <span>📻</span> À propos
+        </a>
+        <a href="contact.html" class="menu-nav-link">
+          <span>✉️</span> Contact
+        </a>
+      </nav>
+
+      <div class="menu-divider"></div>
+
+      <!-- SEKSYON KONT -->
+      <div class="menu-auth">
+        <p class="menu-auth-title">Rejoignez notre communauté</p>
+        <button class="menu-auth-btn menu-signup" onclick="ouvrirModal()">
+          Créer un compte
+        </button>
+        <button class="menu-auth-btn menu-login">
+          Se connecter
+        </button>
+      </div>
+
+      <div class="menu-footer">
+        <p>© 2026 Radio Télé Mega Star</p>
+        <p>La voix qui unit, informe et inspire Haïti 🇭🇹</p>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ==========================================
+    MODAL KREYE KONT
+  =========================================== -->
+  <div class="modal-overlay" id="modal-overlay" onclick="fèmenModalOverlay(event)">
+    <div class="modal">
+
+      <button class="modal-close" onclick="fèmenModal()">✕</button>
+
+      <div class="modal-header">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="modal-logo"/>
+        <h2 class="modal-title">Créer un compte</h2>
+        <p class="modal-sub">Rejoignez la famille Radio Télé Mega Star</p>
+      </div>
+
+      <form class="modal-form" onsubmit="soumèt(event)">
+
+        <div class="modal-field">
+          <label>Nom complet</label>
+          <input type="text" placeholder="Ex: Jean Pierre" required/>
+        </div>
+
+        <div class="modal-field">
+          <label>Adresse email</label>
+          <input type="email" placeholder="Ex: jean@email.com" required/>
+        </div>
+
+        <div class="modal-field">
+          <label>Numéro de téléphone</label>
+          <input type="tel" placeholder="Ex: +509 3X XX XXXX"/>
+        </div>
+
+        <div class="modal-field">
+          <label>Mot de passe</label>
+          <input type="password" placeholder="Minimum 8 caractères" required/>
+        </div>
+
+        <button type="submit" class="modal-submit">
+          Créer mon compte →
+        </button>
+
+        <p class="modal-login-text">
+          Déjà membre?
+          <a href="#" class="modal-login-link">Se connecter</a>
+        </p>
+
+      </form>
+
+    </div>
+  </div>
+
+
+  <!-- ==========================================
+    HERO — Seksyon dakèy prensipal
+  =========================================== -->
+  <section id="ecouter" class="hero">
+
+    <div class="hero-banner">
+      <img src="images/banner_radio_megastar.jpg" alt="Banner" class="hero-banner-img"/>
+      <div class="hero-overlay">
+        <div class="hero-badge">
+          <span class="live-dot"></span>
+          EN DIRECT
+        </div>
+        <h2 class="hero-title">Radio Télé <span>Mega Star</span></h2>
+        <p class="hero-sub">La voix qui unit, informe et inspire Haïti 🇭🇹</p>
+      </div>
+    </div>
+
+    <!-- PLAYER SENP -->
+    <div class="player-strip">
+      <div class="player-strip-left">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="player-strip-logo"/>
+        <div>
+          <p class="player-strip-name">Radio Télé Mega Star</p>
+          <p class="player-strip-freq" id="stream-status">Cliquez ▶ pour écouter</p>
+        </div>
+      </div>
+      <div class="player-strip-vol">
+        <span>🔊</span>
+        <input type="range" min="0" max="1" step="0.1" value="1"
+               onchange="changeVolume(this.value)" class="vol-slider"/>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- AUDIO KACHE -->
+  <audio id="audio-player"
+         src="https://stream.zeno.fm/nlhqgiwj4obtv"
+         preload="none"></audio>
+
+
+  <!-- ==========================================
+    PIBLISITE #1
+  =========================================== -->
+  <div class="ad-zone">
+    <span class="ad-tag">PUBLICITÉ</span>
+    <div class="ad-content">
+      📢 Votre publicité ici — Contactez-nous pour annoncer sur Radio Télé Mega Star
+    </div>
+  </div>
+
+
+  <!-- ==========================================
+    EMISYON — Kart wonn tankou Audacy
+  =========================================== -->
+  <section class="emissions-section">
+    <div class="section-top">
+      <h2 class="section-heading">Nos émissions</h2>
+      <a href="programmes.html" class="voir-tout">Voir tout →</a>
+    </div>
+
+    <div class="emissions-grid">
+
+      <a href="programmes.html" class="emission-card">
+        <div class="emission-circle" style="background:linear-gradient(135deg,#cc0000,#ff6666)">🌅</div>
+        <p class="emission-name">Réveil Matinal</p>
+        <p class="emission-time">05h – 08h</p>
+      </a>
+
+      <a href="programmes.html" class="emission-card">
+        <div class="emission-circle" style="background:linear-gradient(135deg,#1a5a1a,#4CAF50)">📰</div>
+        <p class="emission-name">Actualités</p>
+        <p class="emission-time">08h – 10h</p>
+      </a>
+
+      <a href="programmes.html" class="emission-card">
+        <div class="emission-circle" style="background:linear-gradient(135deg,#996600,#FFD600)">🎵</div>
+        <p class="emission-name">Vibes Haïtiennes</p>
+        <p class="emission-time">10h – 14h</p>
+      </a>
+
+      <a href="programmes.html" class="emission-card">
+        <div class="emission-circle" style="background:linear-gradient(135deg,#cc0000,#cc6600)">🎤</div>
+        <p class="emission-name">Débat Citoyen</p>
+        <p class="emission-time">14h – 17h</p>
+      </a>
+
+      <a href="programmes.html" class="emission-card">
+        <div class="emission-circle" style="background:linear-gradient(135deg,#4a0080,#9C27B0)">🙏</div>
+        <p class="emission-name">Heure Spirituelle</p>
+        <p class="emission-time">17h – 19h</p>
+      </a>
+
+      <a href="programmes.html" class="emission-card">
+        <div class="emission-circle" style="background:linear-gradient(135deg,#0a0a3a,#1a1a6a)">🌙</div>
+        <p class="emission-name">Soirée Mega Star</p>
+        <p class="emission-time">19h – 22h</p>
+      </a>
+
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+    PIBLISITE #2
+  =========================================== -->
+  <div class="ad-zone ad-zone-large">
+    <span class="ad-tag">PUBLICITÉ</span>
+    <div class="ad-content">
+      🎯 Annoncez votre entreprise sur Radio Télé Mega Star — Contactez-nous!
+    </div>
+  </div>
+
+
+  <!-- ==========================================
+    KREYE KONT — Seksyon enskripsyon
+  =========================================== -->
+  <section class="signup-section">
+    <div class="signup-inner">
+      <div class="signup-text">
+        <h2 class="signup-title">Rejoignez notre communauté</h2>
+        <p class="signup-desc">Créez votre compte gratuit et accédez à nos programmes, actualités et bien plus encore!</p>
+        <ul class="signup-perks">
+          <li>✅ Accès à tous nos programmes</li>
+          <li>✅ Notifications des émissions</li>
+          <li>✅ Contenu exclusif</li>
+          <li>✅ Gratuit pour toujours</li>
+        </ul>
+      </div>
+      <div class="signup-form-box">
+        <h3 class="signup-form-title">Créer un compte gratuit</h3>
+        <form class="signup-form" onsubmit="soumèt(event)">
+          <input type="text" placeholder="Nom complet" required/>
+          <input type="email" placeholder="Adresse email" required/>
+          <input type="tel" placeholder="Numéro de téléphone"/>
+          <input type="password" placeholder="Mot de passe"/>
+          <button type="submit" class="signup-submit">
+            Créer mon compte →
+          </button>
+        </form>
+        <p class="signup-login">Déjà membre? <a href="#">Se connecter</a></p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+    FOOTER
+  =========================================== -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo-box">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="footer-img"/>
+        <div>
+          <p class="footer-name">Radio Télé Mega Star</p>
+          <p class="footer-slogan">La voix qui unit, informe et inspire Haïti 🇭🇹</p>
+        </div>
+      </div>
+      <div class="footer-nav">
+        <a href="index.html">Accueil</a>
+        <a href="programmes.html">Programmes</a>
+        <a href="about.html">À propos</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <p class="footer-copy">© 2026 Radio Télé Mega Star — Tous droits réservés.</p>
+    </div>
+  </footer>
+
+
+  <!-- ==========================================
+    BOUTON PLAY FLÒTAN — Anba adwat
+  =========================================== -->
+  <button class="float-play" id="float-play" onclick="togglePlay()" title="Écouter Radio Télé Mega Star">
+    <span id="float-icon">▶</span>
+  </button>
+
+  <script src="script.js"></script>
+
+</body>
+</html>

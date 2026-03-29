@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Programmes — Radio Télé Mega Star</title>
+    <!-- FAVICON — Ti logo nan onglet navigatè -->
+<link rel="icon"
+      type="image/jpeg"
+      href="images/radio_tele_mega_star_logo.jpg"/>
+    <link rel="stylesheet" href="style.css"/>
+  </head>
+
+  <body>
+
+    <!-- HEADER — Menm jan ak index.html -->
+    <header>
+      <div class="logo">
+        <img src="images/radio_tele_mega_star_logo.jpg"
+             alt="Logo Radio Télé Mega Star"
+             class="logo-img"/>
+        <div class="logo-text">
+          <h1>Radio Télé Mega Star</h1>
+          <p>La voix qui unit, informe et inspire Haïti</p>
+        </div>
+      </div>
+
+      <nav>
+        <!--
+          Remake: lyen yo gen "../" oswa non fichye
+          pou retounen nan bon paj la
+        -->
+        <a href="index.html#ecouter">Écouter</a>
+        <a href="index.html#about">À propos</a>
+        <a href="programmes.html" class="nav-active">Programmes</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+    </header>
+
+
+    <!-- HERO PETIT — Tit paj programmes lan -->
+    <div class="page-hero">
+      <p class="section-title">Notre grille</p>
+      <h2 class="page-hero-title">Nos Programmes</h2>
+      <p class="page-hero-sub">Découvrez toutes nos émissions — 24h/24 · 7j/7</p>
+    </div>
+
+
+    <!-- PROGRAMMES — Tab konplè -->
+    <section id="programmes">
+
+      <table>
+        <tr>
+          <th>Horaire</th>
+          <th>Émission</th>
+          <th>Description</th>
+        </tr>
+        <tr>
+          <td>🌅 05:00 – 08:00</td>
+          <td>Réveil Matinal</td>
+          <td>Commencez votre journée avec les nouvelles, la musique et la prière du matin.</td>
+        </tr>
+        <tr>
+          <td>📰 08:00 – 10:00</td>
+          <td>Actualités Haiti</td>
+          <td>Toute l'actualité nationale et internationale présentée avec rigueur.</td>
+        </tr>
+        <tr>
+          <td>🎵 10:00 – 14:00</td>
+          <td>Vibes Haïtiennes</td>
+          <td>Le meilleur de la musique haïtienne : kompa, rasin, rap kreyòl et gospel.</td>
+        </tr>
+        <tr>
+          <td>🎤 14:00 – 17:00</td>
+          <td>Débat Citoyen</td>
+          <td>Un espace de dialogue ouvert où toutes les voix comptent.</td>
+        </tr>
+        <tr>
+          <td>🙏 17:00 – 19:00</td>
+          <td>Heure Spirituelle</td>
+          <td>Guidance, espoir et inspiration pour terminer votre journée en paix.</td>
+        </tr>
+        <tr>
+          <td>🌙 19:00 – 22:00</td>
+          <td>Soirée Mega Star</td>
+          <td>Détente, musique et culture haïtienne pour finir la journée en beauté.</td>
+        </tr>
+        <tr>
+          <td>🌃 22:00 – 05:00</td>
+          <td>Nuit Mega Star</td>
+          <td>Musique douce et programmes de nuit pour vous accompagner.</td>
+        </tr>
+      </table>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer>
+      <p>© 2026 Radio Télé Mega Star — Tous droits réservés.</p>
+      <p>La voix qui unit, informe et inspire Haïti 🇭🇹</p>
+    </footer>
+
+<script src="script.js"></script>
+
+    <!-- BAR RADYO FIKS — Toujou vizib anba ekran -->
+<div class="radio-bar" id="radio-bar">
+
+  <!-- Logo ti -->
+  <div class="radio-bar-logo">
+    <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo"/>
+    <div>
+      <p class="radio-bar-name">Radio Télé Mega Star</p>
+      <p class="radio-bar-status" id="bar-status">En direct — 97.3 FM</p>
+    </div>
+  </div>
+
+  <!-- Bouton Play/Pause -->
+  <div class="radio-bar-controls">
+    <button class="bar-play-btn" onclick="togglePlay()">
+      <span id="bar-play-icon">▶</span>
+      <span id="bar-play-text">Écouter</span>
+    </button>
+  </div>
+
+  <!-- Volume -->
+  <div class="radio-bar-volume">
+    <span>🔊</span>
+    <input type="range"
+           id="volume-slider"
+           min="0" max="10"
+           step="0.1"
+           value="1"
+           onchange="changeVolume(this.value)"/>
+  </div>
+
+</div>
+
+  </body>
+
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>À propos — Radio Télé Mega Star</title>
+  <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="logo-img"/>
+        <div class="logo-text">
+          <h1>Radio Télé Mega Star</h1>
+          <p>97.3 FM · CH. 60 · Cable 116</p>
+        </div>
+      </a>
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" placeholder="Rechercher une émission..." class="search-input"/>
+      </div>
+      <button class="menu-btn" onclick="ouvrirMenu()">
+        <span class="menu-btn-icon">☰</span> Menu
+      </button>
+    </div>
+  </header>
+
+  <!-- MENU OVERLAY -->
+  <div class="menu-overlay" id="menu-overlay" onclick="fèmenMenuOverlay(event)">
+    <div class="menu-panel">
+      <button class="menu-close" onclick="fèmenMenu()">✕</button>
+      <div class="menu-logo">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo"/>
+        <p>Radio Télé Mega Star</p>
+      </div>
+      <nav class="menu-nav">
+        <a href="index.html" class="menu-nav-link"><span>🏠</span> Accueil</a>
+        <a href="programmes.html" class="menu-nav-link"><span>📋</span> Programmes</a>
+        <a href="about.html" class="menu-nav-link menu-nav-active"><span>📻</span> À propos</a>
+        <a href="contact.html" class="menu-nav-link"><span>✉️</span> Contact</a>
+      </nav>
+      <div class="menu-divider"></div>
+      <div class="menu-auth">
+        <p class="menu-auth-title">Rejoignez notre communauté</p>
+        <button class="menu-auth-btn menu-signup" onclick="ouvrirModal()">Créer un compte</button>
+        <button class="menu-auth-btn menu-login">Se connecter</button>
+      </div>
+      <div class="menu-footer">
+        <p>© 2026 Radio Télé Mega Star</p>
+        <p>La voix qui unit, informe et inspire Haïti 🇭🇹</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal-overlay" onclick="fèmenModalOverlay(event)">
+    <div class="modal">
+      <button class="modal-close" onclick="fèmenModal()">✕</button>
+      <div class="modal-header">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="modal-logo"/>
+        <h2 class="modal-title">Créer un compte</h2>
+        <p class="modal-sub">Rejoignez la famille Radio Télé Mega Star</p>
+      </div>
+      <form class="modal-form" onsubmit="soumèt(event)">
+        <div class="modal-field"><label>Nom complet</label><input type="text" placeholder="Ex: Jean Pierre" required/></div>
+        <div class="modal-field"><label>Adresse email</label><input type="email" placeholder="Ex: jean@email.com" required/></div>
+        <div class="modal-field"><label>Numéro de téléphone</label><input type="tel" placeholder="Ex: +509 3X XX XXXX"/></div>
+        <div class="modal-field"><label>Mot de passe</label><input type="password" placeholder="Minimum 8 caractères" required/></div>
+        <button type="submit" class="modal-submit">Créer mon compte →</button>
+        <p class="modal-login-text">Déjà membre? <a href="#" class="modal-login-link">Se connecter</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <p class="page-hero-label">Notre histoire</p>
+    <h2 class="page-hero-title">À propos de nous</h2>
+    <p class="page-hero-sub">Découvrez qui nous sommes et notre mission pour Haïti</p>
+  </div>
+
+  <!-- CONTNI ABOUT -->
+  <section class="about-page-section">
+    <div class="about-page-inner">
+
+      <!-- MISYON -->
+      <div class="about-block">
+        <img src="images/banner_radio_megastar.jpg" alt="Radio Télé Mega Star" class="about-page-img"/>
+        <div class="about-block-text">
+          <h3 class="about-block-title">Notre mission</h3>
+          <p>Radio Télé Mega Star est une station de radio et de télévision haïtienne dédiée à servir l'ensemble du territoire national avec passion, professionnalisme et authenticité.</p>
+          <p>Fondée avec la mission de rapprocher les Haïtiens à travers les ondes, notre station propose une programmation riche et variée qui reflète la diversité et la richesse de la culture haïtienne.</p>
+          <p>Qu'il s'agisse de musique, d'information, de spiritualité ou de débat citoyen, notre station est le rendez-vous incontournable de tous les Haïtiens, où qu'ils se trouvent dans le monde.</p>
+        </div>
+      </div>
+
+      <!-- ESTATISTIK -->
+      <div class="about-stats-row">
+        <div class="about-stat-box">
+          <span class="about-stat-num">24/7</span>
+          <span class="about-stat-lab">Diffusion continue</span>
+        </div>
+        <div class="about-stat-box">
+          <span class="about-stat-num">97.3</span>
+          <span class="about-stat-lab">FM Stéréo</span>
+        </div>
+        <div class="about-stat-box">
+          <span class="about-stat-num">CH.60</span>
+          <span class="about-stat-lab">Digital Cable 116</span>
+        </div>
+        <div class="about-stat-box">
+          <span class="about-stat-num">🌍</span>
+          <span class="about-stat-lab">Présence mondiale</span>
+        </div>
+      </div>
+
+      <!-- VALÈ -->
+      <div class="about-values">
+        <h3 class="about-values-title">Nos valeurs</h3>
+        <div class="values-grid">
+          <div class="value-card">
+            <div class="value-icon">🎙️</div>
+            <h4>Authenticité</h4>
+            <p>Nous parlons vrai, avec intégrité et transparence envers notre audience.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">🇭🇹</div>
+            <h4>Haïtianité</h4>
+            <p>Fiers de notre culture, nous célébrons l'identité haïtienne dans chaque émission.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">📡</div>
+            <h4>Innovation</h4>
+            <p>Nous adoptons les nouvelles technologies pour mieux servir notre audience mondiale.</p>
+          </div>
+          <div class="value-card">
+            <div class="value-icon">🤝</div>
+            <h4>Communauté</h4>
+            <p>Nous croyons au pouvoir de la radio pour unir et rassembler les Haïtiens.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo-box">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="footer-img"/>
+        <div>
+          <p class="footer-name">Radio Télé Mega Star</p>
+          <p class="footer-slogan">La voix qui unit, informe et inspire Haïti 🇭🇹</p>
+        </div>
+      </div>
+      <div class="footer-nav">
+        <a href="index.html">Accueil</a>
+        <a href="programmes.html">Programmes</a>
+        <a href="about.html">À propos</a>
+        <a href="contact.html">Contact</a>
+      </div>
+      <p class="footer-copy">© 2026 Radio Télé Mega Star — Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <!-- BOUTON PLAY FLÒTAN -->
+  <button class="float-play" id="float-play" onclick="togglePlay()" title="Écouter">
+    <span id="float-icon">▶</span>
+  </button>
+
+  <audio id="audio-player" src="https://stream.zeno.fm/nlhqgiwj4obtv" preload="none"></audio>
+  <script src="script.js"></script>
+</body>
+</html>
