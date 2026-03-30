@@ -160,11 +160,40 @@ function fermerModalOverlay(e) {
 
 function soumettreFormulaire(e) {
   e.preventDefault();
-  fermerModal();
-  setTimeout(function() {
-    alert('Bienvenue dans la famille Radio Tele Mega Star! Votre compte a ete cree avec succes.');
-  }, 300);
-  e.target.reset();
+
+  const form = e.target;
+
+  const username = form.querySelector('input[name="username"]').value;
+  const email = form.querySelector('input[name="email"]').value;
+  const password = form.querySelector('input[name="password"]').value;
+
+  fetch("http://localhost:5000/api/auth/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      username,
+      email,
+      password
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    console.log("Repons backend:", data);
+
+    fermerModal();
+
+    setTimeout(() => {
+      alert("Compte créé avec succès 🔥");
+    }, 300);
+
+    form.reset();
+  })
+  .catch(err => {
+    console.error("Erreur:", err);
+    alert("Erreur lors de la création du compte ❌");
+  });
 }
 
 function soumettreContact(e) {
