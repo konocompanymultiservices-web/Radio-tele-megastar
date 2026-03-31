@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -11,6 +11,7 @@ const app = express();
 app.use(cors({
   origin: [
     'https://radiotelemegastar.netlify.app',
+    'https://radio-tele-megastar.pages.dev',
     'http://localhost:3000',
     'http://127.0.0.1:5500'
   ],
@@ -25,11 +26,13 @@ mongoose.connect(process.env.MONGODB_URI, {
   serverSelectionTimeoutMS: 30000,
   socketTimeoutMS: 45000,
 })
+  .then(() => console.log('âœ… MongoDB konekte ak siksÃ¨!'))
+  .catch(err => console.error('âŒ ErÃ¨ MongoDB:', err.message));
 
-// TÈS WOUT
+// TÃˆS WOUT
 app.get('/', (req, res) => {
   res.json({
-    message: '📻 Radio Télé Mega Star API ap mache!',
+    message: 'ðŸ“» Radio TÃ©lÃ© Mega Star API ap mache!',
     status: 'OK'
   });
 });
@@ -41,9 +44,9 @@ const userRoutes = require('./routes/user');
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 
-// DÉMARRAGE
+// DÃ‰MARRAGE
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Sèvè ap kouri sou pò ${PORT}`);
-  console.log(`📻 Radio Télé Mega Star Backend prè!`);
+  console.log(`ðŸš€ SÃ¨vÃ¨ ap kouri sou pÃ² ${PORT}`);
+  console.log(`ðŸ“» Radio TÃ©lÃ© Mega Star Backend prÃ¨!`);
 });

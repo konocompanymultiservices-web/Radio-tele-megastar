@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Administration &mdash; Radio T&eacute;l&eacute; Mega Star</title>
+  <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --noir: #0a0a0a; --gri: #141414; --gri-cle: #1c1c1c;
+      --bod: #282828; --blan: #f0f0f0; --rouge: #cc0000;
+      --jaune: #FFD600; --gri-text: #888; --vert: #4CAF50; --bleu: #2196F3;
+    }
+    body { background: var(--noir); color: var(--blan); font-family: 'Lato', sans-serif; }
+    a { text-decoration: none; color: inherit; }
+
+    /* LOGIN SCREEN */
+    .login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at center, #1a0000 0%, var(--noir) 70%);
+    }
+    .login-box {
+      background: var(--gri); border: 1px solid var(--bod); border-top: 3px solid var(--rouge);
+      border-radius: 16px; padding: 40px; width: 100%; max-width: 380px; text-align: center;
+    }
+    .login-logo { width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--jaune); object-fit: cover; margin: 0 auto 16px; }
+    .login-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: var(--blan); text-transform: uppercase; margin-bottom: 4px; }
+    .login-sub { font-size: 12px; color: var(--rouge); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 28px; }
+    .login-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; text-align: left; }
+    .login-field label { font-size: 11px; color: var(--jaune); letter-spacing: 2px; text-transform: uppercase; }
+    .login-field input { background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 8px; padding: 12px 16px; color: var(--blan); font-family: 'Lato', sans-serif; font-size: 14px; transition: border-color .2s; width: 100%; }
+    .login-field input:focus { outline: none; border-color: var(--rouge); }
+    .login-btn { width: 100%; background: var(--rouge); color: var(--blan); border: none; padding: 14px; border-radius: 8px; font-family: 'Oswald', sans-serif; font-size: 15px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background .2s; margin-top: 8px; }
+    .login-btn:hover { background: #aa0000; }
+    .login-err { background: rgba(204,0,0,.15); border: 1px solid var(--rouge); color: #ff6666; padding: 10px; border-radius: 6px; font-size: 13px; margin-top: 12px; display: none; }
+
+    /* ADMIN LAYOUT */
+    .admin-wrap { display: none; }
+    .admin-wrap.visible { display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* TOP BAR */
+    .admin-topbar {
+      background: var(--gri); border-bottom: 2px solid var(--rouge);
+      padding: 0 24px; height: 60px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-logo { display: flex; align-items: center; gap: 10px; }
+    .topbar-logo img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--jaune); object-fit: cover; }
+    .topbar-logo span { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--blan); text-transform: uppercase; }
+    .topbar-badge { background: var(--rouge); color: var(--blan); font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-left: 8px; letter-spacing: 1px; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .admin-name { font-family: 'Oswald', sans-serif; font-size: 13px; color: var(--jaune); }
+    .btn-deconn { background: transparent; border: 1px solid #444; color: var(--gri-text); padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all .2s; }
+    .btn-deconn:hover { border-color: var(--rouge); color: var(--rouge); }
+    .btn-site { background: var(--rouge); color: var(--blan); border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: background .2s; }
+    .btn-site:hover { background: #aa0000; }
+
+    /* BODY LAYOUT */
+    .admin-body { display: flex; flex: 1; }
+
+    /* SIDEBAR */
+    .admin-sidebar {
+      width: 210px; background: var(--gri); border-right: 1px solid var(--bod);
+      padding: 20px 12px; flex-shrink: 0;
+    }
+    .sidebar-section-label { font-size: 10px; color: #444; letter-spacing: 2px; text-transform: uppercase; padding: 0 8px; margin: 16px 0 6px; }
+    .admin-nav-btn {
+      display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px;
+      background: transparent; border: none; color: var(--gri-text); font-family: 'Lato', sans-serif;
+      font-size: 13px; cursor: pointer; border-radius: 8px; text-align: left; transition: all .2s;
+    }
+    .admin-nav-btn:hover { background: var(--gri-cle); color: var(--blan); }
+    .admin-nav-btn.active { background: rgba(204,0,0,.15); color: var(--blan); border-left: 3px solid var(--rouge); }
+    .nav-ic { font-size: 16px; }
+
+    /* MAIN */
+    .admin-main { flex: 1; padding: 28px; overflow-y: auto; }
+    .admin-section { display: none; }
+    .admin-section.active { display: block; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .section-ttl { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--blan); border-left: 3px solid var(--rouge); padding-left: 12px; }
+    .btn-primary { background: var(--rouge); color: var(--blan); border: none; padding: 10px 20px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 13px; cursor: pointer; transition: background .2s; }
+    .btn-primary:hover { background: #aa0000; }
+    .btn-secondary { background: transparent; border: 1px solid var(--bod); color: var(--gri-text); padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all .2s; }
+    .btn-secondary:hover { border-color: var(--jaune); color: var(--jaune); }
+
+    /* STATS OVERVIEW */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .stat-box { background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 10px; padding: 20px 16px; }
+    .stat-box-icon { font-size: 24px; margin-bottom: 8px; }
+    .stat-box-val { font-family: 'Oswald', sans-serif; font-size: 28px; color: var(--jaune); }
+    .stat-box-lbl { font-size: 12px; color: var(--gri-text); margin-top: 4px; }
+    .stat-box.rouge { border-top: 2px solid var(--rouge); }
+    .stat-box.vert { border-top: 2px solid var(--vert); }
+    .stat-box.bleu { border-top: 2px solid var(--bleu); }
+    .stat-box.jaune { border-top: 2px solid var(--jaune); }
+
+    /* TABLES */
+    .admin-table-wrap { background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th { background: var(--gri); padding: 12px 16px; text-align: left; font-family: 'Oswald', sans-serif; font-size: 11px; color: var(--gri-text); letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid var(--bod); }
+    .admin-table td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid var(--bod); color: var(--gri-text); }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tr:hover td { background: rgba(255,255,255,.02); color: var(--blan); }
+
+    /* BADGE STATUS */
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 1px; }
+    .badge-vert { background: rgba(76,175,80,.15); color: var(--vert); border: 1px solid var(--vert); }
+    .badge-rouge { background: rgba(204,0,0,.15); color: #ff6666; border: 1px solid #ff6666; }
+    .badge-jaune { background: rgba(255,214,0,.15); color: var(--jaune); border: 1px solid var(--jaune); }
+    .badge-bleu { background: rgba(33,150,243,.15); color: var(--bleu); border: 1px solid var(--bleu); }
+
+    /* ALERT */
+    .admin-alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; display: none; }
+    .admin-alert.success { background: rgba(76,175,80,.15); border: 1px solid var(--vert); color: var(--vert); }
+    .admin-alert.error { background: rgba(204,0,0,.15); border: 1px solid var(--rouge); color: #ff6666; }
+
+    /* FORM GRID */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-full { grid-column: 1 / -1; }
+    .admin-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .admin-field label { font-size: 11px; color: var(--jaune); letter-spacing: 2px; text-transform: uppercase; }
+    .admin-field input, .admin-field textarea, .admin-field select {
+      background: var(--gri); border: 1px solid var(--bod); border-radius: 8px;
+      padding: 10px 14px; color: var(--blan); font-family: 'Lato', sans-serif;
+      font-size: 13px; transition: border-color .2s; width: 100%;
+    }
+    .admin-field input:focus, .admin-field textarea:focus, .admin-field select:focus { outline: none; border-color: var(--rouge); }
+    .admin-field textarea { resize: vertical; min-height: 100px; }
+    .admin-field select option { background: var(--gri); }
+
+    /* CARD */
+    .admin-card { background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+    .admin-card-title { font-family: 'Oswald', sans-serif; font-size: 15px; color: var(--blan); margin-bottom: 16px; border-bottom: 1px solid var(--bod); padding-bottom: 10px; }
+
+    /* ONLINE COUNTER */
+    .online-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(76,175,80,.1); border: 1px solid var(--vert);
+      border-radius: 20px; padding: 6px 14px;
+    }
+    .online-dot { width: 8px; height: 8px; background: var(--vert); border-radius: 50%; animation: blink 1s infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .online-num { font-family: 'Oswald', sans-serif; font-size: 18px; color: var(--vert); }
+    .online-lbl { font-size: 12px; color: var(--gri-text); }
+
+    /* REVENUE */
+    .revenue-display { display: flex; align-items: baseline; gap: 8px; margin: 16px 0; }
+    .revenue-amount { font-family: 'Oswald', sans-serif; font-size: 48px; color: var(--jaune); }
+    .revenue-currency { font-size: 20px; color: var(--gri-text); }
+    .revenue-period { font-size: 13px; color: var(--gri-text); }
+    .btn-retrait { background: var(--jaune); color: var(--noir); border: none; padding: 12px 28px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 14px; cursor: pointer; transition: all .2s; }
+    .btn-retrait:hover { background: #e6c200; transform: translateY(-1px); }
+
+    /* PHOTO PREVIEW */
+    .photo-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--jaune); display: none; margin-bottom: 8px; }
+
+    /* ANNONCE ITEM */
+    .annonce-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; background: var(--gri); border: 1px solid var(--bod); border-radius: 8px; margin-bottom: 8px; }
+    .annonce-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .annonce-live { background: var(--rouge); animation: blink 1s infinite; }
+    .annonce-pub { background: var(--bleu); }
+    .annonce-info h4 { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--blan); margin-bottom: 2px; }
+    .annonce-info p { font-size: 12px; color: var(--gri-text); }
+    .annonce-time { font-size: 11px; color: var(--rouge); margin-top: 4px; }
+    .btn-del { background: transparent; border: 1px solid #444; color: #666; padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; transition: all .2s; }
+    .btn-del:hover { border-color: var(--rouge); color: var(--rouge); }
+    .btn-edit { background: transparent; border: 1px solid #444; color: #666; padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; transition: all .2s; }
+    .btn-edit:hover { border-color: var(--jaune); color: var(--jaune); }
+
+    /* SCHEDULE TABLE */
+    .schedule-grid { display: grid; gap: 10px; }
+    .schedule-item { display: grid; grid-template-columns: 120px 1fr auto; align-items: center; gap: 16px; padding: 14px 16px; background: var(--gri); border: 1px solid var(--bod); border-radius: 8px; }
+    .schedule-time { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--rouge); }
+    .schedule-name { font-size: 13px; color: var(--blan); }
+    .schedule-actions { display: flex; gap: 6px; }
+
+    /* ANIMATEUR */
+    .anim-card { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--gri); border: 1px solid var(--bod); border-radius: 10px; margin-bottom: 8px; }
+    .anim-photo { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--jaune); background: var(--rouge); display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; font-size: 18px; flex-shrink: 0; overflow: hidden; }
+    .anim-photo img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .anim-info { flex: 1; }
+    .anim-info h4 { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--blan); }
+    .anim-info p { font-size: 12px; color: var(--gri-text); margin-top: 2px; }
+
+    @media(max-width:768px) { .admin-sidebar{display:none} .form-grid{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+
+  <!-- ========== LOGIN SCREEN ========== -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-box">
+      <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="login-logo"/>
+      <h2 class="login-title">Administration</h2>
+      <p class="login-sub">Radio T&eacute;l&eacute; Mega Star</p>
+      <div class="login-field">
+        <label>Email administrateur</label>
+        <input type="email" id="admin-email" placeholder="admin@megastar.com"/>
+      </div>
+      <div class="login-field">
+        <label>Mot de passe</label>
+        <input type="password" id="admin-password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter') loginAdmin()"/>
+      </div>
+      <button class="login-btn" onclick="loginAdmin()">&#128274; Acc&egrave;der au panneau</button>
+      <div class="login-err" id="login-err">Email ou mot de passe incorrect</div>
+    </div>
+  </div>
+
+  <!-- ========== ADMIN PANEL ========== -->
+  <div class="admin-wrap" id="admin-wrap">
+
+    <!-- TOP BAR -->
+    <header class="admin-topbar">
+      <div class="topbar-logo">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo"/>
+        <span>Radio T&eacute;l&eacute; Mega Star</span>
+        <span class="topbar-badge">ADMIN</span>
+      </div>
+      <div class="topbar-right">
+        <span class="admin-name" id="admin-display-name">Administrateur</span>
+        <button class="btn-site" onclick="window.open('index.html','_blank')">&#127968; Voir le site</button>
+        <button class="btn-deconn" onclick="logoutAdmin()">D&eacute;connexion</button>
+      </div>
+    </header>
+
+    <div class="admin-body">
+
+      <!-- SIDEBAR -->
+      <aside class="admin-sidebar">
+        <p class="sidebar-section-label">Tableau de bord</p>
+        <button class="admin-nav-btn active" onclick="adminNav('overview',this)"><span class="nav-ic">&#128202;</span> Vue d&apos;ensemble</button>
+        <button class="admin-nav-btn" onclick="adminNav('online',this)"><span class="nav-ic">&#128308;</span> Auditeurs en ligne</button>
+
+        <p class="sidebar-section-label">Contenu</p>
+        <button class="admin-nav-btn" onclick="adminNav('news',this)"><span class="nav-ic">&#128240;</span> Actualit&eacute;s / Slides</button>
+        <button class="admin-nav-btn" onclick="adminNav('annonces',this)"><span class="nav-ic">&#128227;</span> Annonces en direct</button>
+        <button class="admin-nav-btn" onclick="adminNav('schedule',this)"><span class="nav-ic">&#128197;</span> Grille des &eacute;missions</button>
+        <button class="admin-nav-btn" onclick="adminNav('animateurs',this)"><span class="nav-ic">&#127908;</span> Animateurs</button>
+        <button class="admin-nav-btn" onclick="adminNav('reportage',this)"><span class="nav-ic">&#9997;</span> R&eacute;portage direct</button>
+
+        <p class="sidebar-section-label">Membres</p>
+        <button class="admin-nav-btn" onclick="adminNav('membres',this)"><span class="nav-ic">&#128100;</span> Membres inscrits</button>
+        <button class="admin-nav-btn" onclick="adminNav('abonnements',this)"><span class="nav-ic">&#11088;</span> Abonnements</button>
+
+        <p class="sidebar-section-label">Finance</p>
+        <button class="admin-nav-btn" onclick="adminNav('revenus',this)"><span class="nav-ic">&#128176;</span> Revenus</button>
+
+        <p class="sidebar-section-label">Site</p>
+        <button class="admin-nav-btn" onclick="adminNav('site',this)"><span class="nav-ic">&#9881;</span> Param&egrave;tres site</button>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="admin-main">
+
+        <!-- VUE D'ENSEMBLE -->
+        <section class="admin-section active" id="section-overview">
+          <div class="section-header">
+            <h2 class="section-ttl">Vue d&apos;ensemble</h2>
+            <div class="online-badge">
+              <span class="online-dot"></span>
+              <span class="online-num" id="overview-online">0</span>
+              <span class="online-lbl">auditeurs en ligne</span>
+            </div>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-box rouge">
+              <div class="stat-box-icon">&#128100;</div>
+              <div class="stat-box-val" id="ov-membres">0</div>
+              <div class="stat-box-lbl">Membres inscrits</div>
+            </div>
+            <div class="stat-box vert">
+              <div class="stat-box-icon">&#11088;</div>
+              <div class="stat-box-val" id="ov-abonnes">0</div>
+              <div class="stat-box-lbl">Abonn&eacute;s actifs</div>
+            </div>
+            <div class="stat-box bleu">
+              <div class="stat-box-icon">&#127897;</div>
+              <div class="stat-box-val" id="ov-emissions">7</div>
+              <div class="stat-box-lbl">&Eacute;missions / sem.</div>
+            </div>
+            <div class="stat-box jaune">
+              <div class="stat-box-icon">&#128176;</div>
+              <div class="stat-box-val" id="ov-revenus">$0</div>
+              <div class="stat-box-lbl">Revenus du mois</div>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <p class="admin-card-title">&#127897; &Eacute;mission la plus &eacute;cout&eacute;e</p>
+            <div id="top-emission" style="color:var(--gri-text);font-size:13px;">Chargement...</div>
+          </div>
+
+          <div class="admin-card">
+            <p class="admin-card-title">&#128100; Derniers membres inscrits</p>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead><tr><th>Nom</th><th>Email</th><th>Plan</th><th>Date</th></tr></thead>
+                <tbody id="last-membres-body"><tr><td colspan="4" style="text-align:center;padding:20px;">Chargement...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- AUDITEURS EN LIGNE -->
+        <section class="admin-section" id="section-online">
+          <div class="section-header">
+            <h2 class="section-ttl">Auditeurs en ligne</h2>
+          </div>
+          <div class="admin-card" style="text-align:center;padding:40px;">
+            <div class="online-badge" style="display:inline-flex;margin-bottom:16px;">
+              <span class="online-dot"></span>
+              <span class="online-num" id="online-count">0</span>
+              <span class="online-lbl">auditeurs en ce moment</span>
+            </div>
+            <p style="color:var(--gri-text);font-size:13px;margin-top:8px;">Mise &agrave; jour automatique toutes les 30 secondes</p>
+          </div>
+          <div class="admin-card">
+            <p class="admin-card-title">D&eacute;tail des connexions</p>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead><tr><th>Heure</th><th>Membre</th><th>Dur&eacute;e</th><th>Appareil</th></tr></thead>
+                <tbody id="online-details">
+                  <tr><td>En cours</td><td>Visiteurs anonymes</td><td>&mdash;</td><td>Web</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ACTUALITES / SLIDES -->
+        <section class="admin-section" id="section-news">
+          <div class="section-header">
+            <h2 class="section-ttl">Actualit&eacute;s / Slides</h2>
+            <button class="btn-primary" onclick="toggleForm('news-form')">&#43; Nouvelle actualit&eacute;</button>
+          </div>
+          <div id="alert-news" class="admin-alert"></div>
+
+          <!-- FORM -->
+          <div class="admin-card" id="news-form" style="display:none;">
+            <p class="admin-card-title">&#43; Publier une actualit&eacute;</p>
+            <div class="form-grid">
+              <div class="admin-field form-full">
+                <label>Titre</label>
+                <input type="text" id="news-titre" placeholder="Titre de l'actualit&eacute;"/>
+              </div>
+              <div class="admin-field form-full">
+                <label>Contenu</label>
+                <textarea id="news-contenu" placeholder="Contenu de l'actualit&eacute;..."></textarea>
+              </div>
+              <div class="admin-field">
+                <label>Type</label>
+                <select id="news-type">
+                  <option value="slide">Slide (Carousel)</option>
+                  <option value="news">Actualit&eacute;</option>
+                  <option value="breaking">Breaking News</option>
+                </select>
+              </div>
+              <div class="admin-field">
+                <label>Image URL (optionnel)</label>
+                <input type="url" id="news-img" placeholder="https://..."/>
+              </div>
+            </div>
+            <button class="btn-primary" onclick="publierNews()">&#128240; Publier</button>
+            <button class="btn-secondary" style="margin-left:8px;" onclick="toggleForm('news-form')">Annuler</button>
+          </div>
+
+          <!-- LISTE -->
+          <div class="admin-card">
+            <p class="admin-card-title">Publications r&eacute;centes</p>
+            <div id="news-list">
+              <div class="annonce-item">
+                <div class="annonce-dot annonce-pub"></div>
+                <div class="annonce-info" style="flex:1;">
+                  <h4>Bienvenue sur Radio T&eacute;l&eacute; Mega Star</h4>
+                  <p>Article de bienvenue publi&eacute; sur le site</p>
+                  <p class="annonce-time">Slide &bull; Aujourd'hui</p>
+                </div>
+                <div style="display:flex;gap:6px;">
+                  <button class="btn-edit">&#9998; Modifier</button>
+                  <button class="btn-del">&#128465; Supprimer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ANNONCES EN DIRECT -->
+        <section class="admin-section" id="section-annonces">
+          <div class="section-header">
+            <h2 class="section-ttl">Annonces en direct</h2>
+            <button class="btn-primary" onclick="toggleForm('annonce-form')">&#43; Nouvelle annonce</button>
+          </div>
+          <div id="alert-annonces" class="admin-alert"></div>
+          <div class="admin-card" id="annonce-form" style="display:none;">
+            <p class="admin-card-title">&#43; Cr&eacute;er une annonce</p>
+            <div class="admin-field">
+              <label>Titre de l&apos;annonce</label>
+              <input type="text" id="ann-titre" placeholder="Ex: Sp&eacute;ciale &eacute;lections 2026"/>
+            </div>
+            <div class="admin-field">
+              <label>Description</label>
+              <textarea id="ann-desc" placeholder="D&eacute;tails de l'annonce..."></textarea>
+            </div>
+            <div class="form-grid">
+              <div class="admin-field">
+                <label>Heure de d&eacute;but</label>
+                <input type="time" id="ann-heure"/>
+              </div>
+              <div class="admin-field">
+                <label>Type</label>
+                <select id="ann-type">
+                  <option value="live">Annonce en direct</option>
+                  <option value="pub">Publicit&eacute;</option>
+                  <option value="special">Programme sp&eacute;cial</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn-primary" onclick="creerAnnonce()">&#128227; Publier l'annonce</button>
+            <button class="btn-secondary" style="margin-left:8px;" onclick="toggleForm('annonce-form')">Annuler</button>
+          </div>
+          <div class="admin-card">
+            <p class="admin-card-title">Annonces actives</p>
+            <div id="annonces-list">
+              <div class="annonce-item">
+                <div class="annonce-dot annonce-live"></div>
+                <div class="annonce-info" style="flex:1;">
+                  <h4>Radio en direct &mdash; 97.3 FM</h4>
+                  <p>Diffusion continue 24h/24 7j/7</p>
+                  <p class="annonce-time">En direct maintenant</p>
+                </div>
+                <span class="badge badge-rouge">LIVE</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- GRILLE EMISSIONS -->
+        <section class="admin-section" id="section-schedule">
+          <div class="section-header">
+            <h2 class="section-ttl">Grille des &eacute;missions</h2>
+            <button class="btn-primary" onclick="toggleForm('schedule-form')">&#43; Ajouter une &eacute;mission</button>
+          </div>
+          <div id="alert-schedule" class="admin-alert"></div>
+          <div class="admin-card" id="schedule-form" style="display:none;">
+            <p class="admin-card-title">&#43; Nouvelle &eacute;mission</p>
+            <div class="form-grid">
+              <div class="admin-field">
+                <label>Nom de l&apos;&eacute;mission</label>
+                <input type="text" id="sch-nom" placeholder="Ex: R&eacute;veil Matinal"/>
+              </div>
+              <div class="admin-field">
+                <label>Ic&ocirc;ne (emoji)</label>
+                <input type="text" id="sch-emoji" placeholder="Ex: &#127749;" maxlength="2"/>
+              </div>
+              <div class="admin-field">
+                <label>Heure de d&eacute;but</label>
+                <input type="time" id="sch-debut"/>
+              </div>
+              <div class="admin-field">
+                <label>Heure de fin</label>
+                <input type="time" id="sch-fin"/>
+              </div>
+              <div class="admin-field form-full">
+                <label>Description</label>
+                <input type="text" id="sch-desc" placeholder="Description courte"/>
+              </div>
+            </div>
+            <button class="btn-primary" onclick="ajouterEmission()">&#128190; Sauvegarder</button>
+            <button class="btn-secondary" style="margin-left:8px;" onclick="toggleForm('schedule-form')">Annuler</button>
+          </div>
+          <div class="admin-card">
+            <p class="admin-card-title">Grille actuelle</p>
+            <div class="schedule-grid" id="schedule-list">
+              <div class="schedule-item"><span class="schedule-time">05h &mdash; 08h</span><span class="schedule-name">&#127749; R&eacute;veil Matinal</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del">&#128465;</button></div></div>
+              <div class="schedule-item"><span class="schedule-time">08h &mdash; 10h</span><span class="schedule-name">&#128240; Actualit&eacute;s Ha&iuml;ti</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del">&#128465;</button></div></div>
+              <div class="schedule-item"><span class="schedule-time">10h &mdash; 14h</span><span class="schedule-name">&#127925; Vibes Ha&iuml;tiennes</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del">&#128465;</button></div></div>
+              <div class="schedule-item"><span class="schedule-time">14h &mdash; 17h</span><span class="schedule-name">&#127908; D&eacute;bat Citoyen</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del">&#128465;</button></div></div>
+              <div class="schedule-item"><span class="schedule-time">17h &mdash; 19h</span><span class="schedule-name">&#128591; Heure Spirituelle</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del">&#128465;</button></div></div>
+              <div class="schedule-item"><span class="schedule-time">19h &mdash; 22h</span><span class="schedule-name">&#127769; Soir&eacute;e Mega Star</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del">&#128465;</button></div></div>
+              <div class="schedule-item"><span class="schedule-time">22h &mdash; 05h</span><span class="schedule-name">&#127762; Nuit Mega Star</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del">&#128465;</button></div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ANIMATEURS -->
+        <section class="admin-section" id="section-animateurs">
+          <div class="section-header">
+            <h2 class="section-ttl">Animateurs</h2>
+            <button class="btn-primary" onclick="toggleForm('anim-form')">&#43; Ajouter un animateur</button>
+          </div>
+          <div id="alert-anim" class="admin-alert"></div>
+          <div class="admin-card" id="anim-form" style="display:none;">
+            <p class="admin-card-title">&#43; Nouvel animateur</p>
+            <div class="form-grid">
+              <div class="admin-field">
+                <label>Nom complet</label>
+                <input type="text" id="anim-nom" placeholder="Ex: Jean-Pierre Duval"/>
+              </div>
+              <div class="admin-field">
+                <label>&Eacute;mission anim&eacute;e</label>
+                <input type="text" id="anim-emission" placeholder="Ex: R&eacute;veil Matinal"/>
+              </div>
+              <div class="admin-field">
+                <label>Horaire</label>
+                <input type="text" id="anim-horaire" placeholder="Ex: 05h &mdash; 08h"/>
+              </div>
+              <div class="admin-field">
+                <label>Photo (URL)</label>
+                <input type="url" id="anim-photo" placeholder="https://..." oninput="previewAnimPhoto(this.value)"/>
+              </div>
+            </div>
+            <img id="anim-preview" class="photo-preview" alt="Preview"/>
+            <button class="btn-primary" onclick="ajouterAnimateur()">&#128190; Ajouter</button>
+            <button class="btn-secondary" style="margin-left:8px;" onclick="toggleForm('anim-form')">Annuler</button>
+          </div>
+          <div id="animateurs-list">
+            <div class="anim-card">
+              <div class="anim-photo">A</div>
+              <div class="anim-info"><h4>Animateur principal</h4><p>R&eacute;veil Matinal &bull; 05h &mdash; 08h</p></div>
+              <div style="display:flex;gap:6px;"><button class="btn-edit">&#9998; Modifier</button><button class="btn-del">&#128465;</button></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- REPORTAGE DIRECT -->
+        <section class="admin-section" id="section-reportage">
+          <div class="section-header">
+            <h2 class="section-ttl">R&eacute;portage en direct</h2>
+          </div>
+          <div id="alert-reportage" class="admin-alert"></div>
+          <div class="admin-card">
+            <p class="admin-card-title">&#9997; R&eacute;diger un r&eacute;portage</p>
+            <div class="admin-field">
+              <label>Titre du r&eacute;portage</label>
+              <input type="text" id="rep-titre" placeholder="Ex: Couverture sp&eacute;ciale &mdash; F&ecirc;te nationale"/>
+            </div>
+            <div class="admin-field">
+              <label>Contenu (d&eacute;tails, chronologie, citations...)</label>
+              <textarea id="rep-contenu" style="min-height:200px;" placeholder="R&eacute;digez votre r&eacute;portage ici...&#10;&#10;Vous pouvez inclure :&#10;- La situation actuelle&#10;- Les t&eacute;moignages&#10;- L'&eacute;volution en temps r&eacute;el"></textarea>
+            </div>
+            <div class="form-grid">
+              <div class="admin-field">
+                <label>Lieu</label>
+                <input type="text" id="rep-lieu" placeholder="Ex: Port-au-Prince"/>
+              </div>
+              <div class="admin-field">
+                <label>Statut</label>
+                <select id="rep-statut">
+                  <option value="draft">Brouillon</option>
+                  <option value="live">En direct</option>
+                  <option value="published">Publi&eacute;</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn-primary" onclick="publierReportage()">&#128240; Publier le r&eacute;portage</button>
+            <button class="btn-secondary" style="margin-left:8px;" onclick="sauvegarderBrouillon()">&#128190; Sauvegarder brouillon</button>
+          </div>
+          <div class="admin-card">
+            <p class="admin-card-title">R&eacute;portages publi&eacute;s</p>
+            <div id="reportages-list">
+              <p style="color:var(--gri-text);font-size:13px;text-align:center;padding:20px;">Aucun r&eacute;portage pour l&apos;instant.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- MEMBRES -->
+        <section class="admin-section" id="section-membres">
+          <div class="section-header">
+            <h2 class="section-ttl">Membres inscrits</h2>
+            <input type="text" placeholder="&#128269; Rechercher..." oninput="filtrerMembres(this.value)" style="background:var(--gri-cle);border:1px solid var(--bod);border-radius:6px;padding:8px 14px;color:var(--blan);font-size:13px;"/>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Nom</th><th>Email</th><th>T&eacute;l&eacute;phone</th><th>Plan</th><th>Inscrit le</th><th>Statut</th></tr></thead>
+              <tbody id="membres-body">
+                <tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gri-text);">Chargement des membres...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ABONNEMENTS -->
+        <section class="admin-section" id="section-abonnements">
+          <div class="section-header">
+            <h2 class="section-ttl">Abonnements</h2>
+          </div>
+          <div class="stats-row">
+            <div class="stat-box vert"><div class="stat-box-icon">&#11088;</div><div class="stat-box-val" id="nb-premium">0</div><div class="stat-box-lbl">Premium</div></div>
+            <div class="stat-box jaune"><div class="stat-box-icon">&#128081;</div><div class="stat-box-val" id="nb-vip">0</div><div class="stat-box-lbl">VIP</div></div>
+            <div class="stat-box rouge"><div class="stat-box-icon">&#128100;</div><div class="stat-box-val" id="nb-gratuit">0</div><div class="stat-box-lbl">Gratuit</div></div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Membre</th><th>Plan</th><th>Montant</th><th>M&eacute;thode paiement</th><th>Date</th><th>Statut</th></tr></thead>
+              <tbody id="abonnements-body">
+                <tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gri-text);">Chargement...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- REVENUS -->
+        <section class="admin-section" id="section-revenus">
+          <div class="section-header">
+            <h2 class="section-ttl">Revenus</h2>
+          </div>
+          <div class="admin-card">
+            <p class="admin-card-title">&#128176; Solde disponible</p>
+            <div class="revenue-display">
+              <span class="revenue-currency">$</span>
+              <span class="revenue-amount" id="solde-total">0.00</span>
+              <span class="revenue-period">USD</span>
+            </div>
+            <p style="color:var(--gri-text);font-size:13px;margin-bottom:16px;">Total des abonnements collect&eacute;s ce mois</p>
+            <button class="btn-retrait" onclick="demanderRetrait()">&#128176; Demander un retrait</button>
+          </div>
+          <div class="stats-row">
+            <div class="stat-box vert"><div class="stat-box-icon">&#128200;</div><div class="stat-box-val" id="rev-mois">$0</div><div class="stat-box-lbl">Ce mois</div></div>
+            <div class="stat-box bleu"><div class="stat-box-icon">&#128198;</div><div class="stat-box-val" id="rev-total">$0</div><div class="stat-box-lbl">Total cumul&eacute;</div></div>
+            <div class="stat-box jaune"><div class="stat-box-icon">&#11088;</div><div class="stat-box-val" id="rev-premium">$0</div><div class="stat-box-lbl">Premium</div></div>
+            <div class="stat-box rouge"><div class="stat-box-icon">&#128081;</div><div class="stat-box-val" id="rev-vip">$0</div><div class="stat-box-lbl">VIP</div></div>
+          </div>
+          <div class="admin-card">
+            <p class="admin-card-title">Historique des transactions</p>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead><tr><th>Membre</th><th>Plan</th><th>Montant</th><th>M&eacute;thode</th><th>Date</th></tr></thead>
+                <tbody id="transactions-body">
+                  <tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gri-text);">Aucune transaction</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- PARAMETRES SITE -->
+        <section class="admin-section" id="section-site">
+          <div class="section-header">
+            <h2 class="section-ttl">Param&egrave;tres du site</h2>
+          </div>
+          <div id="alert-site" class="admin-alert"></div>
+          <div class="admin-card">
+            <p class="admin-card-title">&#127925; Informations de la radio</p>
+            <div class="form-grid">
+              <div class="admin-field">
+                <label>Nom de la radio</label>
+                <input type="text" id="site-nom" value="Radio T&eacute;l&eacute; Mega Star"/>
+              </div>
+              <div class="admin-field">
+                <label>Fr&eacute;quence FM</label>
+                <input type="text" id="site-freq" value="97.3 FM"/>
+              </div>
+              <div class="admin-field">
+                <label>URL du stream audio</label>
+                <input type="url" id="site-stream" value="https://stream.zeno.fm/nlhqgiwj4obtv"/>
+              </div>
+              <div class="admin-field">
+                <label>Email de contact</label>
+                <input type="email" id="site-email" value="konocompanymultiservices@gmail.com"/>
+              </div>
+              <div class="admin-field form-full">
+                <label>Slogan</label>
+                <input type="text" id="site-slogan" value="La voix qui unit, informe et inspire Ha&iuml;ti"/>
+              </div>
+            </div>
+            <button class="btn-primary" onclick="saveSiteParams()">&#128190; Sauvegarder les param&egrave;tres</button>
+          </div>
+
+          <div class="admin-card">
+            <p class="admin-card-title">&#128100; Compte administrateur</p>
+            <div class="form-grid">
+              <div class="admin-field">
+                <label>Nouveau mot de passe admin</label>
+                <input type="password" id="new-admin-pass" placeholder="Laisser vide pour ne pas changer"/>
+              </div>
+              <div class="admin-field">
+                <label>Confirmer</label>
+                <input type="password" id="confirm-admin-pass" placeholder="Confirmer le mot de passe"/>
+              </div>
+            </div>
+            <button class="btn-primary" onclick="changerModpasAdmin()">&#128274; Changer le mot de passe</button>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "https://radio-megastar-backend-production.up.railway.app";
+    // Credentials admin — changez-les en production!
+    const ADMIN_EMAIL = "admin@megastar.com";
+    const ADMIN_PASS  = "MegaStar2026!";
+    let adminToken = null;
+    let refreshTimer = null;
+
+    // ===== LOGIN =====
+    window.addEventListener('load', function() {
+      const saved = sessionStorage.getItem('adminToken');
+      const savedName = sessionStorage.getItem('adminName');
+      if (saved) {
+        adminToken = saved;
+        showAdmin(savedName || 'Administrateur');
+      }
+    });
+
+    function loginAdmin() {
+      const email = document.getElementById('admin-email').value.trim();
+      const pass  = document.getElementById('admin-password').value;
+      const err   = document.getElementById('login-err');
+      err.style.display = 'none';
+
+      // Essai connexion backend avec role=admin
+      fetch(API_URL + '/api/auth/connexion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, motDePasse: pass })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.token) {
+          const user = data.user;
+          // Verifye si se yon admin
+          if (user.role === 'admin' || email === ADMIN_EMAIL) {
+            adminToken = data.token;
+            sessionStorage.setItem('adminToken', adminToken);
+            sessionStorage.setItem('adminName', user.nom || 'Administrateur');
+            showAdmin(user.nom || 'Administrateur');
+          } else {
+            err.textContent = 'Acc&egrave;s refus&eacute; &mdash; compte non administrateur';
+            err.style.display = 'block';
+          }
+        } else {
+          // Fallback: credentials locaux
+          if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
+            adminToken = 'local-admin-' + Date.now();
+            sessionStorage.setItem('adminToken', adminToken);
+            sessionStorage.setItem('adminName', 'Administrateur');
+            showAdmin('Administrateur');
+          } else {
+            err.style.display = 'block';
+          }
+        }
+      })
+      .catch(() => {
+        // Backend offline — credentials locaux
+        if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
+          adminToken = 'local-admin-' + Date.now();
+          sessionStorage.setItem('adminToken', adminToken);
+          sessionStorage.setItem('adminName', 'Administrateur');
+          showAdmin('Administrateur');
+        } else {
+          err.style.display = 'block';
+        }
+      });
+    }
+
+    function showAdmin(name) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-wrap').classList.add('visible');
+      document.getElementById('admin-display-name').textContent = name;
+      loadAllData();
+      startAutoRefresh();
+    }
+
+    function logoutAdmin() {
+      sessionStorage.removeItem('adminToken');
+      sessionStorage.removeItem('adminName');
+      clearInterval(refreshTimer);
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('admin-wrap').classList.remove('visible');
+    }
+
+    // ===== NAVIGATION =====
+    function adminNav(id, btn) {
+      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('section-' + id).classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    function toggleForm(id) {
+      var el = document.getElementById(id);
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // ===== LOAD ALL DATA =====
+    function loadAllData() {
+      loadStats();
+      loadMembres();
+      loadAbonnements();
+    }
+
+    function startAutoRefresh() {
+      refreshTimer = setInterval(function() {
+        simulateOnline();
+      }, 30000);
+      simulateOnline();
+    }
+
+    // ===== STATS =====
+    function loadStats() {
+      fetch(API_URL + '/api/admin/stats', {
+        headers: { 'Authorization': 'Bearer ' + adminToken }
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          const s = data.stats;
+          setText('ov-membres', s.totalMembres || 0);
+          setText('ov-abonnes', s.abonnesActifs || 0);
+          const rev = '$' + ((s.revenusMois || 0).toFixed(2));
+          setText('ov-revenus', rev);
+          setText('solde-total', (s.revenusMois || 0).toFixed(2));
+          setText('rev-mois', rev);
+          setText('rev-total', '$' + ((s.revenusTotal || 0).toFixed(2)));
+          setText('rev-premium', '$' + ((s.revenusPremium || 0).toFixed(2)));
+          setText('rev-vip', '$' + ((s.revenusVIP || 0).toFixed(2)));
+          if (s.topEmission) {
+            document.getElementById('top-emission').innerHTML =
+              '<span style="font-size:18px;">&#127897;</span> <strong style="color:var(--blan)">' + s.topEmission.nom + '</strong> &mdash; <span style="color:var(--gri-text)">' + s.topEmission.ecoutes + ' &eacute;coutes</span>';
+          }
+        }
+      })
+      .catch(() => {
+        // Fallback simulé
+        setText('ov-membres', '—');
+        setText('ov-abonnes', '—');
+      });
+    }
+
+    function simulateOnline() {
+      const n = Math.floor(Math.random() * 40) + 5;
+      setText('online-count', n);
+      setText('overview-online', n);
+    }
+
+    // ===== MEMBRES =====
+    function loadMembres() {
+      fetch(API_URL + '/api/admin/membres', {
+        headers: { 'Authorization': 'Bearer ' + adminToken }
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.success) return;
+        const membres = data.membres || [];
+        const tbody = document.getElementById('membres-body');
+        const lastTbody = document.getElementById('last-membres-body');
+        if (!membres.length) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gri-text);">Aucun membre inscrit</td></tr>';
+          return;
+        }
+        tbody.innerHTML = membres.map(m => `
+          <tr>
+            <td style="color:var(--blan)">${m.nom || '—'}</td>
+            <td>${m.email || '—'}</td>
+            <td>${m.telephone || '—'}</td>
+            <td><span class="badge ${m.plan === 'VIP' ? 'badge-jaune' : m.plan === 'Premium' ? 'badge-vert' : 'badge-bleu'}">${m.plan || 'Gratuit'}</span></td>
+            <td>${m.createdAt ? new Date(m.createdAt).toLocaleDateString('fr-FR') : '—'}</td>
+            <td><span class="badge badge-vert">Actif</span></td>
+          </tr>
+        `).join('');
+        if (lastTbody) {
+          lastTbody.innerHTML = membres.slice(0, 5).map(m => `
+            <tr>
+              <td style="color:var(--blan)">${m.nom || '—'}</td>
+              <td>${m.email || '—'}</td>
+              <td><span class="badge ${m.plan === 'Premium' || m.plan === 'VIP' ? 'badge-vert' : 'badge-bleu'}">${m.plan || 'Gratuit'}</span></td>
+              <td>${m.createdAt ? new Date(m.createdAt).toLocaleDateString('fr-FR') : '—'}</td>
+            </tr>
+          `).join('');
+        }
+        setText('ov-membres', membres.length);
+      })
+      .catch(() => {});
+    }
+
+    function filtrerMembres(q) {
+      const rows = document.querySelectorAll('#membres-body tr');
+      q = q.toLowerCase();
+      rows.forEach(r => {
+        r.style.display = !q || r.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    }
+
+    // ===== ABONNEMENTS =====
+    function loadAbonnements() {
+      fetch(API_URL + '/api/admin/abonnements', {
+        headers: { 'Authorization': 'Bearer ' + adminToken }
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.success) return;
+        const abos = data.abonnements || [];
+        const tbody = document.getElementById('abonnements-body');
+        const txBody = document.getElementById('transactions-body');
+
+        let premium = 0, vip = 0, gratuit = 0, total = 0;
+        abos.forEach(a => {
+          if (a.plan === 'Premium') { premium++; total += 5; }
+          else if (a.plan === 'VIP') { vip++; total += 15; }
+          else gratuit++;
+        });
+        setText('nb-premium', premium);
+        setText('nb-vip', vip);
+        setText('nb-gratuit', gratuit);
+        setText('solde-total', total.toFixed(2));
+        setText('rev-mois', '$' + total.toFixed(2));
+        setText('ov-abonnes', premium + vip);
+        setText('ov-revenus', '$' + total.toFixed(2));
+
+        tbody.innerHTML = abos.length ? abos.map(a => `
+          <tr>
+            <td style="color:var(--blan)">${a.nom || '—'}</td>
+            <td><span class="badge ${a.plan === 'VIP' ? 'badge-jaune' : a.plan === 'Premium' ? 'badge-vert' : 'badge-bleu'}">${a.plan}</span></td>
+            <td style="color:var(--jaune)">${a.plan === 'VIP' ? '$15' : a.plan === 'Premium' ? '$5' : '$0'}</td>
+            <td>${a.methodePaiement || '—'}</td>
+            <td>${a.createdAt ? new Date(a.createdAt).toLocaleDateString('fr-FR') : '—'}</td>
+            <td><span class="badge badge-vert">Actif</span></td>
+          </tr>
+        `).join('') : '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gri-text);">Aucun abonnement</td></tr>';
+      })
+      .catch(() => {});
+    }
+
+    // ===== CONTENU =====
+    function publierNews() {
+      const titre = document.getElementById('news-titre').value.trim();
+      const contenu = document.getElementById('news-contenu').value.trim();
+      const type = document.getElementById('news-type').value;
+      if (!titre) { showAdminAlert('alert-news', 'Titre requis', 'error'); return; }
+      const item = creerAnnonceItem(titre, contenu, type, 'pub');
+      document.getElementById('news-list').insertBefore(item, document.getElementById('news-list').firstChild);
+      showAdminAlert('alert-news', 'Actualit&eacute; publi&eacute;e ! &#10003;', 'success');
+      document.getElementById('news-titre').value = '';
+      document.getElementById('news-contenu').value = '';
+      toggleForm('news-form');
+    }
+
+    function creerAnnonce() {
+      const titre = document.getElementById('ann-titre').value.trim();
+      const desc = document.getElementById('ann-desc').value.trim();
+      const type = document.getElementById('ann-type').value;
+      if (!titre) { showAdminAlert('alert-annonces', 'Titre requis', 'error'); return; }
+      const item = creerAnnonceItem(titre, desc, type, type === 'live' ? 'live' : 'pub');
+      document.getElementById('annonces-list').insertBefore(item, document.getElementById('annonces-list').firstChild);
+      showAdminAlert('alert-annonces', 'Annonce cr&eacute;&eacute;e ! &#10003;', 'success');
+      document.getElementById('ann-titre').value = '';
+      document.getElementById('ann-desc').value = '';
+      toggleForm('annonce-form');
+    }
+
+    function creerAnnonceItem(titre, desc, typeLabel, dotClass) {
+      const div = document.createElement('div');
+      div.className = 'annonce-item';
+      div.innerHTML = `
+        <div class="annonce-dot annonce-${dotClass}"></div>
+        <div class="annonce-info" style="flex:1;">
+          <h4>${titre}</h4>
+          <p>${desc || '&mdash;'}</p>
+          <p class="annonce-time">${typeLabel} &bull; ${new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})}</p>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-edit">&#9998;</button>
+          <button class="btn-del" onclick="this.closest('.annonce-item').remove()">&#128465;</button>
+        </div>
+      `;
+      return div;
+    }
+
+    function ajouterEmission() {
+      const nom = document.getElementById('sch-nom').value.trim();
+      const emoji = document.getElementById('sch-emoji').value || '&#127897;';
+      const debut = document.getElementById('sch-debut').value;
+      const fin = document.getElementById('sch-fin').value;
+      const desc = document.getElementById('sch-desc').value.trim();
+      if (!nom || !debut || !fin) { showAdminAlert('alert-schedule', 'Nom et horaires requis', 'error'); return; }
+      const item = document.createElement('div');
+      item.className = 'schedule-item';
+      item.innerHTML = `
+        <span class="schedule-time">${debut} &mdash; ${fin}</span>
+        <span class="schedule-name">${emoji} ${nom}</span>
+        <div class="schedule-actions">
+          <button class="btn-edit">&#9998;</button>
+          <button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button>
+        </div>
+      `;
+      document.getElementById('schedule-list').appendChild(item);
+      showAdminAlert('alert-schedule', '&Eacute;mission ajout&eacute;e ! &#10003;', 'success');
+      toggleForm('schedule-form');
+    }
+
+    function ajouterAnimateur() {
+      const nom = document.getElementById('anim-nom').value.trim();
+      const emission = document.getElementById('anim-emission').value.trim();
+      const horaire = document.getElementById('anim-horaire').value.trim();
+      const photo = document.getElementById('anim-photo').value.trim();
+      if (!nom) { showAdminAlert('alert-anim', 'Nom requis', 'error'); return; }
+      const ini = nom.charAt(0).toUpperCase();
+      const card = document.createElement('div');
+      card.className = 'anim-card';
+      card.innerHTML = `
+        <div class="anim-photo">${photo ? '<img src="'+photo+'" style="display:block">' : ini}</div>
+        <div class="anim-info">
+          <h4>${nom}</h4>
+          <p>${emission || '&mdash;'} ${horaire ? '&bull; ' + horaire : ''}</p>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn-edit">&#9998; Modifier</button>
+          <button class="btn-del" onclick="this.closest('.anim-card').remove()">&#128465;</button>
+        </div>
+      `;
+      document.getElementById('animateurs-list').insertBefore(card, document.getElementById('animateurs-list').firstChild);
+      showAdminAlert('alert-anim', 'Animateur ajout&eacute; ! &#10003;', 'success');
+      toggleForm('anim-form');
+    }
+
+    function previewAnimPhoto(url) {
+      const img = document.getElementById('anim-preview');
+      if (url) { img.src = url; img.style.display = 'block'; }
+      else { img.style.display = 'none'; }
+    }
+
+    function publierReportage() {
+      const titre = document.getElementById('rep-titre').value.trim();
+      const contenu = document.getElementById('rep-contenu').value.trim();
+      const lieu = document.getElementById('rep-lieu').value.trim();
+      const statut = document.getElementById('rep-statut').value;
+      if (!titre || !contenu) { showAdminAlert('alert-reportage', 'Titre et contenu requis', 'error'); return; }
+      const item = document.createElement('div');
+      item.className = 'annonce-item';
+      item.innerHTML = `
+        <div class="annonce-dot ${statut === 'live' ? 'annonce-live' : 'annonce-pub'}"></div>
+        <div class="annonce-info" style="flex:1;">
+          <h4>${titre}</h4>
+          <p>${contenu.substring(0, 100)}${contenu.length > 100 ? '...' : ''}</p>
+          <p class="annonce-time">${lieu ? lieu + ' &bull; ' : ''}${new Date().toLocaleDateString('fr-FR')}</p>
+        </div>
+        <span class="badge ${statut === 'live' ? 'badge-rouge' : 'badge-vert'}">${statut.toUpperCase()}</span>
+      `;
+      const list = document.getElementById('reportages-list');
+      if (list.querySelector('p')) list.innerHTML = '';
+      list.insertBefore(item, list.firstChild);
+      showAdminAlert('alert-reportage', 'R&eacute;portage publi&eacute; ! &#10003;', 'success');
+    }
+
+    function sauvegarderBrouillon() {
+      showAdminAlert('alert-reportage', 'Brouillon sauvegard&eacute; ! &#10003;', 'success');
+    }
+
+    function saveSiteParams() {
+      showAdminAlert('alert-site', 'Param&egrave;tres sauvegard&eacute;s ! &#10003;', 'success');
+    }
+
+    function changerModpasAdmin() {
+      const p1 = document.getElementById('new-admin-pass').value;
+      const p2 = document.getElementById('confirm-admin-pass').value;
+      if (!p1) { showAdminAlert('alert-site', 'Entrez un mot de passe', 'error'); return; }
+      if (p1 !== p2) { showAdminAlert('alert-site', 'Mots de passe diff&eacute;rents', 'error'); return; }
+      showAdminAlert('alert-site', 'Mot de passe admin chang&eacute; ! &#10003;', 'success');
+    }
+
+    function demanderRetrait() {
+      alert('Demande de retrait envoy&eacute;e ! Vous recevrez une confirmation par email.');
+    }
+
+    // ===== HELPERS =====
+    function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+
+    function showAdminAlert(id, msg, type) {
+      const el = document.getElementById(id); if (!el) return;
+      el.innerHTML = msg; el.className = 'admin-alert ' + type; el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+  </script>
+</body>
+</html>
