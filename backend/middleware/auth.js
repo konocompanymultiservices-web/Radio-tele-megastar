@@ -11,9 +11,16 @@ module.exports = async (req, res, next) => {
       });
     }
 
-    const token = authHeader.replace('Bearer ', '');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).select('-motDePasse');
+ const token = authHeader.replace('Bearer ', '');
+const decoded = jwt.verify(token, process.env.JWT_SECRET);
+const user = await User.findById(decoded.id).select('-motDePasse');
+
+if (!user) {
+  return res.status(401).json({ success: false, message: 'User pa egziste' });
+}
+
+req.user = user; // 👈 TRÈ ENPÒTAN
+next();
 
     if (!user) {
       return res.status(401).json({

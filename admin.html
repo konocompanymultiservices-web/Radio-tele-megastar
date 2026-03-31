@@ -708,58 +708,23 @@
       }
     });
 
-    function loginAdmin() {
-      const email = document.getElementById('admin-email').value.trim();
-      const pass  = document.getElementById('admin-password').value;
-      const err   = document.getElementById('login-err');
-      err.style.display = 'none';
+function loginAdmin() {
+  const email = document.getElementById('admin-email').value.trim();
+  const pass  = document.getElementById('admin-password').value;
+  const err   = document.getElementById('login-err');
+  err.style.display = 'none';
 
-      // Essai connexion backend avec role=admin
-      fetch(API_URL + '/api/auth/connexion', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, motDePasse: pass })
-      })
-      .then(r => r.json())
-      .then(data => {
-        if (data.success && data.token) {
-          const user = data.user;
-          // Verifye si se yon admin
-          if (user.role === 'admin' || email === ADMIN_EMAIL) {
-            adminToken = data.token;
-            sessionStorage.setItem('adminToken', adminToken);
-            sessionStorage.setItem('adminName', user.nom || 'Administrateur');
-            showAdmin(user.nom || 'Administrateur');
-          } else {
-            err.textContent = 'Acc&egrave;s refus&eacute; &mdash; compte non administrateur';
-            err.style.display = 'block';
-          }
-        } else {
-          // Fallback: credentials locaux
-          if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
-            adminToken = 'local-admin-' + Date.now();
-            sessionStorage.setItem('adminToken', adminToken);
-            sessionStorage.setItem('adminName', 'Administrateur');
-            showAdmin('Administrateur');
-          } else {
-            err.style.display = 'block';
-          }
-        }
-      })
-      .catch(() => {
-        // Backend offline — credentials locaux
-        if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
-          adminToken = 'local-admin-' + Date.now();
-          sessionStorage.setItem('adminToken', adminToken);
-          sessionStorage.setItem('adminName', 'Administrateur');
-          showAdmin('Administrateur');
-        } else {
-          err.style.display = 'block';
-        }
-      });
-    }
+  if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
+    adminToken = 'temp-token-' + Date.now();
+    sessionStorage.setItem('adminToken', adminToken);
+    sessionStorage.setItem('adminName', 'Administrateur');
+    showAdmin('Administrateur');
+  } else {
+    err.style.display = 'block';
+  }
+}
 
-    function showAdmin(name) {
+function showAdmin(name) {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('admin-wrap').classList.add('visible');
       document.getElementById('admin-display-name').textContent = name;

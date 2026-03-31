@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 
 // WOUT YO
 const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/user');
+const userRoutes = require('./routes/User');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);

@@ -281,29 +281,48 @@ function soumettreFormulaire(e) {
   var btn = form.querySelector('button[type="submit"]');
   if (btn) { btn.textContent = 'Chargement...'; btn.disabled = true; }
 
-  fetch(API_URL + '/api/auth/inscription', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nom: nom, email: email, telephone: telephone, motDePasse: motDePasse })
+ fetch(API_URL + '/api/auth/inscription', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    nom,
+    email,
+    telephone,
+    motDePasse
   })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
-    if (btn) { btn.textContent = 'Cr\u00e9er mon compte \u2192'; btn.disabled = false; }
-    if (data.success) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      fermerModal(); checkUser(); form.reset();
-      setTimeout(function() {
-        if (confirm('Kont ou cr\u00e9\u00e9 avec succ\u00e8s ! Vle ale nan dashboard ou ?')) {
-          window.location.href = 'dashboard.html';
-        }
-      }, 300);
-    } else { alert(data.message || 'Er\u00e8 — eseye ank\u00f2'); }
-  })
-  .catch(function() {
-    if (btn) { btn.textContent = 'Cr\u00e9er mon compte \u2192'; btn.disabled = false; }
-    alert('Er\u00e8 koneksyon ak s\u00e8v\u00e8');
-  });
+})
+.then(r => r.json())
+.then(data => {
+
+  if (btn) {
+    btn.textContent = 'Créer mon compte →';
+    btn.disabled = false;
+  }
+
+  if (data.success) {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    fermerModal();
+    checkUser();
+    form.reset();
+
+    if (confirm('Kont kreye! Ale dashboard ?')) {
+      window.location.href = 'dashboard.html';
+    }
+
+  } else {
+    alert(data.message || 'Erè');
+  }
+
+})
+.catch(() => {
+  if (btn) {
+    btn.textContent = 'Créer mon compte →';
+    btn.disabled = false;
+  }
+  alert('Erè serveur');
+});
 }
 
 // ============================================
@@ -318,25 +337,53 @@ function soumettreLogin(e) {
   var btn = form.querySelector('button[type="submit"]');
   if (btn) { btn.textContent = 'Connexion...'; btn.disabled = true; }
 
-  fetch(API_URL + '/api/auth/connexion', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, motDePasse: motDePasse })
+ fetch(API_URL + '/api/auth/connexion', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    email,
+    motDePasse
   })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
-    if (btn) { btn.textContent = 'Se connecter \u2192'; btn.disabled = false; }
-    if (data.success && data.token) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      fermerModalLogin(); checkUser(); form.reset();
-      setTimeout(function() { window.location.href = 'dashboard.html'; }, 300);
-    } else { alert(data.message || 'Email oswa modpas enkòrèk'); }
-  })
-  .catch(function() {
-    if (btn) { btn.textContent = 'Se connecter \u2192'; btn.disabled = false; }
-    alert('Er\u00e8 koneksyon ak s\u00e8v\u00e8');
-  });
+})
+.then(r => r.json())
+.then(data => {
+
+  if (btn) {
+    btn.textContent = 'Se connecter →';
+    btn.disabled = false;
+  }
+
+  if (data.success && data.token) {
+
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    fermerModalLogin();
+    checkUser();
+    form.reset();
+
+    const user = data.user;
+
+    if (user.role === 'admin') {
+      window.location.href = 'admin.html';
+    } else {
+      window.location.href = 'dashboard.html';
+    }
+
+  } else {
+    alert(data.message || 'Login incorrect');
+  }
+
+})
+.catch(() => {
+
+  if (btn) {
+    btn.textContent = 'Se connecter →';
+    btn.disabled = false;
+  }
+
+  alert('Erreur serveur');
+});
 }
 
 // ============================================

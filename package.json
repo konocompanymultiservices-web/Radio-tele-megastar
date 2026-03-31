@@ -2,6 +2,7 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "socket.io": "^4.8.3"
@@ -24,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/konocompanymultiservices-web/Radio-tele-megastar/issues"
   },
-  "homepage": "https://github.com/konocompanymultiservices-web/Radio-tele-megastar#readme"
+  "homepage": "https://github.com/konocompanymultiservices-web/Radio-tele-megastar#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
 }

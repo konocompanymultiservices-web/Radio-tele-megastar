@@ -13,7 +13,12 @@ const UserSchema = new mongoose.Schema({
     emissionsEcoutees: { type: Number, default: 0 }
   },
   dateInscription: { type: Date, default: Date.now },
-  actif: { type: Boolean, default: true }
+  actif: { type: Boolean, default: true },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user'
+  }
 }, { timestamps: true });
 
 UserSchema.pre('save', async function() {
