@@ -8,45 +8,31 @@ var audio = document.getElementById('audio-player');
 // ============================================
 // LOAD PAGE
 // ============================================
-window.addEventListener('load', function () {
-  checkUser();
-  initCarousel();
-
-  if (audio) {
-    var estateJwe = localStorage.getItem('radioJwe');
-    if (estateJwe === 'wi') {
-      audio.play()
-        .then(function () { meteEtatPlay(); })
-        .catch(function () { montreNotifikasyon(); });
-    } else {
-      meteEtatPause();
+function checkUser() {
+  var token = localStorage.getItem('token');
+  var userStr = localStorage.getItem('user');
+  var userBar = document.getElementById('user-bar');
+  var barName = document.getElementById('bar-user-name');
+  if (token && userStr) {
+    var user = JSON.parse(userStr);
+    if (userBar) { userBar.style.display = 'flex'; userBar.style.alignItems = 'center'; userBar.style.gap = '8px'; }
+    if (barName) barName.textContent = user.nom || 'Mon compte';
+    var btnSignup = document.querySelector('.menu-signup');
+    var btnLogin = document.querySelector('.menu-login');
+    if (btnSignup) {
+      btnSignup.textContent = 'Mon Dashboard';
+      btnSignup.onclick = function() {
+        // KOREKSYON — verifye role!
+        if (user.role === 'admin') {
+          window.location.href = 'admin.html';
+        } else {
+          window.location.href = 'dashboard.html';
+        }
+      };
     }
-    window.addEventListener('storage', function (e) {
-      if (e.key === 'radioJwe') {
-        if (e.newValue === 'wi') { audio.play(); meteEtatPlay(); }
-        else { audio.pause(); meteEtatPause(); }
-      }
-    });
+    if (btnLogin) { btnLogin.textContent = 'D\u00e9connexion'; btnLogin.onclick = logout; }
   } else {
-    var estateJwe = localStorage.getItem('radioJwe');
-    estateJwe === 'wi' ? meteEtatPlay() : meteEtatPause();
-  }
-});
-
-// ============================================
-// PLAY / PAUSE
-// ============================================
-function togglePlay() {
-  if (!audio) return;
-  if (audio.paused) {
-    audio.play().then(function () {
-      localStorage.setItem('radioJwe', 'wi');
-      meteEtatPlay();
-    }).catch(function () { montreNotifikasyon(); });
-  } else {
-    audio.pause();
-    localStorage.setItem('radioJwe', 'non');
-    meteEtatPause();
+    if (userBar) userBar.style.display = 'none';
   }
 }
 
