@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Radio Télé Mega Star — 97.3 FM · La voix d'Haïti</title>
+  <title>Radio TÃ©lÃ© Mega Star â€” 97.3 FM Â· La voix d'HaÃ¯ti</title>
   <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
@@ -17,19 +17,19 @@
       <a href="index.html" class="logo">
         <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="logo-img"/>
         <div class="logo-text">
-          <h1>Radio Télé Mega Star</h1>
-          <p>97.3 FM · CH. 60 · Cable 116</p>
+          <h1>Radio TÃ©lÃ© Mega Star</h1>
+          <p>97.3 FM Â· CH. 60 Â· Cable 116</p>
         </div>
       </a>
 
       <div class="search-box">
-        <span>🔍</span>
-        <input type="text" placeholder="Rechercher une émission..." class="search-input"/>
+        <span>ðŸ”</span>
+        <input type="text" placeholder="Rechercher une Ã©mission..." class="search-input"/>
       </div>
 
-      <!-- ouvrirMenu reste pareil — li deja nan script.js -->
+      <!-- ouvrirMenu reste pareil â€” li deja nan script.js -->
       <button class="menu-btn" onclick="ouvrirMenu()">
-        <span class="menu-btn-icon">☰</span>
+        <span class="menu-btn-icon">â˜°</span>
         Menu
       </button>
 
@@ -38,39 +38,39 @@
 
 
   <!-- MENU OVERLAY -->
-  <!-- fermerMenuOverlay ak fermerMenu remplace fèmenMenuOverlay ak fèmenMenu -->
+  <!-- fermerMenuOverlay ak fermerMenu remplace fÃ¨menMenuOverlay ak fÃ¨menMenu -->
   <div class="menu-overlay" id="menu-overlay" onclick="fermerMenuOverlay(event)">
     <div class="menu-panel">
 
-      <button class="menu-close" onclick="fermerMenu()">✕</button>
+      <button class="menu-close" onclick="fermerMenu()">âœ•</button>
 
       <div class="menu-logo">
         <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo"/>
-        <p>Radio Télé Mega Star</p>
+        <p>Radio TÃ©lÃ© Mega Star</p>
       </div>
 
       <nav class="menu-nav">
         <a href="index.html" class="menu-nav-link">
-          <span>🏠</span> Accueil
+          <span>ðŸ </span> Accueil
         </a>
         <a href="programmes.html" class="menu-nav-link">
-          <span>📋</span> Programmes
+          <span>ðŸ“‹</span> Programmes
         </a>
         <a href="about.html" class="menu-nav-link">
-          <span>📻</span> À propos
+          <span>ðŸ“»</span> Ã€ propos
         </a>
         <a href="contact.html" class="menu-nav-link">
-          <span>✉️</span> Contact
+          <span>âœ‰ï¸</span> Contact
         </a>
       </nav>
 
       <div class="menu-divider"></div>
 
       <div class="menu-auth">
-        <p class="menu-auth-title">Rejoignez notre communauté</p>
+        <p class="menu-auth-title">Rejoignez notre communautÃ©</p>
         <!-- ouvrirModal reste pareil -->
         <button class="menu-auth-btn menu-signup" onclick="ouvrirModal()">
-          Créer un compte
+          CrÃ©er un compte
         </button>
         <button class="menu-auth-btn menu-login">
           Se connecter
@@ -78,8 +78,8 @@
       </div>
 
       <div class="menu-footer">
-        <p>© 2026 Radio Télé Mega Star</p>
-        <p>La voix qui unit, informe et inspire Haïti 🇭🇹</p>
+        <p>Â© 2026 Radio TÃ©lÃ© Mega Star</p>
+        <p>La voix qui unit, informe et inspire HaÃ¯ti ðŸ‡­ðŸ‡¹</p>
       </div>
 
     </div>
@@ -87,47 +87,47 @@
 
 
   <!-- MODAL KREYE KONT -->
-  <!-- fermerModalOverlay ak fermerModal remplace fèmenModalOverlay ak fèmenModal -->
-  <!-- soumettreFormulaire remplace soumèt -->
+  <!-- fermerModalOverlay ak fermerModal remplace fÃ¨menModalOverlay ak fÃ¨menModal -->
+  <!-- soumettreFormulaire remplace soumÃ¨t -->
   <div class="modal-overlay" id="modal-overlay" onclick="fermerModalOverlay(event)">
     <div class="modal">
 
-      <button class="modal-close" onclick="fermerModal()">✕</button>
+      <button class="modal-close" onclick="fermerModal()">âœ•</button>
 
       <div class="modal-header">
         <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="modal-logo"/>
-        <h2 class="modal-title">Créer un compte</h2>
-        <p class="modal-sub">Rejoignez la famille Radio Télé Mega Star</p>
+        <h2 class="modal-title">CrÃ©er un compte</h2>
+        <p class="modal-sub">Rejoignez la famille Radio TÃ©lÃ© Mega Star</p>
       </div>
 
       <form class="modal-form" onsubmit="soumettreFormulaire(event)">
 
         <div class="modal-field">
           <label>Nom complet</label>
-          <input type="text" placeholder="Ex: Jean Pierre" required/>
+          <input type="text" name="username" placeholder="Ex: Jean Pierre" required/>
         </div>
 
         <div class="modal-field">
           <label>Adresse email</label>
-          <input type="email" placeholder="Ex: jean@email.com" required/>
+          <input type="email" name="email" placeholder="Ex: jean@email.com" required/>
         </div>
 
         <div class="modal-field">
-          <label>Numéro de téléphone</label>
-          <input type="tel" placeholder="Ex: +509 3X XX XXXX"/>
+          <label>NumÃ©ro de tÃ©lÃ©phone</label>
+          <input type="tel" name="phone" placeholder="Ex: +509 3X XX XXXX"/>
         </div>
 
         <div class="modal-field">
           <label>Mot de passe</label>
-          <input type="password" placeholder="Minimum 8 caractères" required/>
+          <input type="password" name="password" placeholder="Minimum 8 caractères" required/>
         </div>
 
         <button type="submit" class="modal-submit">
-          Créer mon compte →
+          CrÃ©er mon compte â†’
         </button>
 
         <p class="modal-login-text">
-          Déjà membre?
+          DÃ©jÃ  membre?
           <a href="#" class="modal-login-link">Se connecter</a>
         </p>
 
@@ -147,8 +147,8 @@
           <span class="live-dot"></span>
           EN DIRECT
         </div>
-        <h2 class="hero-title">Radio Télé <span>Mega Star</span></h2>
-        <p class="hero-sub">La voix qui unit, informe et inspire Haïti 🇭🇹</p>
+        <h2 class="hero-title">Radio TÃ©lÃ© <span>Mega Star</span></h2>
+        <p class="hero-sub">La voix qui unit, informe et inspire HaÃ¯ti ðŸ‡­ðŸ‡¹</p>
       </div>
     </div>
 
@@ -156,12 +156,12 @@
       <div class="player-strip-left">
         <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="player-strip-logo"/>
         <div>
-          <p class="player-strip-name">Radio Télé Mega Star</p>
-          <p class="player-strip-freq" id="stream-status">Cliquez ▶ pour écouter</p>
+          <p class="player-strip-name">Radio TÃ©lÃ© Mega Star</p>
+          <p class="player-strip-freq" id="stream-status">Cliquez â–¶ pour Ã©couter</p>
         </div>
       </div>
       <div class="player-strip-vol">
-        <span>🔊</span>
+        <span>ðŸ”Š</span>
         <input type="range" min="0" max="1" step="0.1" value="1"
                onchange="changeVolume(this.value)" class="vol-slider"/>
       </div>
@@ -178,9 +178,9 @@
 
   <!-- PIBLISITE #1 -->
   <div class="ad-zone">
-    <span class="ad-tag">PUBLICITÉ</span>
+    <span class="ad-tag">PUBLICITÃ‰</span>
     <div class="ad-content">
-      📢 Votre publicité ici — Contactez-nous pour annoncer sur Radio Télé Mega Star
+      ðŸ“¢ Votre publicitÃ© ici â€” Contactez-nous pour annoncer sur Radio TÃ©lÃ© Mega Star
     </div>
   </div>
 
@@ -188,46 +188,46 @@
   <!-- EMISYON -->
   <section class="emissions-section">
     <div class="section-top">
-      <h2 class="section-heading">Nos émissions</h2>
-      <a href="programmes.html" class="voir-tout">Voir tout →</a>
+      <h2 class="section-heading">Nos Ã©missions</h2>
+      <a href="programmes.html" class="voir-tout">Voir tout â†’</a>
     </div>
 
     <div class="emissions-grid">
 
       <a href="programmes.html" class="emission-card">
-        <div class="emission-circle" style="background:linear-gradient(135deg,#cc0000,#ff6666)">🌅</div>
-        <p class="emission-name">Réveil Matinal</p>
-        <p class="emission-time">05h – 08h</p>
+        <div class="emission-circle" style="background:linear-gradient(135deg,#cc0000,#ff6666)">ðŸŒ…</div>
+        <p class="emission-name">RÃ©veil Matinal</p>
+        <p class="emission-time">05h â€“ 08h</p>
       </a>
 
       <a href="programmes.html" class="emission-card">
-        <div class="emission-circle" style="background:linear-gradient(135deg,#1a5a1a,#4CAF50)">📰</div>
-        <p class="emission-name">Actualités</p>
-        <p class="emission-time">08h – 10h</p>
+        <div class="emission-circle" style="background:linear-gradient(135deg,#1a5a1a,#4CAF50)">ðŸ“°</div>
+        <p class="emission-name">ActualitÃ©s</p>
+        <p class="emission-time">08h â€“ 10h</p>
       </a>
 
       <a href="programmes.html" class="emission-card">
-        <div class="emission-circle" style="background:linear-gradient(135deg,#996600,#FFD600)">🎵</div>
-        <p class="emission-name">Vibes Haïtiennes</p>
-        <p class="emission-time">10h – 14h</p>
+        <div class="emission-circle" style="background:linear-gradient(135deg,#996600,#FFD600)">ðŸŽµ</div>
+        <p class="emission-name">Vibes HaÃ¯tiennes</p>
+        <p class="emission-time">10h â€“ 14h</p>
       </a>
 
       <a href="programmes.html" class="emission-card">
-        <div class="emission-circle" style="background:linear-gradient(135deg,#cc0000,#cc6600)">🎤</div>
-        <p class="emission-name">Débat Citoyen</p>
-        <p class="emission-time">14h – 17h</p>
+        <div class="emission-circle" style="background:linear-gradient(135deg,#cc0000,#cc6600)">ðŸŽ¤</div>
+        <p class="emission-name">DÃ©bat Citoyen</p>
+        <p class="emission-time">14h â€“ 17h</p>
       </a>
 
       <a href="programmes.html" class="emission-card">
-        <div class="emission-circle" style="background:linear-gradient(135deg,#4a0080,#9C27B0)">🙏</div>
+        <div class="emission-circle" style="background:linear-gradient(135deg,#4a0080,#9C27B0)">ðŸ™</div>
         <p class="emission-name">Heure Spirituelle</p>
-        <p class="emission-time">17h – 19h</p>
+        <p class="emission-time">17h â€“ 19h</p>
       </a>
 
       <a href="programmes.html" class="emission-card">
-        <div class="emission-circle" style="background:linear-gradient(135deg,#0a0a3a,#1a1a6a)">🌙</div>
-        <p class="emission-name">Soirée Mega Star</p>
-        <p class="emission-time">19h – 22h</p>
+        <div class="emission-circle" style="background:linear-gradient(135deg,#0a0a3a,#1a1a6a)">ðŸŒ™</div>
+        <p class="emission-name">SoirÃ©e Mega Star</p>
+        <p class="emission-time">19h â€“ 22h</p>
       </a>
 
     </div>
@@ -236,9 +236,9 @@
 
   <!-- PIBLISITE #2 -->
   <div class="ad-zone ad-zone-large">
-    <span class="ad-tag">PUBLICITÉ</span>
+    <span class="ad-tag">PUBLICITÃ‰</span>
     <div class="ad-content">
-      🎯 Annoncez votre entreprise sur Radio Télé Mega Star — Contactez-nous!
+      ðŸŽ¯ Annoncez votre entreprise sur Radio TÃ©lÃ© Mega Star â€” Contactez-nous!
     </div>
   </div>
 
@@ -247,28 +247,28 @@
   <section class="signup-section">
     <div class="signup-inner">
       <div class="signup-text">
-        <h2 class="signup-title">Rejoignez notre communauté</h2>
-        <p class="signup-desc">Créez votre compte gratuit et accédez à nos programmes, actualités et bien plus encore!</p>
+        <h2 class="signup-title">Rejoignez notre communautÃ©</h2>
+        <p class="signup-desc">CrÃ©ez votre compte gratuit et accÃ©dez Ã  nos programmes, actualitÃ©s et bien plus encore!</p>
         <ul class="signup-perks">
-          <li>✅ Accès à tous nos programmes</li>
-          <li>✅ Notifications des émissions</li>
-          <li>✅ Contenu exclusif</li>
-          <li>✅ Gratuit pour toujours</li>
+          <li>âœ… AccÃ¨s Ã  tous nos programmes</li>
+          <li>âœ… Notifications des Ã©missions</li>
+          <li>âœ… Contenu exclusif</li>
+          <li>âœ… Gratuit pour toujours</li>
         </ul>
       </div>
       <div class="signup-form-box">
-        <h3 class="signup-form-title">Créer un compte gratuit</h3>
-        <!-- soumettreFormulaire remplace soumèt -->
+        <h3 class="signup-form-title">CrÃ©er un compte gratuit</h3>
+        <!-- soumettreFormulaire remplace soumÃ¨t -->
         <form class="signup-form" onsubmit="soumettreFormulaire(event)">
           <input type="text" name="username" placeholder="Nom complet" required/>
 <input type="email" name="email" placeholder="Adresse email" required/>
-<input type="tel" name="phone" placeholder="Numéro de téléphone"/>
+<input type="tel" name="phone" placeholder="NumÃ©ro de tÃ©lÃ©phone"/>
 <input type="password" name="password" placeholder="Mot de passe"/>
           <button type="submit" class="signup-submit">
-            Créer mon compte →
+            CrÃ©er mon compte â†’
           </button>
         </form>
-        <p class="signup-login">Déjà membre? <a href="#">Se connecter</a></p>
+        <p class="signup-login">DÃ©jÃ  membre? <a href="#">Se connecter</a></p>
       </div>
     </div>
   </section>
@@ -280,27 +280,26 @@
       <div class="footer-logo-box">
         <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="footer-img"/>
         <div>
-          <p class="footer-name">Radio Télé Mega Star</p>
-          <p class="footer-slogan">La voix qui unit, informe et inspire Haïti 🇭🇹</p>
+          <p class="footer-name">Radio TÃ©lÃ© Mega Star</p>
+          <p class="footer-slogan">La voix qui unit, informe et inspire HaÃ¯ti ðŸ‡­ðŸ‡¹</p>
         </div>
       </div>
       <div class="footer-nav">
         <a href="index.html">Accueil</a>
         <a href="programmes.html">Programmes</a>
-        <a href="about.html">À propos</a>
+        <a href="about.html">Ã€ propos</a>
         <a href="contact.html">Contact</a>
       </div>
-      <p class="footer-copy">© 2026 Radio Télé Mega Star — Tous droits réservés.</p>
+      <p class="footer-copy">Â© 2026 Radio TÃ©lÃ© Mega Star â€” Tous droits rÃ©servÃ©s.</p>
     </div>
   </footer>
 
 
-  <!-- BOUTON PLAY FLÒTAN -->
-  <button class="float-play" id="float-play" onclick="togglePlay()" title="Écouter Radio Télé Mega Star">
-    <span id="float-icon">▶</span>
+  <!-- BOUTON PLAY FLÃ’TAN -->
+  <button class="float-play" id="float-play" onclick="togglePlay()" title="Ã‰couter Radio TÃ©lÃ© Mega Star">
+    <span id="float-icon">â–¶</span>
   </button>
-
-  <script src="script.js"></script>
-
+  
+  <button onclick="logout()">Logout</button>
 </body>
 </html>
