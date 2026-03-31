@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mon Dashboard — Radio Télé Mega Star</title>
+  <title>Mon Dashboard â€” Radio TÃ©lÃ© Mega Star</title>
   <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
   <style>
@@ -206,7 +206,7 @@
     .plan-price span { font-size:14px; color:var(--gri-text); }
     .plan-features { list-style:none; margin:1rem 0 1.5rem; text-align:left; }
     .plan-features li { font-size:13px; color:var(--gri-text); padding:6px 0; border-bottom:1px solid var(--bod); }
-    .plan-features li::before { content:"✓ "; color:var(--jaune); font-weight:700; }
+    .plan-features li::before { content:"âœ“ "; color:var(--jaune); font-weight:700; }
     .btn-plan {
       width:100%;
       padding:10px;
@@ -346,13 +346,13 @@
     <a href="index.html" class="dash-logo">
       <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo"/>
       <div class="dash-logo-text">
-        <h1>Radio Télé Mega Star</h1>
-        <p>97.3 FM · Mon Dashboard</p>
+        <h1>Radio TÃ©lÃ© Mega Star</h1>
+        <p>97.3 FM Â· Mon Dashboard</p>
       </div>
     </a>
     <div class="dash-header-right">
       <span class="dash-user-name" id="header-username">Chargement...</span>
-      <button class="btn-logout" onclick="dekonekte()">Déconnexion</button>
+      <button class="btn-logout" onclick="dekonekte()">DÃ©connexion</button>
     </div>
   </header>
 
@@ -365,7 +365,7 @@
         <div class="avatar-circle" onclick="document.getElementById('photo-input').click()">
           <span id="avatar-initials">?</span>
           <img id="avatar-img" src="" alt="Photo"/>
-          <div class="avatar-overlay">📷<br>Chanje foto</div>
+          <div class="avatar-overlay">ðŸ“·<br>Chanje foto</div>
         </div>
         <p class="sidebar-name" id="sidebar-name">Chargement...</p>
         <span class="sidebar-plan" id="sidebar-plan">GRATUIT</span>
@@ -373,19 +373,19 @@
 
       <nav class="sidebar-nav">
         <button class="sidebar-nav-item active" onclick="afficherSection('overview')">
-          <span class="nav-icon">📊</span> Vue d'ensemble
+          <span class="nav-icon">ðŸ“Š</span> Vue d'ensemble
         </button>
         <button class="sidebar-nav-item" onclick="afficherSection('ecoute')">
-          <span class="nav-icon">📻</span> Mon écoute
+          <span class="nav-icon">ðŸ“»</span> Mon Ã©coute
         </button>
         <button class="sidebar-nav-item" onclick="afficherSection('abonnement')">
-          <span class="nav-icon">⭐</span> Mon abonnement
+          <span class="nav-icon">â­</span> Mon abonnement
         </button>
         <button class="sidebar-nav-item" onclick="afficherSection('profil')">
-          <span class="nav-icon">👤</span> Mon profil
+          <span class="nav-icon">ðŸ‘¤</span> Mon profil
         </button>
         <button class="sidebar-nav-item" onclick="afficherSection('modpas')">
-          <span class="nav-icon">🔐</span> Mot de passe
+          <span class="nav-icon">ðŸ”</span> Mot de passe
         </button>
       </nav>
     </aside>
@@ -398,98 +398,98 @@
         <h2 class="section-title">Vue d'ensemble</h2>
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-icon">⏱️</div>
+            <div class="stat-icon">â±ï¸</div>
             <div class="stat-value" id="stat-temps">0h</div>
-            <div class="stat-label">Temps d'écoute total</div>
+            <div class="stat-label">Temps d'Ã©coute total</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">🎙️</div>
+            <div class="stat-icon">ðŸŽ™ï¸</div>
             <div class="stat-value" id="stat-emissions">0</div>
-            <div class="stat-label">Émissions écoutées</div>
+            <div class="stat-label">Ã‰missions Ã©coutÃ©es</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">📅</div>
+            <div class="stat-icon">ðŸ“…</div>
             <div class="stat-value" id="stat-jours">0</div>
             <div class="stat-label">Jours comme membre</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">⭐</div>
+            <div class="stat-icon">â­</div>
             <div class="stat-value" id="stat-plan">Gratuit</div>
             <div class="stat-label">Plan actuel</div>
           </div>
         </div>
 
-        <h3 style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:14px;margin-bottom:1rem;">DERNIÈRE ACTIVITÉ</h3>
+        <h3 style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:14px;margin-bottom:1rem;">DERNIÃˆRE ACTIVITÃ‰</h3>
         <div class="emission-item">
-          <div class="emission-emoji">📻</div>
+          <div class="emission-emoji">ðŸ“»</div>
           <div class="emission-info">
-            <h4>Radio Télé Mega Star — En direct</h4>
-            <p id="derniere-ecoute">Aucune écoute enregistrée</p>
+            <h4>Radio TÃ©lÃ© Mega Star â€” En direct</h4>
+            <p id="derniere-ecoute">Aucune Ã©coute enregistrÃ©e</p>
           </div>
         </div>
       </section>
 
       <!-- ECOUTE -->
       <section class="dash-section" id="section-ecoute">
-        <h2 class="section-title">Mon écoute</h2>
+        <h2 class="section-title">Mon Ã©coute</h2>
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-icon">⏱️</div>
+            <div class="stat-icon">â±ï¸</div>
             <div class="stat-value" id="ecoute-temps">0h</div>
-            <div class="stat-label">Temps total d'écoute</div>
+            <div class="stat-label">Temps total d'Ã©coute</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">🎙️</div>
+            <div class="stat-icon">ðŸŽ™ï¸</div>
             <div class="stat-value" id="ecoute-nb">0</div>
-            <div class="stat-label">Émissions écoutées</div>
+            <div class="stat-label">Ã‰missions Ã©coutÃ©es</div>
           </div>
         </div>
 
-        <h3 style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:14px;margin-bottom:1rem;">ÉMISSIONS FAVORITES</h3>
+        <h3 style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:14px;margin-bottom:1rem;">Ã‰MISSIONS FAVORITES</h3>
         <ul class="emission-list">
           <li class="emission-item">
-            <div class="emission-emoji">🌅</div>
+            <div class="emission-emoji">ðŸŒ…</div>
             <div class="emission-info">
-              <h4>Réveil Matinal</h4>
-              <p>05h – 08h chak maten</p>
+              <h4>RÃ©veil Matinal</h4>
+              <p>05h â€“ 08h chak maten</p>
             </div>
-            <span class="emission-time-badge">Populè</span>
+            <span class="emission-time-badge">PopulÃ¨</span>
           </li>
           <li class="emission-item">
-            <div class="emission-emoji">📰</div>
+            <div class="emission-emoji">ðŸ“°</div>
             <div class="emission-info">
-              <h4>Actualités</h4>
-              <p>08h – 10h</p>
+              <h4>ActualitÃ©s</h4>
+              <p>08h â€“ 10h</p>
             </div>
             <span class="emission-time-badge">Nouvo</span>
           </li>
           <li class="emission-item">
-            <div class="emission-emoji">🎵</div>
+            <div class="emission-emoji">ðŸŽµ</div>
             <div class="emission-info">
-              <h4>Vibes Haïtiennes</h4>
-              <p>10h – 14h</p>
+              <h4>Vibes HaÃ¯tiennes</h4>
+              <p>10h â€“ 14h</p>
             </div>
             <span class="emission-time-badge">Top</span>
           </li>
           <li class="emission-item">
-            <div class="emission-emoji">🎤</div>
+            <div class="emission-emoji">ðŸŽ¤</div>
             <div class="emission-info">
-              <h4>Débat Citoyen</h4>
-              <p>14h – 17h</p>
+              <h4>DÃ©bat Citoyen</h4>
+              <p>14h â€“ 17h</p>
             </div>
           </li>
           <li class="emission-item">
-            <div class="emission-emoji">🙏</div>
+            <div class="emission-emoji">ðŸ™</div>
             <div class="emission-info">
               <h4>Heure Spirituelle</h4>
-              <p>17h – 19h</p>
+              <p>17h â€“ 19h</p>
             </div>
           </li>
           <li class="emission-item">
-            <div class="emission-emoji">🌙</div>
+            <div class="emission-emoji">ðŸŒ™</div>
             <div class="emission-info">
-              <h4>Soirée Mega Star</h4>
-              <p>19h – 22h</p>
+              <h4>SoirÃ©e Mega Star</h4>
+              <p>19h â€“ 22h</p>
             </div>
           </li>
         </ul>
@@ -505,25 +505,25 @@
             <p class="plan-name">Gratuit</p>
             <p class="plan-price">$0 <span>/mois</span></p>
             <ul class="plan-features">
-              <li>Écoute radio en direct</li>
-              <li>Accès aux programmes</li>
+              <li>Ã‰coute radio en direct</li>
+              <li>AccÃ¨s aux programmes</li>
               <li>Compte personnel</li>
             </ul>
             <button class="btn-plan btn-plan-current" disabled>Plan actuel</button>
           </div>
 
           <div class="plan-card premium-card">
-            <span class="plan-badge">Recommandé</span>
+            <span class="plan-badge">RecommandÃ©</span>
             <p class="plan-name">Premium</p>
             <p class="plan-price">$5 <span>/mois</span></p>
             <ul class="plan-features">
               <li>Tout du plan Gratuit</li>
               <li>Contenu exclusif</li>
-              <li>Sans publicité</li>
+              <li>Sans publicitÃ©</li>
               <li>Notifications prioritaires</li>
-              <li>Support dédié</li>
+              <li>Support dÃ©diÃ©</li>
             </ul>
-            <button class="btn-plan btn-plan-upgrade" onclick="upgraderPlan('premium')">Passer à Premium</button>
+            <button class="btn-plan btn-plan-upgrade" onclick="upgraderPlan('premium')">Passer Ã  Premium</button>
           </div>
 
           <div class="plan-card">
@@ -531,12 +531,12 @@
             <p class="plan-price">$15 <span>/mois</span></p>
             <ul class="plan-features">
               <li>Tout du plan Premium</li>
-              <li>Accès backstage</li>
+              <li>AccÃ¨s backstage</li>
               <li>Badge VIP exclusif</li>
-              <li>Invitations événements</li>
+              <li>Invitations Ã©vÃ©nements</li>
               <li>Contact direct animateurs</li>
             </ul>
-            <button class="btn-plan btn-plan-upgrade" onclick="upgraderPlan('vip')">Passer à VIP</button>
+            <button class="btn-plan btn-plan-upgrade" onclick="upgraderPlan('vip')">Passer Ã  VIP</button>
           </div>
         </div>
       </section>
@@ -554,8 +554,8 @@
           </div>
           <div>
             <p style="font-family:'Oswald',sans-serif;font-size:16px;margin-bottom:4px;">Photo de profil</p>
-            <p style="font-size:12px;color:var(--gri-text);margin-bottom:12px;">JPG, PNG — Max 2MB</p>
-            <button class="photo-upload-btn" onclick="document.getElementById('photo-input').click()">📷 Changer la photo</button>
+            <p style="font-size:12px;color:var(--gri-text);margin-bottom:12px;">JPG, PNG â€” Max 2MB</p>
+            <button class="photo-upload-btn" onclick="document.getElementById('photo-input').click()">ðŸ“· Changer la photo</button>
             <input type="file" id="photo-input" accept="image/*" onchange="changerPhoto(this)"/>
           </div>
         </div>
@@ -570,10 +570,10 @@
             <input type="email" id="profil-email" placeholder="Votre email" disabled style="opacity:0.5;"/>
           </div>
           <div class="form-group">
-            <label>NUMÉRO DE TÉLÉPHONE</label>
+            <label>NUMÃ‰RO DE TÃ‰LÃ‰PHONE</label>
             <input type="tel" id="profil-telephone" placeholder="Ex: +509 3X XX XXXX"/>
           </div>
-          <button type="submit" class="btn-save">💾 Sauvegarder</button>
+          <button type="submit" class="btn-save">ðŸ’¾ Sauvegarder</button>
         </form>
       </section>
 
@@ -588,13 +588,13 @@
           </div>
           <div class="form-group">
             <label>NOUVEAU MOT DE PASSE</label>
-            <input type="password" id="nouveau-modpas" placeholder="Minimum 6 caractères" required/>
+            <input type="password" id="nouveau-modpas" placeholder="Minimum 6 caractÃ¨res" required/>
           </div>
           <div class="form-group">
             <label>CONFIRMER LE NOUVEAU MOT DE PASSE</label>
-            <input type="password" id="confirm-modpas" placeholder="Répétez le nouveau mot de passe" required/>
+            <input type="password" id="confirm-modpas" placeholder="RÃ©pÃ©tez le nouveau mot de passe" required/>
           </div>
-          <button type="submit" class="btn-save">🔐 Changer le mot de passe</button>
+          <button type="submit" class="btn-save">ðŸ” Changer le mot de passe</button>
         </form>
       </section>
 
@@ -639,7 +639,7 @@
         document.getElementById('photo-img').style.display = 'block';
       }
 
-      // Fòm pwofil
+      // FÃ²m pwofil
       document.getElementById('profil-nom').value = nom;
       document.getElementById('profil-email').value = currentUser.email || '';
       document.getElementById('profil-telephone').value = currentUser.telephone || '';
@@ -665,12 +665,12 @@
           document.getElementById('stat-emissions').textContent = stats.emissionsEcoutees || 0;
           document.getElementById('ecoute-nb').textContent = stats.emissionsEcoutees || 0;
 
-          // Jou kòm manm
+          // Jou kÃ²m manm
           const dateInscription = new Date(profil.membreDepuis);
           const jou = Math.floor((new Date() - dateInscription) / (1000 * 60 * 60 * 24));
           document.getElementById('stat-jours').textContent = jou;
 
-          // Dènye koute
+          // DÃ¨nye koute
           if (stats.dernierEcoute) {
             document.getElementById('derniere-ecoute').textContent =
               new Date(stats.dernierEcoute).toLocaleDateString('fr-FR');
@@ -704,7 +704,7 @@
       })
       .then(r => r.json())
       .then(data => {
-        btn.textContent = '💾 Sauvegarder';
+        btn.textContent = 'ðŸ’¾ Sauvegarder';
         btn.disabled = false;
         const alert = document.getElementById('alert-profil');
         if (data.success) {
@@ -714,15 +714,15 @@
           document.getElementById('sidebar-name').textContent = nom;
           document.getElementById('header-username').textContent = nom;
           document.getElementById('avatar-initials').textContent = nom.charAt(0).toUpperCase();
-          afficherAlert('alert-profil', 'Profil mis à jour avec succès! ✓', 'success');
+          afficherAlert('alert-profil', 'Profil mis Ã  jour avec succÃ¨s! âœ“', 'success');
         } else {
-          afficherAlert('alert-profil', data.message || 'Erè — eseye ankò', 'error');
+          afficherAlert('alert-profil', data.message || 'ErÃ¨ â€” eseye ankÃ²', 'error');
         }
       })
       .catch(() => {
-        btn.textContent = '💾 Sauvegarder';
+        btn.textContent = 'ðŸ’¾ Sauvegarder';
         btn.disabled = false;
-        afficherAlert('alert-profil', 'Erè koneksyon ak sèvè', 'error');
+        afficherAlert('alert-profil', 'ErÃ¨ koneksyon ak sÃ¨vÃ¨', 'error');
       });
     }
 
@@ -738,7 +738,7 @@
         return;
       }
       if (nouveauModpas.length < 6) {
-        afficherAlert('alert-modpas', 'Modpas dwe gen omwen 6 karaktè', 'error');
+        afficherAlert('alert-modpas', 'Modpas dwe gen omwen 6 karaktÃ¨', 'error');
         return;
       }
 
@@ -753,19 +753,19 @@
       })
       .then(r => r.json())
       .then(data => {
-        btn.textContent = '🔐 Changer le mot de passe';
+        btn.textContent = 'ðŸ” Changer le mot de passe';
         btn.disabled = false;
         if (data.success) {
-          afficherAlert('alert-modpas', 'Modpas chanje ak siksè! ✓', 'success');
+          afficherAlert('alert-modpas', 'Modpas chanje ak siksÃ¨! âœ“', 'success');
           e.target.reset();
         } else {
-          afficherAlert('alert-modpas', data.message || 'Erè — eseye ankò', 'error');
+          afficherAlert('alert-modpas', data.message || 'ErÃ¨ â€” eseye ankÃ²', 'error');
         }
       })
       .catch(() => {
-        btn.textContent = '🔐 Changer le mot de passe';
+        btn.textContent = 'ðŸ” Changer le mot de passe';
         btn.disabled = false;
-        afficherAlert('alert-modpas', 'Erè koneksyon ak sèvè', 'error');
+        afficherAlert('alert-modpas', 'ErÃ¨ koneksyon ak sÃ¨vÃ¨', 'error');
       });
     }
 
@@ -774,7 +774,7 @@
       const file = input.files[0];
       if (!file) return;
       if (file.size > 2 * 1024 * 1024) {
-        alert('Foto a twò gwo — max 2MB');
+        alert('Foto a twÃ² gwo â€” max 2MB');
         return;
       }
       const reader = new FileReader();
@@ -806,7 +806,7 @@
 
     // UPGRADE PLAN
     function upgraderPlan(plan) {
-      afficherAlert('alert-plan', `Sistèm peman ap vini byento pou plan ${plan.toUpperCase()}! Kontakte nou pou plis enfòmasyon.`, 'success');
+      afficherAlert('alert-plan', `SistÃ¨m peman ap vini byento pou plan ${plan.toUpperCase()}! Kontakte nou pou plis enfÃ²masyon.`, 'success');
     }
 
     // ALERT
