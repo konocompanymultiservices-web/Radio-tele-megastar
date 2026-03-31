@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mon Dashboard — Radio Télé Mega Star</title>
+  <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --noir: #0a0a0a;
+      --rouge: #cc0000;
+      --jaune: #FFD600;
+      --blan: #ffffff;
+      --gri: #141414;
+      --gri-cle: #1e1e1e;
+      --gri-text: #aaaaaa;
+      --bod: rgba(255,255,255,0.07);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Lato',sans-serif; background:var(--noir); color:var(--blan); min-height:100vh; }
+
+    /* HEADER */
+    .dash-header {
+      background:var(--gri);
+      border-bottom:2px solid var(--rouge);
+      padding:0 2rem;
+      height:64px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      position:sticky;
+      top:0;
+      z-index:100;
+    }
+    .dash-logo { display:flex; align-items:center; gap:12px; text-decoration:none; }
+    .dash-logo img { width:40px; height:40px; border-radius:50%; object-fit:cover; }
+    .dash-logo-text h1 { font-family:'Oswald',sans-serif; font-size:16px; color:var(--jaune); line-height:1; }
+    .dash-logo-text p { font-size:11px; color:var(--gri-text); }
+    .dash-header-right { display:flex; align-items:center; gap:1rem; }
+    .dash-user-name { font-size:14px; color:var(--gri-text); }
+    .btn-logout {
+      background:transparent;
+      border:1px solid var(--rouge);
+      color:var(--rouge);
+      padding:6px 16px;
+      border-radius:4px;
+      font-family:'Oswald',sans-serif;
+      font-size:13px;
+      cursor:pointer;
+      transition:all 0.2s;
+    }
+    .btn-logout:hover { background:var(--rouge); color:var(--blan); }
+
+    /* LAYOUT */
+    .dash-layout {
+      display:grid;
+      grid-template-columns:240px 1fr;
+      min-height:calc(100vh - 64px);
+    }
+
+    /* SIDEBAR */
+    .dash-sidebar {
+      background:var(--gri);
+      border-right:1px solid var(--bod);
+      padding:2rem 0;
+    }
+    .sidebar-avatar {
+      text-align:center;
+      padding:0 1rem 2rem;
+      border-bottom:1px solid var(--bod);
+      margin-bottom:1rem;
+    }
+    .avatar-circle {
+      width:80px;
+      height:80px;
+      border-radius:50%;
+      background:var(--rouge);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:'Oswald',sans-serif;
+      font-size:28px;
+      color:var(--blan);
+      margin:0 auto 12px;
+      border:3px solid var(--jaune);
+      overflow:hidden;
+      cursor:pointer;
+      position:relative;
+    }
+    .avatar-circle img { width:100%; height:100%; object-fit:cover; display:none; }
+    .avatar-overlay {
+      position:absolute;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity:0;
+      transition:opacity 0.2s;
+      font-size:11px;
+      text-align:center;
+    }
+    .avatar-circle:hover .avatar-overlay { opacity:1; }
+    .sidebar-name { font-family:'Oswald',sans-serif; font-size:16px; color:var(--blan); }
+    .sidebar-plan {
+      display:inline-block;
+      background:var(--jaune);
+      color:var(--noir);
+      font-size:10px;
+      font-family:'Oswald',sans-serif;
+      padding:2px 10px;
+      border-radius:20px;
+      margin-top:4px;
+    }
+    .sidebar-plan.premium { background:var(--rouge); color:var(--blan); }
+    .sidebar-nav { padding:0 1rem; }
+    .sidebar-nav-item {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 16px;
+      border-radius:8px;
+      cursor:pointer;
+      font-size:14px;
+      color:var(--gri-text);
+      transition:all 0.2s;
+      margin-bottom:4px;
+      border:none;
+      background:transparent;
+      width:100%;
+      text-align:left;
+    }
+    .sidebar-nav-item:hover { background:var(--gri-cle); color:var(--blan); }
+    .sidebar-nav-item.active { background:var(--rouge); color:var(--blan); }
+    .sidebar-nav-item .nav-icon { font-size:18px; width:24px; text-align:center; }
+
+    /* MAIN */
+    .dash-main { padding:2rem; overflow-y:auto; }
+    .dash-section { display:none; }
+    .dash-section.active { display:block; }
+
+    /* CARDS STATS */
+    .stats-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+      gap:1rem;
+      margin-bottom:2rem;
+    }
+    .stat-card {
+      background:var(--gri-cle);
+      border:1px solid var(--bod);
+      border-radius:12px;
+      padding:1.5rem;
+      text-align:center;
+    }
+    .stat-icon { font-size:32px; margin-bottom:8px; }
+    .stat-value { font-family:'Oswald',sans-serif; font-size:28px; color:var(--jaune); }
+    .stat-label { font-size:12px; color:var(--gri-text); margin-top:4px; }
+
+    /* SECTION TITLE */
+    .section-title {
+      font-family:'Oswald',sans-serif;
+      font-size:22px;
+      color:var(--blan);
+      margin-bottom:1.5rem;
+      padding-bottom:8px;
+      border-bottom:2px solid var(--rouge);
+      display:inline-block;
+    }
+
+    /* PLAN CARDS */
+    .plan-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+      gap:1.5rem;
+      margin-bottom:2rem;
+    }
+    .plan-card {
+      background:var(--gri-cle);
+      border:1px solid var(--bod);
+      border-radius:12px;
+      padding:2rem 1.5rem;
+      text-align:center;
+      position:relative;
+      transition:transform 0.2s;
+    }
+    .plan-card:hover { transform:translateY(-4px); }
+    .plan-card.current { border:2px solid var(--jaune); }
+    .plan-card.premium-card { border:2px solid var(--rouge); }
+    .plan-badge {
+      position:absolute;
+      top:-12px;
+      left:50%;
+      transform:translateX(-50%);
+      background:var(--rouge);
+      color:var(--blan);
+      font-family:'Oswald',sans-serif;
+      font-size:11px;
+      padding:3px 16px;
+      border-radius:20px;
+    }
+    .plan-badge.current-badge { background:var(--jaune); color:var(--noir); }
+    .plan-name { font-family:'Oswald',sans-serif; font-size:20px; color:var(--blan); margin-bottom:8px; }
+    .plan-price { font-family:'Oswald',sans-serif; font-size:36px; color:var(--jaune); }
+    .plan-price span { font-size:14px; color:var(--gri-text); }
+    .plan-features { list-style:none; margin:1rem 0 1.5rem; text-align:left; }
+    .plan-features li { font-size:13px; color:var(--gri-text); padding:6px 0; border-bottom:1px solid var(--bod); }
+    .plan-features li::before { content:"✓ "; color:var(--jaune); font-weight:700; }
+    .btn-plan {
+      width:100%;
+      padding:10px;
+      border-radius:6px;
+      font-family:'Oswald',sans-serif;
+      font-size:14px;
+      cursor:pointer;
+      border:none;
+      transition:all 0.2s;
+    }
+    .btn-plan-current { background:var(--jaune); color:var(--noir); }
+    .btn-plan-upgrade { background:var(--rouge); color:var(--blan); }
+    .btn-plan-upgrade:hover { background:#aa0000; }
+
+    /* FORM PROFIL */
+    .profil-form { max-width:500px; }
+    .form-group { margin-bottom:1.2rem; }
+    .form-group label { display:block; font-size:13px; color:var(--gri-text); margin-bottom:6px; font-family:'Oswald',sans-serif; letter-spacing:.05em; }
+    .form-group input {
+      width:100%;
+      background:var(--gri-cle);
+      border:1px solid var(--bod);
+      border-radius:6px;
+      padding:12px 16px;
+      color:var(--blan);
+      font-family:'Lato',sans-serif;
+      font-size:14px;
+      transition:border-color 0.2s;
+    }
+    .form-group input:focus { outline:none; border-color:var(--rouge); }
+    .btn-save {
+      background:var(--rouge);
+      color:var(--blan);
+      border:none;
+      padding:12px 32px;
+      border-radius:6px;
+      font-family:'Oswald',sans-serif;
+      font-size:15px;
+      cursor:pointer;
+      transition:background 0.2s;
+    }
+    .btn-save:hover { background:#aa0000; }
+    .form-success { color:#4CAF50; font-size:13px; margin-top:8px; display:none; }
+    .form-error { color:var(--rouge); font-size:13px; margin-top:8px; display:none; }
+
+    /* EMISYON HISTORY */
+    .emission-list { list-style:none; }
+    .emission-item {
+      display:flex;
+      align-items:center;
+      gap:1rem;
+      padding:1rem;
+      background:var(--gri-cle);
+      border-radius:8px;
+      margin-bottom:8px;
+      border:1px solid var(--bod);
+    }
+    .emission-emoji { font-size:24px; width:40px; text-align:center; }
+    .emission-info { flex:1; }
+    .emission-info h4 { font-family:'Oswald',sans-serif; font-size:15px; color:var(--blan); }
+    .emission-info p { font-size:12px; color:var(--gri-text); }
+    .emission-time-badge {
+      background:var(--rouge);
+      color:var(--blan);
+      font-size:11px;
+      padding:3px 10px;
+      border-radius:20px;
+    }
+
+    /* LOADING */
+    .loading { text-align:center; padding:3rem; color:var(--gri-text); }
+
+    /* ALERT */
+    .alert {
+      padding:12px 16px;
+      border-radius:8px;
+      margin-bottom:1rem;
+      font-size:14px;
+      display:none;
+    }
+    .alert-success { background:rgba(76,175,80,0.15); border:1px solid #4CAF50; color:#4CAF50; }
+    .alert-error { background:rgba(204,0,0,0.15); border:1px solid var(--rouge); color:var(--rouge); }
+
+    /* PHOTO UPLOAD */
+    .photo-upload-area {
+      display:flex;
+      align-items:center;
+      gap:2rem;
+      margin-bottom:2rem;
+      padding:1.5rem;
+      background:var(--gri-cle);
+      border-radius:12px;
+      border:1px solid var(--bod);
+    }
+    .photo-avatar-big {
+      width:100px;
+      height:100px;
+      border-radius:50%;
+      background:var(--rouge);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:'Oswald',sans-serif;
+      font-size:36px;
+      color:var(--blan);
+      border:3px solid var(--jaune);
+      overflow:hidden;
+      flex-shrink:0;
+    }
+    .photo-avatar-big img { width:100%; height:100%; object-fit:cover; display:none; }
+    .photo-upload-btn {
+      background:transparent;
+      border:1px solid var(--jaune);
+      color:var(--jaune);
+      padding:8px 20px;
+      border-radius:6px;
+      font-family:'Oswald',sans-serif;
+      font-size:13px;
+      cursor:pointer;
+      transition:all 0.2s;
+    }
+    .photo-upload-btn:hover { background:var(--jaune); color:var(--noir); }
+    #photo-input { display:none; }
+
+    /* RESPONSIVE */
+    @media(max-width:768px) {
+      .dash-layout { grid-template-columns:1fr; }
+      .dash-sidebar { display:none; }
+      .stats-grid { grid-template-columns:1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="dash-header">
+    <a href="index.html" class="dash-logo">
+      <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo"/>
+      <div class="dash-logo-text">
+        <h1>Radio Télé Mega Star</h1>
+        <p>97.3 FM · Mon Dashboard</p>
+      </div>
+    </a>
+    <div class="dash-header-right">
+      <span class="dash-user-name" id="header-username">Chargement...</span>
+      <button class="btn-logout" onclick="dekonekte()">Déconnexion</button>
+    </div>
+  </header>
+
+  <!-- LAYOUT -->
+  <div class="dash-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="dash-sidebar">
+      <div class="sidebar-avatar">
+        <div class="avatar-circle" onclick="document.getElementById('photo-input').click()">
+          <span id="avatar-initials">?</span>
+          <img id="avatar-img" src="" alt="Photo"/>
+          <div class="avatar-overlay">📷<br>Chanje foto</div>
+        </div>
+        <p class="sidebar-name" id="sidebar-name">Chargement...</p>
+        <span class="sidebar-plan" id="sidebar-plan">GRATUIT</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="sidebar-nav-item active" onclick="afficherSection('overview')">
+          <span class="nav-icon">📊</span> Vue d'ensemble
+        </button>
+        <button class="sidebar-nav-item" onclick="afficherSection('ecoute')">
+          <span class="nav-icon">📻</span> Mon écoute
+        </button>
+        <button class="sidebar-nav-item" onclick="afficherSection('abonnement')">
+          <span class="nav-icon">⭐</span> Mon abonnement
+        </button>
+        <button class="sidebar-nav-item" onclick="afficherSection('profil')">
+          <span class="nav-icon">👤</span> Mon profil
+        </button>
+        <button class="sidebar-nav-item" onclick="afficherSection('modpas')">
+          <span class="nav-icon">🔐</span> Mot de passe
+        </button>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="dash-main">
+
+      <!-- OVERVIEW -->
+      <section class="dash-section active" id="section-overview">
+        <h2 class="section-title">Vue d'ensemble</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-value" id="stat-temps">0h</div>
+            <div class="stat-label">Temps d'écoute total</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🎙️</div>
+            <div class="stat-value" id="stat-emissions">0</div>
+            <div class="stat-label">Émissions écoutées</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value" id="stat-jours">0</div>
+            <div class="stat-label">Jours comme membre</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-value" id="stat-plan">Gratuit</div>
+            <div class="stat-label">Plan actuel</div>
+          </div>
+        </div>
+
+        <h3 style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:14px;margin-bottom:1rem;">DERNIÈRE ACTIVITÉ</h3>
+        <div class="emission-item">
+          <div class="emission-emoji">📻</div>
+          <div class="emission-info">
+            <h4>Radio Télé Mega Star — En direct</h4>
+            <p id="derniere-ecoute">Aucune écoute enregistrée</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ECOUTE -->
+      <section class="dash-section" id="section-ecoute">
+        <h2 class="section-title">Mon écoute</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-value" id="ecoute-temps">0h</div>
+            <div class="stat-label">Temps total d'écoute</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🎙️</div>
+            <div class="stat-value" id="ecoute-nb">0</div>
+            <div class="stat-label">Émissions écoutées</div>
+          </div>
+        </div>
+
+        <h3 style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:14px;margin-bottom:1rem;">ÉMISSIONS FAVORITES</h3>
+        <ul class="emission-list">
+          <li class="emission-item">
+            <div class="emission-emoji">🌅</div>
+            <div class="emission-info">
+              <h4>Réveil Matinal</h4>
+              <p>05h – 08h chak maten</p>
+            </div>
+            <span class="emission-time-badge">Populè</span>
+          </li>
+          <li class="emission-item">
+            <div class="emission-emoji">📰</div>
+            <div class="emission-info">
+              <h4>Actualités</h4>
+              <p>08h – 10h</p>
+            </div>
+            <span class="emission-time-badge">Nouvo</span>
+          </li>
+          <li class="emission-item">
+            <div class="emission-emoji">🎵</div>
+            <div class="emission-info">
+              <h4>Vibes Haïtiennes</h4>
+              <p>10h – 14h</p>
+            </div>
+            <span class="emission-time-badge">Top</span>
+          </li>
+          <li class="emission-item">
+            <div class="emission-emoji">🎤</div>
+            <div class="emission-info">
+              <h4>Débat Citoyen</h4>
+              <p>14h – 17h</p>
+            </div>
+          </li>
+          <li class="emission-item">
+            <div class="emission-emoji">🙏</div>
+            <div class="emission-info">
+              <h4>Heure Spirituelle</h4>
+              <p>17h – 19h</p>
+            </div>
+          </li>
+          <li class="emission-item">
+            <div class="emission-emoji">🌙</div>
+            <div class="emission-info">
+              <h4>Soirée Mega Star</h4>
+              <p>19h – 22h</p>
+            </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ABONNEMENT -->
+      <section class="dash-section" id="section-abonnement">
+        <h2 class="section-title">Mon abonnement</h2>
+        <div id="alert-plan" class="alert"></div>
+        <div class="plan-grid">
+          <div class="plan-card current">
+            <span class="plan-badge current-badge">Plan actuel</span>
+            <p class="plan-name">Gratuit</p>
+            <p class="plan-price">$0 <span>/mois</span></p>
+            <ul class="plan-features">
+              <li>Écoute radio en direct</li>
+              <li>Accès aux programmes</li>
+              <li>Compte personnel</li>
+            </ul>
+            <button class="btn-plan btn-plan-current" disabled>Plan actuel</button>
+          </div>
+
+          <div class="plan-card premium-card">
+            <span class="plan-badge">Recommandé</span>
+            <p class="plan-name">Premium</p>
+            <p class="plan-price">$5 <span>/mois</span></p>
+            <ul class="plan-features">
+              <li>Tout du plan Gratuit</li>
+              <li>Contenu exclusif</li>
+              <li>Sans publicité</li>
+              <li>Notifications prioritaires</li>
+              <li>Support dédié</li>
+            </ul>
+            <button class="btn-plan btn-plan-upgrade" onclick="upgraderPlan('premium')">Passer à Premium</button>
+          </div>
+
+          <div class="plan-card">
+            <p class="plan-name">VIP</p>
+            <p class="plan-price">$15 <span>/mois</span></p>
+            <ul class="plan-features">
+              <li>Tout du plan Premium</li>
+              <li>Accès backstage</li>
+              <li>Badge VIP exclusif</li>
+              <li>Invitations événements</li>
+              <li>Contact direct animateurs</li>
+            </ul>
+            <button class="btn-plan btn-plan-upgrade" onclick="upgraderPlan('vip')">Passer à VIP</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFIL -->
+      <section class="dash-section" id="section-profil">
+        <h2 class="section-title">Mon profil</h2>
+        <div id="alert-profil" class="alert"></div>
+
+        <!-- PHOTO -->
+        <div class="photo-upload-area">
+          <div class="photo-avatar-big">
+            <span id="photo-initials">?</span>
+            <img id="photo-img" src="" alt="Photo profil"/>
+          </div>
+          <div>
+            <p style="font-family:'Oswald',sans-serif;font-size:16px;margin-bottom:4px;">Photo de profil</p>
+            <p style="font-size:12px;color:var(--gri-text);margin-bottom:12px;">JPG, PNG — Max 2MB</p>
+            <button class="photo-upload-btn" onclick="document.getElementById('photo-input').click()">📷 Changer la photo</button>
+            <input type="file" id="photo-input" accept="image/*" onchange="changerPhoto(this)"/>
+          </div>
+        </div>
+
+        <form class="profil-form" onsubmit="sauvegarderProfil(event)">
+          <div class="form-group">
+            <label>NOM COMPLET</label>
+            <input type="text" id="profil-nom" placeholder="Votre nom complet" required/>
+          </div>
+          <div class="form-group">
+            <label>ADRESSE EMAIL</label>
+            <input type="email" id="profil-email" placeholder="Votre email" disabled style="opacity:0.5;"/>
+          </div>
+          <div class="form-group">
+            <label>NUMÉRO DE TÉLÉPHONE</label>
+            <input type="tel" id="profil-telephone" placeholder="Ex: +509 3X XX XXXX"/>
+          </div>
+          <button type="submit" class="btn-save">💾 Sauvegarder</button>
+        </form>
+      </section>
+
+      <!-- MOT DE PASSE -->
+      <section class="dash-section" id="section-modpas">
+        <h2 class="section-title">Changer le mot de passe</h2>
+        <div id="alert-modpas" class="alert"></div>
+        <form class="profil-form" onsubmit="changerModpas(event)">
+          <div class="form-group">
+            <label>MOT DE PASSE ACTUEL</label>
+            <input type="password" id="ancien-modpas" placeholder="Votre mot de passe actuel" required/>
+          </div>
+          <div class="form-group">
+            <label>NOUVEAU MOT DE PASSE</label>
+            <input type="password" id="nouveau-modpas" placeholder="Minimum 6 caractères" required/>
+          </div>
+          <div class="form-group">
+            <label>CONFIRMER LE NOUVEAU MOT DE PASSE</label>
+            <input type="password" id="confirm-modpas" placeholder="Répétez le nouveau mot de passe" required/>
+          </div>
+          <button type="submit" class="btn-save">🔐 Changer le mot de passe</button>
+        </form>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    const API_URL = "https://radio-megastar-backend-production.up.railway.app";
+    let currentUser = null;
+    let authToken = null;
+
+    // INIT
+    window.addEventListener('load', function() {
+      authToken = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+
+      if (!authToken || !userStr) {
+        alert('Ou dwe konekte pou aksede dashboard ou a!');
+        window.location.href = 'index.html';
+        return;
+      }
+
+      currentUser = JSON.parse(userStr);
+      chargerDashboard();
+    });
+
+    function chargerDashboard() {
+      // Mete non ak inisyal
+      const nom = currentUser.nom || 'Utilisateur';
+      const inisyal = nom.charAt(0).toUpperCase();
+
+      document.getElementById('header-username').textContent = nom;
+      document.getElementById('sidebar-name').textContent = nom;
+      document.getElementById('avatar-initials').textContent = inisyal;
+      document.getElementById('photo-initials').textContent = inisyal;
+
+      // Foto pwofil
+      if (currentUser.fotoPwofil) {
+        document.getElementById('avatar-img').src = currentUser.fotoPwofil;
+        document.getElementById('avatar-img').style.display = 'block';
+        document.getElementById('photo-img').src = currentUser.fotoPwofil;
+        document.getElementById('photo-img').style.display = 'block';
+      }
+
+      // Fòm pwofil
+      document.getElementById('profil-nom').value = nom;
+      document.getElementById('profil-email').value = currentUser.email || '';
+      document.getElementById('profil-telephone').value = currentUser.telephone || '';
+
+      // Chaje done soti backend
+      chargerDonneesDashboard();
+    }
+
+    function chargerDonneesDashboard() {
+      fetch(`${API_URL}/api/user/dashboard`, {
+        headers: { 'Authorization': `Bearer ${authToken}` }
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          const stats = data.dashboard.statistiques;
+          const profil = data.dashboard.profil;
+
+          // Kalkile tan
+          const heures = Math.floor((stats.tempsEcoute || 0) / 60);
+          document.getElementById('stat-temps').textContent = heures + 'h';
+          document.getElementById('ecoute-temps').textContent = heures + 'h';
+          document.getElementById('stat-emissions').textContent = stats.emissionsEcoutees || 0;
+          document.getElementById('ecoute-nb').textContent = stats.emissionsEcoutees || 0;
+
+          // Jou kòm manm
+          const dateInscription = new Date(profil.membreDepuis);
+          const jou = Math.floor((new Date() - dateInscription) / (1000 * 60 * 60 * 24));
+          document.getElementById('stat-jours').textContent = jou;
+
+          // Dènye koute
+          if (stats.dernierEcoute) {
+            document.getElementById('derniere-ecoute').textContent =
+              new Date(stats.dernierEcoute).toLocaleDateString('fr-FR');
+          }
+        }
+      })
+      .catch(err => console.log('Dashboard load error:', err));
+    }
+
+    // NAVIGASYON
+    function afficherSection(id) {
+      document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
+      document.getElementById('section-' + id).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    // SOVE PWOFIL
+    function sauvegarderProfil(e) {
+      e.preventDefault();
+      const nom = document.getElementById('profil-nom').value;
+      const telephone = document.getElementById('profil-telephone').value;
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.textContent = 'Sauvegarde...';
+      btn.disabled = true;
+
+      fetch(`${API_URL}/api/user/profil`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify({ nom, telephone })
+      })
+      .then(r => r.json())
+      .then(data => {
+        btn.textContent = '💾 Sauvegarder';
+        btn.disabled = false;
+        const alert = document.getElementById('alert-profil');
+        if (data.success) {
+          currentUser.nom = nom;
+          currentUser.telephone = telephone;
+          localStorage.setItem('user', JSON.stringify(currentUser));
+          document.getElementById('sidebar-name').textContent = nom;
+          document.getElementById('header-username').textContent = nom;
+          document.getElementById('avatar-initials').textContent = nom.charAt(0).toUpperCase();
+          afficherAlert('alert-profil', 'Profil mis à jour avec succès! ✓', 'success');
+        } else {
+          afficherAlert('alert-profil', data.message || 'Erè — eseye ankò', 'error');
+        }
+      })
+      .catch(() => {
+        btn.textContent = '💾 Sauvegarder';
+        btn.disabled = false;
+        afficherAlert('alert-profil', 'Erè koneksyon ak sèvè', 'error');
+      });
+    }
+
+    // CHANJE MODPAS
+    function changerModpas(e) {
+      e.preventDefault();
+      const ancienModpas = document.getElementById('ancien-modpas').value;
+      const nouveauModpas = document.getElementById('nouveau-modpas').value;
+      const confirmModpas = document.getElementById('confirm-modpas').value;
+
+      if (nouveauModpas !== confirmModpas) {
+        afficherAlert('alert-modpas', 'Nouvo modpas yo pa matche!', 'error');
+        return;
+      }
+      if (nouveauModpas.length < 6) {
+        afficherAlert('alert-modpas', 'Modpas dwe gen omwen 6 karaktè', 'error');
+        return;
+      }
+
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.textContent = 'Changement...';
+      btn.disabled = true;
+
+      fetch(`${API_URL}/api/user/changer-modpas`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        body: JSON.stringify({ ancienModpas, nouveauModpas })
+      })
+      .then(r => r.json())
+      .then(data => {
+        btn.textContent = '🔐 Changer le mot de passe';
+        btn.disabled = false;
+        if (data.success) {
+          afficherAlert('alert-modpas', 'Modpas chanje ak siksè! ✓', 'success');
+          e.target.reset();
+        } else {
+          afficherAlert('alert-modpas', data.message || 'Erè — eseye ankò', 'error');
+        }
+      })
+      .catch(() => {
+        btn.textContent = '🔐 Changer le mot de passe';
+        btn.disabled = false;
+        afficherAlert('alert-modpas', 'Erè koneksyon ak sèvè', 'error');
+      });
+    }
+
+    // CHANJE FOTO
+    function changerPhoto(input) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Foto a twò gwo — max 2MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const url = e.target.result;
+        document.getElementById('avatar-img').src = url;
+        document.getElementById('avatar-img').style.display = 'block';
+        document.getElementById('avatar-initials').style.display = 'none';
+        document.getElementById('photo-img').src = url;
+        document.getElementById('photo-img').style.display = 'block';
+        document.getElementById('photo-initials').style.display = 'none';
+
+        // Sove nan backend
+        fetch(`${API_URL}/api/user/profil`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+          body: JSON.stringify({ fotoPwofil: url })
+        })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            currentUser.fotoPwofil = url;
+            localStorage.setItem('user', JSON.stringify(currentUser));
+          }
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // UPGRADE PLAN
+    function upgraderPlan(plan) {
+      afficherAlert('alert-plan', `Sistèm peman ap vini byento pou plan ${plan.toUpperCase()}! Kontakte nou pou plis enfòmasyon.`, 'success');
+    }
+
+    // ALERT
+    function afficherAlert(id, msg, type) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.className = 'alert alert-' + type;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+
+    // DEKONEKTE
+    function dekonekte() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

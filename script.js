@@ -146,8 +146,8 @@ function soumettreFormulaire(e) {
     ? form.querySelector('input[name="username"]').value 
     : form.querySelector('input[name="nom"]').value;
   const email = form.querySelector('input[name="email"]').value;
-  const telephone = form.querySelector('input[name="telephone"]') 
-    ? form.querySelector('input[name="telephone"]').value 
+  const telephone = form.querySelector('input[name="phone"]') 
+    ? form.querySelector('input[name="phone"]').value 
     : '';
   const motDePasse = form.querySelector('input[name="password"]') 
     ? form.querySelector('input[name="password"]').value 
@@ -178,7 +178,7 @@ function soumettreFormulaire(e) {
         alert(`Bienvenue ${data.user.nom}! Kont ou kreye ak siksÃ¨ ðŸ”¥`);
       }, 300);
 
-      form.reset();
+      form.reset(); window.location.href = 'dashboard.html'; window.location.href = 'dashboard.html';
     } else {
       alert(data.message || "ErÃ¨ â€” eseye ankÃ² âŒ");
     }
@@ -312,3 +312,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function (lyen) {
     if (target) target.scrollIntoView({ behavior: 'smooth' });
   });
 });
+
+
+
