@@ -24,7 +24,7 @@ function envoyerEmailBackground(to, subject, html) {
 /* =========================
    🔵 INSCRIPTION
 ========================= */
-router.post('/inscription', async (req, res) => {
+router.post("/signup", async (req, res) => {
   try {
     const { nom, email, telephone, motDePasse } = req.body;
 
@@ -76,7 +76,7 @@ router.post('/inscription', async (req, res) => {
 /* =========================
    🔵 CONNEXION
 ========================= */
-router.post('/connexion', async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const { email, motDePasse } = req.body;
 
@@ -100,16 +100,7 @@ router.post('/connexion', async (req, res) => {
       { expiresIn: '7d' }
     );
 
-    res.json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        nom: user.nom,
-        email: user.email,
-        role: user.role
-      }
-    });
+res.json({ success: true, message: 'Koneksyon reyisi!', token, user: { id: user._id, nom: user.nom, email: user.email, role: user.role } });
 
   } catch (err) {
     console.error(err.message);
