@@ -307,10 +307,11 @@ function soumettreFormulaire(e) {
     checkUser();
     form.reset();
 
-    if (confirm('Kont kreye! Ale dashboard ?')) {
-      window.location.href = 'dashboard.html';
-    }
-
+   if (data.user.role === 'admin') {
+  window.location.href = 'admin.html';
+} else {
+  window.location.href = 'dashboard.html';
+}
   } else {
     alert(data.message || 'Erè');
   }
