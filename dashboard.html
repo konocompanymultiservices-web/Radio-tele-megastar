@@ -7,112 +7,161 @@
   <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
   <style>
-    :root{--noir:#0a0a0a;--rouge:#cc0000;--jaune:#FFD600;--blan:#ffffff;--gri:#141414;--gri-cle:#1e1e1e;--gri-text:#aaaaaa;--bod:rgba(255,255,255,0.07);--success:#4CAF50;}
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Lato',sans-serif;background:var(--noir);color:var(--blan);min-height:100vh;}
-    .dash-header{background:var(--gri);border-bottom:2px solid var(--rouge);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-    .dash-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
-    .dash-logo img{width:40px;height:40px;border-radius:50%;object-fit:cover;}
-    .dash-logo-text h1{font-family:'Oswald',sans-serif;font-size:16px;color:var(--jaune);line-height:1;}
-    .dash-logo-text p{font-size:11px;color:var(--gri-text);}
-    .dash-header-right{display:flex;align-items:center;gap:1rem;}
-    .dash-user-name{font-size:14px;color:var(--gri-text);}
-    .btn-logout{background:transparent;border:1px solid var(--rouge);color:var(--rouge);padding:6px 16px;border-radius:4px;font-family:'Oswald',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s;}
-    .btn-logout:hover{background:var(--rouge);color:var(--blan);}
-    .dash-layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 64px);}
-    .dash-sidebar{background:var(--gri);border-right:1px solid var(--bod);padding:2rem 0;}
-    .sidebar-avatar{text-align:center;padding:0 1rem 2rem;border-bottom:1px solid var(--bod);margin-bottom:1rem;}
-    .avatar-circle{width:80px;height:80px;border-radius:50%;background:var(--rouge);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:28px;color:var(--blan);margin:0 auto 12px;border:3px solid var(--jaune);overflow:hidden;cursor:pointer;position:relative;}
-    .avatar-circle img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;display:none;}
-    .avatar-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;font-size:11px;text-align:center;z-index:2;}
-    .avatar-circle:hover .avatar-overlay{opacity:1;}
-    .sidebar-name{font-family:'Oswald',sans-serif;font-size:15px;color:var(--blan);}
-    .sidebar-email{font-size:11px;color:var(--gri-text);margin-top:2px;word-break:break-all;padding:0 8px;}
-    .sidebar-plan{display:inline-block;background:var(--jaune);color:var(--noir);font-size:10px;font-family:'Oswald',sans-serif;padding:2px 10px;border-radius:20px;margin-top:6px;}
-    .sidebar-nav{padding:0 1rem;}
-    .sidebar-nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--gri-text);transition:all 0.2s;margin-bottom:4px;border:none;background:transparent;width:100%;text-align:left;}
-    .sidebar-nav-item:hover{background:var(--gri-cle);color:var(--blan);}
-    .sidebar-nav-item.active{background:var(--rouge);color:var(--blan);}
-    .nav-icon{font-size:16px;width:24px;text-align:center;}
-    .dash-main{padding:2rem;overflow-y:auto;}
-    .dash-section{display:none;}
-    .dash-section.active{display:block;animation:fadeIn 0.3s ease;}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    .section-title{font-family:'Oswald',sans-serif;font-size:22px;color:var(--blan);margin-bottom:1.5rem;padding-bottom:8px;border-bottom:2px solid var(--rouge);display:inline-block;}
-    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem;}
-    .stat-card{background:var(--gri-cle);border:1px solid var(--bod);border-radius:12px;padding:1.5rem;text-align:center;}
-    .stat-icon{font-size:28px;margin-bottom:8px;}
-    .stat-value{font-family:'Oswald',sans-serif;font-size:26px;color:var(--jaune);}
-    .stat-label{font-size:12px;color:var(--gri-text);margin-top:4px;}
-    .alert{padding:12px 16px;border-radius:8px;margin-bottom:1rem;font-size:14px;display:none;}
-    .alert-success{background:rgba(76,175,80,0.15);border:1px solid #4CAF50;color:#4CAF50;}
-    .alert-error{background:rgba(204,0,0,0.15);border:1px solid var(--rouge);color:#ff6666;}
-    .plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-bottom:2rem;}
-    .plan-card{background:var(--gri-cle);border:1px solid var(--bod);border-radius:12px;padding:2rem 1.5rem;text-align:center;position:relative;transition:transform 0.2s;}
-    .plan-card:hover{transform:translateY(-4px);}
-    .plan-card.current-plan{border:2px solid var(--jaune);}
-    .plan-card.premium-card{border:2px solid var(--rouge);}
-    .plan-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--rouge);color:var(--blan);font-family:'Oswald',sans-serif;font-size:11px;padding:3px 16px;border-radius:20px;}
-    .plan-badge.current-badge{background:var(--jaune);color:var(--noir);}
-    .plan-name{font-family:'Oswald',sans-serif;font-size:20px;color:var(--blan);margin-bottom:8px;}
-    .plan-price{font-family:'Oswald',sans-serif;font-size:34px;color:var(--jaune);}
-    .plan-price span{font-size:13px;color:var(--gri-text);}
-    .plan-features{list-style:none;margin:1rem 0 1.5rem;text-align:left;}
-    .plan-features li{font-size:13px;color:var(--gri-text);padding:6px 0;border-bottom:1px solid var(--bod);}
-    .plan-features li::before{content:"✓ ";color:var(--jaune);font-weight:700;}
-    .btn-plan{width:100%;padding:10px;border-radius:6px;font-family:'Oswald',sans-serif;font-size:14px;cursor:pointer;border:none;transition:all 0.2s;}
-    .btn-plan-current{background:var(--jaune);color:var(--noir);cursor:default;}
-    .btn-plan-upgrade{background:var(--rouge);color:var(--blan);}
-    .btn-plan-upgrade:hover{background:#aa0000;}
-    .peman-section{margin-top:2rem;}
-    .peman-title{font-family:'Oswald',sans-serif;font-size:13px;color:var(--gri-text);margin-bottom:1rem;letter-spacing:.06em;text-transform:uppercase;}
-    .peman-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;}
-    .peman-card{background:var(--gri-cle);border:2px solid var(--bod);border-radius:10px;padding:1.2rem;text-align:center;cursor:pointer;transition:all 0.2s;}
-    .peman-card:hover{border-color:var(--rouge);}
-    .peman-card.selected{border-color:var(--jaune);background:rgba(255,214,0,0.05);}
-    .peman-icon{font-size:32px;margin-bottom:8px;}
-    .peman-name{font-family:'Oswald',sans-serif;font-size:14px;color:var(--blan);}
-    .peman-desc{font-size:11px;color:var(--gri-text);margin-top:4px;}
-    .profil-form{max-width:500px;}
-    .form-group{margin-bottom:1.2rem;}
-    .form-group label{display:block;font-size:12px;color:var(--gri-text);margin-bottom:6px;font-family:'Oswald',sans-serif;letter-spacing:.06em;text-transform:uppercase;}
-    .form-group input{width:100%;background:var(--gri-cle);border:1px solid var(--bod);border-radius:6px;padding:12px 16px;color:var(--blan);font-family:'Lato',sans-serif;font-size:14px;transition:border-color 0.2s;}
-    .form-group input:focus{outline:none;border-color:var(--rouge);}
-    .form-group input:disabled{opacity:0.4;cursor:not-allowed;}
-    .btn-save{background:var(--rouge);color:var(--blan);border:none;padding:12px 32px;border-radius:6px;font-family:'Oswald',sans-serif;font-size:15px;cursor:pointer;transition:background 0.2s;}
-    .btn-save:hover{background:#aa0000;}
-    .btn-save:disabled{opacity:0.6;cursor:wait;}
-    .photo-upload-area{display:flex;align-items:center;gap:2rem;margin-bottom:2rem;padding:1.5rem;background:var(--gri-cle);border-radius:12px;border:1px solid var(--bod);}
-    .photo-avatar-big{width:90px;height:90px;border-radius:50%;background:var(--rouge);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:32px;color:var(--blan);border:3px solid var(--jaune);overflow:hidden;flex-shrink:0;position:relative;}
-    .photo-avatar-big img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;display:none;}
-    .btn-photo{background:transparent;border:1px solid var(--jaune);color:var(--jaune);padding:8px 20px;border-radius:6px;font-family:'Oswald',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s;display:block;margin-bottom:8px;}
-    .btn-photo:hover{background:var(--jaune);color:var(--noir);}
-    .btn-photo-del{background:transparent;border:1px solid #555;color:var(--gri-text);padding:6px 16px;border-radius:6px;font-size:12px;cursor:pointer;transition:all 0.2s;}
-    .btn-photo-del:hover{border-color:var(--rouge);color:var(--rouge);}
-    .notif-grid{display:grid;gap:1rem;margin-bottom:2rem;}
-    .notif-item{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;background:var(--gri-cle);border-radius:10px;border:1px solid var(--bod);}
-    .notif-info h4{font-family:'Oswald',sans-serif;font-size:15px;color:var(--blan);}
-    .notif-info p{font-size:12px;color:var(--gri-text);margin-top:2px;}
-    .toggle-switch{position:relative;width:48px;height:26px;flex-shrink:0;}
-    .toggle-switch input{opacity:0;width:0;height:0;}
-    .toggle-slider{position:absolute;inset:0;background:#333;border-radius:26px;cursor:pointer;transition:0.3s;}
-    .toggle-slider::before{content:'';position:absolute;width:20px;height:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:0.3s;}
-    .toggle-switch input:checked + .toggle-slider{background:var(--rouge);}
-    .toggle-switch input:checked + .toggle-slider::before{transform:translateX(22px);}
-    .emission-list{list-style:none;}
-    .emission-item{display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--gri-cle);border-radius:8px;margin-bottom:8px;border:1px solid var(--bod);}
-    .emission-emoji{font-size:22px;width:36px;text-align:center;}
-    .emission-info{flex:1;}
-    .emission-info h4{font-family:'Oswald',sans-serif;font-size:14px;color:var(--blan);}
-    .emission-info p{font-size:12px;color:var(--gri-text);}
-    .emission-badge{background:var(--rouge);color:var(--blan);font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;}
-    .contact-box{background:var(--gri-cle);border:1px solid var(--bod);border-radius:12px;padding:2rem;max-width:500px;}
-    .contact-box p{color:var(--gri-text);font-size:14px;margin-bottom:1.5rem;line-height:1.6;}
-    .contact-links{display:flex;flex-direction:column;gap:12px;}
-    .contact-link{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--noir);border-radius:8px;text-decoration:none;color:var(--blan);font-size:14px;border:1px solid var(--bod);transition:border-color 0.2s;}
-    .contact-link:hover{border-color:var(--rouge);}
-    .contact-link-icon{font-size:20px;width:28px;text-align:center;}
-    @media(max-width:768px){.dash-layout{grid-template-columns:1fr;}.dash-sidebar{display:none;}}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --noir: #0d0d0d; --gri: #161616; --gri-cle: #1e1e1e;
+      --bod: #2a2a2a; --blan: #f0f0f0; --rouge: #cc0000;
+      --jaune: #FFD600; --gri-text: #888;
+    }
+    body { background: var(--noir); color: var(--blan); font-family: 'Lato', sans-serif; min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+
+    /* HEADER */
+    .dash-header {
+      background: var(--gri); border-bottom: 2px solid var(--rouge);
+      padding: 0 24px; height: 64px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 100;
+    }
+    .dash-logo { display: flex; align-items: center; gap: 12px; }
+    .dash-logo img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--jaune); }
+    .dash-logo-text h1 { font-family: 'Oswald', sans-serif; font-size: 16px; color: var(--blan); }
+    .dash-logo-text p { font-size: 11px; color: var(--gri-text); }
+    .dash-header-right { display: flex; align-items: center; gap: 12px; }
+    .dash-user-name { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--jaune); }
+    .btn-logout { background: transparent; border: 1px solid #444; color: var(--gri-text); padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all .2s; }
+    .btn-logout:hover { border-color: var(--rouge); color: var(--rouge); }
+
+    /* LAYOUT */
+    .dash-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 64px); }
+
+    /* SIDEBAR */
+    .dash-sidebar { background: var(--gri); border-right: 1px solid var(--bod); padding: 24px 16px; }
+    .sidebar-avatar { text-align: center; padding-bottom: 20px; border-bottom: 1px solid var(--bod); margin-bottom: 16px; }
+    .avatar-circle {
+      width: 72px; height: 72px; border-radius: 50%; background: var(--rouge);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Oswald', sans-serif; font-size: 26px; color: var(--blan);
+      border: 3px solid var(--jaune); margin: 0 auto 10px; cursor: pointer;
+      position: relative; overflow: hidden;
+    }
+    .avatar-circle img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: none; }
+    .avatar-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,.6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; text-align: center; opacity: 0; transition: .2s;
+    }
+    .avatar-circle:hover .avatar-overlay { opacity: 1; }
+    .sidebar-name { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--blan); }
+    .sidebar-email { font-size: 11px; color: var(--gri-text); margin-top: 3px; word-break: break-all; }
+    .sidebar-plan { display: inline-block; margin-top: 8px; background: var(--rouge); color: var(--blan); font-size: 10px; font-family: 'Oswald', sans-serif; padding: 2px 10px; border-radius: 20px; letter-spacing: 1px; }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
+    .sidebar-nav-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      border-radius: 8px; background: transparent; border: none; color: var(--gri-text);
+      font-family: 'Lato', sans-serif; font-size: 13px; cursor: pointer; text-align: left; transition: all .2s;
+    }
+    .sidebar-nav-item:hover { background: var(--gri-cle); color: var(--blan); }
+    .sidebar-nav-item.active { background: rgba(204,0,0,.15); color: var(--blan); border-left: 3px solid var(--rouge); }
+    .nav-icon { font-size: 16px; }
+
+    /* MAIN */
+    .dash-main { padding: 32px; overflow-y: auto; }
+    .dash-section { display: none; }
+    .dash-section.active { display: block; }
+    .section-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: var(--blan); margin-bottom: 1.5rem; padding-bottom: 8px; border-bottom: 2px solid var(--rouge); display: inline-block; }
+
+    /* STATS */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 12px; padding: 1.5rem; text-align: center; }
+    .stat-icon { font-size: 28px; margin-bottom: 8px; }
+    .stat-value { font-family: 'Oswald', sans-serif; font-size: 26px; color: var(--jaune); }
+    .stat-label { font-size: 12px; color: var(--gri-text); margin-top: 4px; }
+
+    /* ALERT */
+    .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 1rem; font-size: 14px; display: none; }
+    .alert-success { background: rgba(76,175,80,.15); border: 1px solid #4CAF50; color: #4CAF50; }
+    .alert-error { background: rgba(204,0,0,.15); border: 1px solid var(--rouge); color: #ff6666; }
+
+    /* PLAN */
+    .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .plan-card { background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 12px; padding: 2rem 1.5rem; text-align: center; position: relative; transition: transform .2s; }
+    .plan-card:hover { transform: translateY(-4px); }
+    .plan-card.current-plan { border: 2px solid var(--jaune); }
+    .plan-card.premium-card { border: 2px solid var(--rouge); }
+    .plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--rouge); color: var(--blan); font-family: 'Oswald', sans-serif; font-size: 11px; padding: 3px 16px; border-radius: 20px; }
+    .plan-badge.current-badge { background: var(--jaune); color: var(--noir); }
+    .plan-name { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--blan); margin-bottom: 8px; }
+    .plan-price { font-family: 'Oswald', sans-serif; font-size: 34px; color: var(--jaune); }
+    .plan-price span { font-size: 13px; color: var(--gri-text); }
+    .plan-features { list-style: none; margin: 1rem 0 1.5rem; text-align: left; }
+    .plan-features li { font-size: 13px; color: var(--gri-text); padding: 6px 0; border-bottom: 1px solid var(--bod); }
+    .plan-features li::before { content: "&#10003; "; color: var(--jaune); font-weight: 700; }
+    .btn-plan { width: 100%; padding: 10px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 14px; cursor: pointer; border: none; transition: all .2s; }
+    .btn-plan-current { background: var(--jaune); color: var(--noir); cursor: default; }
+    .btn-plan-upgrade { background: var(--rouge); color: var(--blan); }
+    .btn-plan-upgrade:hover { background: #aa0000; }
+
+    /* PEMAN */
+    .peman-section { margin-top: 2rem; }
+    .peman-title { font-family: 'Oswald', sans-serif; font-size: 13px; color: var(--gri-text); margin-bottom: 1rem; letter-spacing: .06em; text-transform: uppercase; }
+    .peman-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+    .peman-card { background: var(--gri-cle); border: 2px solid var(--bod); border-radius: 10px; padding: 1.2rem; text-align: center; cursor: pointer; transition: all .2s; }
+    .peman-card:hover { border-color: var(--rouge); }
+    .peman-card.selected { border-color: var(--jaune); background: rgba(255,214,0,.05); }
+    .peman-icon { font-size: 32px; margin-bottom: 8px; }
+    .peman-name { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--blan); }
+    .peman-desc { font-size: 11px; color: var(--gri-text); margin-top: 4px; }
+
+    /* PROFIL */
+    .profil-form { max-width: 500px; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-size: 12px; color: var(--gri-text); margin-bottom: 6px; font-family: 'Oswald', sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+    .form-group input { width: 100%; background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 6px; padding: 12px 16px; color: var(--blan); font-family: 'Lato', sans-serif; font-size: 14px; transition: border-color .2s; }
+    .form-group input:focus { outline: none; border-color: var(--rouge); }
+    .form-group input:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-save { background: var(--rouge); color: var(--blan); border: none; padding: 12px 32px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 15px; cursor: pointer; transition: background .2s; }
+    .btn-save:hover { background: #aa0000; }
+    .btn-save:disabled { opacity: .6; cursor: wait; }
+
+    /* PHOTO */
+    .photo-upload-area { display: flex; align-items: center; gap: 2rem; margin-bottom: 2rem; padding: 1.5rem; background: var(--gri-cle); border-radius: 12px; border: 1px solid var(--bod); }
+    .photo-avatar-big { width: 90px; height: 90px; border-radius: 50%; background: var(--rouge); display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; font-size: 32px; color: var(--blan); border: 3px solid var(--jaune); overflow: hidden; flex-shrink: 0; position: relative; }
+    .photo-avatar-big img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: none; }
+    .btn-photo { background: transparent; border: 1px solid var(--jaune); color: var(--jaune); padding: 8px 20px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 13px; cursor: pointer; transition: all .2s; display: block; margin-bottom: 8px; }
+    .btn-photo:hover { background: var(--jaune); color: var(--noir); }
+    .btn-photo-del { background: transparent; border: 1px solid #555; color: var(--gri-text); padding: 6px 16px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all .2s; }
+    .btn-photo-del:hover { border-color: var(--rouge); color: var(--rouge); }
+
+    /* NOTIF */
+    .notif-grid { display: grid; gap: 1rem; margin-bottom: 2rem; }
+    .notif-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem; background: var(--gri-cle); border-radius: 10px; border: 1px solid var(--bod); }
+    .notif-info h4 { font-family: 'Oswald', sans-serif; font-size: 15px; color: var(--blan); }
+    .notif-info p { font-size: 12px; color: var(--gri-text); margin-top: 2px; }
+    .toggle-switch { position: relative; width: 48px; height: 26px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: #333; border-radius: 26px; cursor: pointer; transition: .3s; }
+    .toggle-slider::before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .3s; }
+    .toggle-switch input:checked + .toggle-slider { background: var(--rouge); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(22px); }
+
+    /* EMISSION LIST */
+    .emission-list { list-style: none; }
+    .emission-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--gri-cle); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--bod); }
+    .emission-emoji { font-size: 22px; width: 36px; text-align: center; }
+    .emission-info { flex: 1; }
+    .emission-info h4 { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--blan); }
+    .emission-info p { font-size: 12px; color: var(--gri-text); }
+    .emission-badge { background: var(--rouge); color: var(--blan); font-size: 10px; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+
+    /* CONTACT */
+    .contact-box { background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 12px; padding: 2rem; max-width: 500px; }
+    .contact-box p { color: var(--gri-text); font-size: 14px; margin-bottom: 1.5rem; line-height: 1.6; }
+    .contact-links { display: flex; flex-direction: column; gap: 12px; }
+    .contact-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--noir); border-radius: 8px; text-decoration: none; color: var(--blan); font-size: 14px; border: 1px solid var(--bod); transition: border-color .2s; }
+    .contact-link:hover { border-color: var(--rouge); }
+    .contact-link-icon { font-size: 20px; width: 28px; text-align: center; }
+
+    @media(max-width:768px) { .dash-layout { grid-template-columns: 1fr; } .dash-sidebar { display: none; } }
   </style>
 </head>
 <body>
@@ -190,7 +239,7 @@
         </ul>
       </section>
 
-      <!-- ABONNEMENT -->
+      <!-- ABONNEMENT + PEMAN -->
       <section class="dash-section" id="section-abonnement">
         <h2 class="section-title">Mon abonnement</h2>
         <div id="alert-plan" class="alert"></div>
@@ -199,29 +248,59 @@
             <span class="plan-badge current-badge">Plan actuel</span>
             <p class="plan-name">Gratuit</p>
             <p class="plan-price">$0 <span>/mois</span></p>
-            <ul class="plan-features"><li>&Eacute;coute radio en direct</li><li>Acc&egrave;s aux programmes</li><li>Compte personnel</li></ul>
+            <ul class="plan-features">
+              <li>&Eacute;coute radio en direct</li>
+              <li>Acc&egrave;s aux programmes</li>
+              <li>Compte personnel</li>
+            </ul>
             <button class="btn-plan btn-plan-current" disabled>Plan actuel</button>
           </div>
           <div class="plan-card premium-card">
             <span class="plan-badge">Recommand&eacute;</span>
             <p class="plan-name">Premium</p>
             <p class="plan-price">$5 <span>/mois</span></p>
-            <ul class="plan-features"><li>Tout du plan Gratuit</li><li>Contenu exclusif</li><li>Sans publicit&eacute;</li><li>Notifications prioritaires</li><li>Support d&eacute;di&eacute;</li></ul>
+            <ul class="plan-features">
+              <li>Tout du plan Gratuit</li>
+              <li>Contenu exclusif</li>
+              <li>Sans publicit&eacute;</li>
+              <li>Notifications prioritaires</li>
+              <li>Support d&eacute;di&eacute;</li>
+            </ul>
             <button class="btn-plan btn-plan-upgrade" onclick="choisirPlan('Premium','$5/mois')">Passer &agrave; Premium</button>
           </div>
           <div class="plan-card">
             <p class="plan-name">VIP</p>
             <p class="plan-price">$15 <span>/mois</span></p>
-            <ul class="plan-features"><li>Tout du plan Premium</li><li>Acc&egrave;s backstage</li><li>Badge VIP exclusif</li><li>Invitations &eacute;v&eacute;nements</li><li>Contact animateurs</li></ul>
+            <ul class="plan-features">
+              <li>Tout du plan Premium</li>
+              <li>Acc&egrave;s backstage</li>
+              <li>Badge VIP exclusif</li>
+              <li>Invitations &eacute;v&eacute;nements</li>
+              <li>Contact animateurs</li>
+            </ul>
             <button class="btn-plan btn-plan-upgrade" onclick="choisirPlan('VIP','$15/mois')">Passer &agrave; VIP</button>
           </div>
         </div>
+
+        <!-- METOD PEMAN -->
         <div class="peman-section" id="peman-section" style="display:none;">
           <p class="peman-title">M&eacute;thode de paiement &mdash; <span id="plan-choisi" style="color:var(--jaune);"></span></p>
           <div class="peman-grid">
-            <div class="peman-card" onclick="selPeman(this,'carte')"><div class="peman-icon">&#128179;</div><div class="peman-name">Carte bancaire</div><div class="peman-desc">Visa, Mastercard</div></div>
-            <div class="peman-card" onclick="selPeman(this,'moncash')"><div class="peman-icon">&#128241;</div><div class="peman-name">MonCash</div><div class="peman-desc">Paiement Ha&iuml;ti</div></div>
-            <div class="peman-card" onclick="selPeman(this,'paypal')"><div class="peman-icon">&#128176;</div><div class="peman-name">PayPal</div><div class="peman-desc">International</div></div>
+            <div class="peman-card" onclick="selPeman(this,'carte')">
+              <div class="peman-icon">&#128179;</div>
+              <div class="peman-name">Carte bancaire</div>
+              <div class="peman-desc">Visa, Mastercard</div>
+            </div>
+            <div class="peman-card" onclick="selPeman(this,'moncash')">
+              <div class="peman-icon">&#128241;</div>
+              <div class="peman-name">MonCash</div>
+              <div class="peman-desc">Paiement Ha&iuml;ti</div>
+            </div>
+            <div class="peman-card" onclick="selPeman(this,'paypal')">
+              <div class="peman-icon">&#128176;</div>
+              <div class="peman-name">PayPal</div>
+              <div class="peman-desc">International</div>
+            </div>
           </div>
           <div id="peman-confirm" style="margin-top:1.5rem;display:none;">
             <button class="btn-save" onclick="confirmerPeman()">Confirmer le paiement &#8594;</button>
@@ -238,7 +317,7 @@
           <button class="btn-save" id="btn-notif-browser" onclick="activerNotifBrowser()" style="font-size:13px;padding:10px 20px;">&#128276; Activer les notifications browser</button>
           <span id="notif-browser-status" style="margin-left:12px;font-size:12px;color:var(--gri-text);"></span>
         </div>
-        <p style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:13px;margin-bottom:1rem;letter-spacing:.06em;">&Eacute;MISSIONS &mdash; NOTIFICATIONS EMAIL</p>
+        <p style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:13px;margin-bottom:1rem;letter-spacing:.06em;">&Eacute;MISSIONS &mdash; ALERTES EMAIL</p>
         <div class="notif-grid">
           <div class="notif-item"><div class="notif-info"><h4>R&eacute;veil Matinal</h4><p>Alerte 15 min avant (05h00)</p></div><label class="toggle-switch"><input type="checkbox" id="notif-reveil" onchange="saveNotif()"/><span class="toggle-slider"></span></label></div>
           <div class="notif-item"><div class="notif-info"><h4>Actualit&eacute;s</h4><p>Alerte 15 min avant (08h00)</p></div><label class="toggle-switch"><input type="checkbox" id="notif-actu" onchange="saveNotif()"/><span class="toggle-slider"></span></label></div>
@@ -290,16 +369,28 @@
       <section class="dash-section" id="section-contact">
         <h2 class="section-title">Nous contacter</h2>
         <div class="contact-box">
-          <p>Vous avez une question ou souhaitez annoncer sur Radio T&eacute;l&eacute; Mega Star? Contactez-nous!</p>
+          <p>Vous avez une question ou souhaitez annoncer sur Radio T&eacute;l&eacute; Mega Star&nbsp;? Contactez-nous&nbsp;!</p>
           <div class="contact-links">
-            <a href="mailto:konocompanymultiservices@gmail.com?subject=Contact Radio Télé Mega Star" class="contact-link">
-              <span class="contact-link-icon">&#9993;</span><div><p style="font-family:'Oswald',sans-serif;font-size:14px;">Email g&eacute;n&eacute;ral</p><p style="font-size:12px;color:var(--gri-text);">konocompanymultiservices@gmail.com</p></div>
+            <a href="mailto:konocompanymultiservices@gmail.com?subject=Contact%20Radio%20T%C3%A9l%C3%A9%20Mega%20Star" class="contact-link">
+              <span class="contact-link-icon">&#9993;</span>
+              <div>
+                <p style="font-family:'Oswald',sans-serif;font-size:14px;">Email g&eacute;n&eacute;ral</p>
+                <p style="font-size:12px;color:var(--gri-text);">konocompanymultiservices@gmail.com</p>
+              </div>
             </a>
-            <a href="mailto:konocompanymultiservices@gmail.com?subject=Publicité Radio Télé Mega Star&body=Bonjour, je souhaite annoncer sur votre radio." class="contact-link">
-              <span class="contact-link-icon">&#127919;</span><div><p style="font-family:'Oswald',sans-serif;font-size:14px;">Publicit&eacute;</p><p style="font-size:12px;color:var(--gri-text);">Annoncer sur notre radio</p></div>
+            <a href="mailto:konocompanymultiservices@gmail.com?subject=Publicit%C3%A9%20Radio%20T%C3%A9l%C3%A9%20Mega%20Star&body=Bonjour%2C%20je%20souhaite%20annoncer%20sur%20votre%20radio." class="contact-link">
+              <span class="contact-link-icon">&#127919;</span>
+              <div>
+                <p style="font-family:'Oswald',sans-serif;font-size:14px;">Publicit&eacute;</p>
+                <p style="font-size:12px;color:var(--gri-text);">Annoncer sur notre radio</p>
+              </div>
             </a>
-            <a href="mailto:konocompanymultiservices@gmail.com?subject=Abonnement Premium/VIP" class="contact-link">
-              <span class="contact-link-icon">&#11088;</span><div><p style="font-family:'Oswald',sans-serif;font-size:14px;">Abonnement Premium / VIP</p><p style="font-size:12px;color:var(--gri-text);">Questions sur les plans</p></div>
+            <a href="mailto:konocompanymultiservices@gmail.com?subject=Abonnement%20Premium%2FVIP" class="contact-link">
+              <span class="contact-link-icon">&#11088;</span>
+              <div>
+                <p style="font-family:'Oswald',sans-serif;font-size:14px;">Abonnement Premium / VIP</p>
+                <p style="font-size:12px;color:var(--gri-text);">Questions sur les plans</p>
+              </div>
             </a>
           </div>
         </div>
@@ -334,7 +425,9 @@
       val('profil-nom', nom);
       val('profil-email', email);
       val('profil-tel', currentUser.telephone || '');
-      if (currentUser.fotoPwofil) showPhoto(currentUser.fotoPwofil);
+      // Restore foto pwofil si li egziste
+      const foto = currentUser.fotoPwofil || localStorage.getItem('fotoPwofil_' + currentUser.id);
+      if (foto) showPhoto(foto);
       loadStats();
     }
 
@@ -361,38 +454,75 @@
     }
 
     function showPhoto(url) {
-      ['avatar-img','photo-img'].forEach(id => { const el = document.getElementById(id); if(el){el.src=url;el.style.display='block';} });
-      ['avatar-initials','photo-initials'].forEach(id => { const el = document.getElementById(id); if(el) el.style.display='none'; });
+      ['avatar-img','photo-img'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.src = url; el.style.display = 'block'; }
+      });
+      ['avatar-initials','photo-initials'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
     }
 
     function hidePhoto() {
-      ['avatar-img','photo-img'].forEach(id => { const el = document.getElementById(id); if(el) el.style.display='none'; });
+      ['avatar-img','photo-img'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.src = ''; el.style.display = 'none'; }
+      });
       const ini = (currentUser.nom || 'U').charAt(0).toUpperCase();
-      ['avatar-initials','photo-initials'].forEach(id => { const el = document.getElementById(id); if(el){el.style.display='';el.textContent=ini;} });
+      ['avatar-initials','photo-initials'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.style.display = ''; el.textContent = ini; }
+      });
     }
 
     function changerPhoto(input) {
-      const file = input.files[0]; if (!file) return;
-      if (file.size > 2097152) { alert('Foto a twò gwo — max 2MB'); return; }
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 2097152) { showAlert('alert-profil', 'Foto a twò gwo — max 2MB', 'error'); return; }
       const reader = new FileReader();
       reader.onload = function(e) {
         const url = e.target.result;
         showPhoto(url);
-        fetch(API_URL + '/api/user/profil', { method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body:JSON.stringify({fotoPwofil:url}) })
+        // Save lokalman IMEDYATMAN pou persist apre dekoneksyon
+        localStorage.setItem('fotoPwofil_' + currentUser.id, url);
+        currentUser.fotoPwofil = url;
+        localStorage.setItem('user', JSON.stringify(currentUser));
+        // Eseye save sou backend tou
+        fetch(API_URL + '/api/user/profil', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+          body: JSON.stringify({ fotoPwofil: url })
+        })
         .then(r => r.json()).then(data => {
-          if (data.success) { currentUser.fotoPwofil = url; localStorage.setItem('user', JSON.stringify(currentUser)); alert('Photo mise à jour! ✓'); }
-        }).catch(() => {});
+          if (data.success) {
+            if (data.user) { currentUser = {...currentUser, ...data.user}; }
+            localStorage.setItem('user', JSON.stringify(currentUser));
+            showAlert('alert-profil', 'Photo mise à jour ! ✓', 'success');
+          } else {
+            // Menm si backend echwe, foto a deja save lokalman
+            showAlert('alert-profil', 'Photo sauvegardée localement ✓', 'success');
+          }
+        }).catch(() => {
+          showAlert('alert-profil', 'Photo sauvegardée localement ✓', 'success');
+        });
       };
       reader.readAsDataURL(file);
       input.value = '';
     }
 
     function supprimerPhoto() {
-      if (!confirm('Supprimer la photo?')) return;
-      fetch(API_URL + '/api/user/profil', { method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body:JSON.stringify({fotoPwofil:''}) })
-      .then(r => r.json()).then(data => {
-        if (data.success) { currentUser.fotoPwofil = ''; localStorage.setItem('user', JSON.stringify(currentUser)); hidePhoto(); alert('Photo supprimée ✓'); }
-      });
+      if (!confirm('Supprimer la photo ?')) return;
+      localStorage.removeItem('fotoPwofil_' + currentUser.id);
+      currentUser.fotoPwofil = '';
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      hidePhoto();
+      fetch(API_URL + '/api/user/profil', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ fotoPwofil: '' })
+      }).catch(() => {});
+      showAlert('alert-profil', 'Photo supprimée ✓', 'success');
     }
 
     function saveProfil(e) {
@@ -401,34 +531,49 @@
       const telephone = document.getElementById('profil-tel').value.trim();
       const btn = document.getElementById('btn-save-profil');
       btn.textContent = 'Sauvegarde...'; btn.disabled = true;
-      fetch(API_URL + '/api/user/profil', { method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body:JSON.stringify({nom,telephone}) })
+      fetch(API_URL + '/api/user/profil', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ nom, telephone })
+      })
       .then(r => r.json()).then(data => {
-        btn.textContent = '\uD83D\uDCBE Sauvegarder'; btn.disabled = false;
+        btn.textContent = '&#128190; Sauvegarder'; btn.disabled = false;
         if (data.success) {
-          currentUser.nom = nom; currentUser.telephone = telephone;
+          currentUser.nom = nom;
+          currentUser.telephone = telephone;
           localStorage.setItem('user', JSON.stringify(currentUser));
-          setText('sidebar-name', nom); setText('header-username', nom);
+          setText('sidebar-name', nom);
+          setText('header-username', nom);
           setText('avatar-initials', nom.charAt(0).toUpperCase());
-          showAlert('alert-profil', 'Profil mis à jour! ✓', 'success');
-        } else { showAlert('alert-profil', data.message || 'Erreur', 'error'); }
-      }).catch(() => { btn.textContent = '\uD83D\uDCBE Sauvegarder'; btn.disabled = false; showAlert('alert-profil', 'Erreur serveur', 'error'); });
+          showAlert('alert-profil', 'Profil mis à jour ! ✓', 'success');
+        } else {
+          showAlert('alert-profil', data.message || 'Erreur', 'error');
+        }
+      }).catch(() => {
+        btn.textContent = 'Sauvegarder'; btn.disabled = false;
+        showAlert('alert-profil', 'Erreur serveur', 'error');
+      });
     }
 
     function saveModpas(e) {
       e.preventDefault();
       const ancien = document.getElementById('ancien-modpas').value;
       const nouveau = document.getElementById('nouveau-modpas').value;
-      const confirm = document.getElementById('confirm-modpas').value;
-      if (nouveau !== confirm) { showAlert('alert-modpas', 'Modpas yo pa matche!', 'error'); return; }
-      if (nouveau.length < 6) { showAlert('alert-modpas', 'Omwen 6 karaktè', 'error'); return; }
+      const conf = document.getElementById('confirm-modpas').value;
+      if (nouveau !== conf) { showAlert('alert-modpas', 'Les mots de passe ne correspondent pas !', 'error'); return; }
+      if (nouveau.length < 6) { showAlert('alert-modpas', 'Minimum 6 caractères', 'error'); return; }
       const btn = e.target.querySelector('button[type="submit"]');
       btn.textContent = 'Changement...'; btn.disabled = true;
-      fetch(API_URL + '/api/user/changer-modpas', { method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body:JSON.stringify({ancienModpas:ancien,nouveauModpas:nouveau}) })
+      fetch(API_URL + '/api/user/changer-modpas', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ ancienModpas: ancien, nouveauModpas: nouveau })
+      })
       .then(r => r.json()).then(data => {
-        btn.textContent = '\uD83D\uDD12 Changer le mot de passe'; btn.disabled = false;
-        if (data.success) { showAlert('alert-modpas', 'Modpas chanje! ✓', 'success'); e.target.reset(); }
+        btn.textContent = 'Changer le mot de passe'; btn.disabled = false;
+        if (data.success) { showAlert('alert-modpas', 'Mot de passe changé ! ✓', 'success'); e.target.reset(); }
         else { showAlert('alert-modpas', data.message || 'Erreur', 'error'); }
-      }).catch(() => { btn.textContent = '\uD83D\uDD12 Changer le mot de passe'; btn.disabled = false; });
+      }).catch(() => { btn.textContent = 'Changer le mot de passe'; btn.disabled = false; });
     }
 
     function choisirPlan(nom, prix) {
@@ -436,7 +581,7 @@
       document.getElementById('peman-section').style.display = 'block';
       document.getElementById('peman-confirm').style.display = 'none';
       document.querySelectorAll('.peman-card').forEach(c => c.classList.remove('selected'));
-      document.getElementById('peman-section').scrollIntoView({behavior:'smooth'});
+      document.getElementById('peman-section').scrollIntoView({ behavior: 'smooth' });
     }
 
     function selPeman(el, m) {
@@ -446,7 +591,7 @@
     }
 
     function confirmerPeman() {
-      showAlert('alert-plan', 'Mèsi! Nou pral kontakte ou pa email pou finalize peman an. ✓', 'success');
+      showAlert('alert-plan', 'Mèsi ! Nou pral kontakte ou pa email pou finalize peman an. ✓', 'success');
       document.getElementById('peman-section').style.display = 'none';
     }
 
@@ -465,15 +610,18 @@
       if (!('Notification' in window)) return;
       Notification.requestPermission().then(p => {
         if (p === 'granted') {
-          new Notification('Radio Télé Mega Star', { body: 'Notifikasyon aktive!', icon: 'images/radio_tele_mega_star_logo.jpg' });
+          new Notification('Radio Télé Mega Star', { body: 'Notifikasyon aktive !', icon: 'images/radio_tele_mega_star_logo.jpg' });
           checkNotifBrowser();
-          showAlert('alert-notif', 'Notifikasyon browser aktive! ✓', 'success');
-        } else { showAlert('alert-notif', 'Notifikasyon refize.', 'error'); }
+          showAlert('alert-notif', 'Notifications browser activées ! ✓', 'success');
+        } else { showAlert('alert-notif', 'Notifications refusées.', 'error'); }
       });
     }
 
     function saveNotif() {
-      const n = { reveil: g('notif-reveil'), actu: g('notif-actu'), vibes: g('notif-vibes'), debat: g('notif-debat'), spirit: g('notif-spirit'), soiree: g('notif-soiree') };
+      const n = {
+        reveil: g('notif-reveil'), actu: g('notif-actu'), vibes: g('notif-vibes'),
+        debat: g('notif-debat'), spirit: g('notif-spirit'), soiree: g('notif-soiree')
+      };
       localStorage.setItem('notifs_' + currentUser.id, JSON.stringify(n));
       showAlert('alert-notif', 'Préférences sauvegardées ✓', 'success');
     }
@@ -496,7 +644,11 @@
       setTimeout(() => { el.style.display = 'none'; }, 4000);
     }
 
-    function dekonekte() { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = 'index.html'; }
+    function dekonekte() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'index.html';
+    }
   </script>
 </body>
 </html>
