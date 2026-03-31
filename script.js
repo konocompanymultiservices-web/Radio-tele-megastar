@@ -1,9 +1,8 @@
 ﻿// ============================================
-// RADIO TÃ‰LÃ‰ MEGA STAR â€” SCRIPT KORIJE
+// RADIO TÉLÉ MEGA STAR — SCRIPT.JS
 // ============================================
 
-const API_URL = "https://radio-megastar-backend-production.up.railway.app"; // â† chanje ak URL Railway ou a
-// const API_URL = "http://localhost:5000"; // â† itilize sa pou tÃ¨s lokal
+const API_URL = "https://radio-megastar-backend-production.up.railway.app";
 
 var audio = document.getElementById('audio-player');
 
@@ -41,9 +40,12 @@ window.addEventListener('load', function () {
 function togglePlay() {
   if (!audio) return;
   if (audio.paused) {
-    audio.play();
-    localStorage.setItem('radioJwe', 'wi');
-    meteEtatPlay();
+    audio.play().then(function() {
+      localStorage.setItem('radioJwe', 'wi');
+      meteEtatPlay();
+    }).catch(function() {
+      montreNotifikasyon();
+    });
   } else {
     audio.pause();
     localStorage.setItem('radioJwe', 'non');
@@ -56,19 +58,13 @@ function togglePlay() {
 // ============================================
 function meteEtatPlay() {
   var fi = document.getElementById('float-icon');
-  if (fi) fi.textContent = 'â¸';
+  if (fi) fi.textContent = '\u23F8';
   var ss = document.getElementById('stream-status');
-  if (ss) { ss.textContent = 'En direct â€” Radio Tele Mega Star'; ss.style.color = '#cc0000'; }
+  if (ss) { ss.textContent = 'En direct'; ss.style.color = '#cc0000'; }
   var pi = document.getElementById('play-icon');
-  if (pi) pi.textContent = 'â¸';
+  if (pi) pi.textContent = '\u23F8';
   var pt = document.getElementById('play-text');
   if (pt) pt.textContent = 'Pause';
-  var bi = document.getElementById('bar-play-icon');
-  if (bi) bi.textContent = 'â¸';
-  var bt = document.getElementById('bar-play-text');
-  if (bt) bt.textContent = 'Pause';
-  var bs = document.getElementById('bar-status');
-  if (bs) { bs.textContent = 'En direct maintenant'; bs.style.color = '#cc0000'; }
 }
 
 // ============================================
@@ -76,19 +72,13 @@ function meteEtatPlay() {
 // ============================================
 function meteEtatPause() {
   var fi = document.getElementById('float-icon');
-  if (fi) fi.textContent = 'â–¶';
+  if (fi) fi.textContent = '\u25B6';
   var ss = document.getElementById('stream-status');
-  if (ss) { ss.textContent = 'Cliquez pour Ã©couter'; ss.style.color = '#aaa'; }
+  if (ss) { ss.textContent = 'Cliquez pour écouter'; ss.style.color = '#aaa'; }
   var pi = document.getElementById('play-icon');
-  if (pi) pi.textContent = 'â–¶';
+  if (pi) pi.textContent = '\u25B6';
   var pt = document.getElementById('play-text');
-  if (pt) pt.textContent = 'Ã‰couter maintenant';
-  var bi = document.getElementById('bar-play-icon');
-  if (bi) bi.textContent = 'â–¶';
-  var bt = document.getElementById('bar-play-text');
-  if (bt) bt.textContent = 'Ã‰couter';
-  var bs = document.getElementById('bar-status');
-  if (bs) { bs.textContent = 'En direct - 97.3 FM'; bs.style.color = '#888'; }
+  if (pt) pt.textContent = 'Écouter maintenant';
 }
 
 // ============================================
@@ -116,10 +106,11 @@ function fermerMenuOverlay(e) {
 }
 
 // ============================================
-// MODAL REGISTER
+// MODAL ENSKRIPSYON
 // ============================================
 function ouvrirModal() {
   fermerMenu();
+  fermerModalLogin();
   setTimeout(function () {
     var modal = document.getElementById('modal-overlay');
     if (modal) { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
@@ -136,127 +127,139 @@ function fermerModalOverlay(e) {
 }
 
 // ============================================
-// ENSKRIPSYON (REGISTER)
+// MODAL KONEKSYON
+// ============================================
+function ouvrirModalLogin() {
+  fermerMenu();
+  fermerModal();
+  setTimeout(function () {
+    var modal = document.getElementById('modal-login-overlay');
+    if (modal) { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  }, 200);
+}
+
+function fermerModalLogin() {
+  var modal = document.getElementById('modal-login-overlay');
+  if (modal) { modal.classList.remove('open'); document.body.style.overflow = ''; }
+}
+
+function fermerModalLoginOverlay(e) {
+  if (e.target === document.getElementById('modal-login-overlay')) fermerModalLogin();
+}
+
+// ============================================
+// ENSKRIPSYON
 // ============================================
 function soumettreFormulaire(e) {
   e.preventDefault();
-  const form = e.target;
+  var form = e.target;
 
-  const nom = form.querySelector('input[name="username"]') 
-    ? form.querySelector('input[name="username"]').value 
-    : form.querySelector('input[name="nom"]').value;
-  const email = form.querySelector('input[name="email"]').value;
-  const telephone = form.querySelector('input[name="phone"]') 
-    ? form.querySelector('input[name="phone"]').value 
-    : '';
-  const motDePasse = form.querySelector('input[name="password"]') 
-    ? form.querySelector('input[name="password"]').value 
-    : form.querySelector('input[name="motDePasse"]').value;
+  var usernameInput = form.querySelector('input[name="username"]');
+  var nomInput = form.querySelector('input[name="nom"]');
+  var nom = usernameInput ? usernameInput.value : (nomInput ? nomInput.value : '');
+  var email = form.querySelector('input[name="email"]').value;
+  var phoneInput = form.querySelector('input[name="phone"]');
+  var telephone = phoneInput ? phoneInput.value : '';
+  var pwInput = form.querySelector('input[name="password"]') || form.querySelector('input[name="motDePasse"]');
+  var motDePasse = pwInput ? pwInput.value : '';
 
-  // Montre loading
-  const btn = form.querySelector('button[type="submit"]');
+  if (!nom || !email || !motDePasse) {
+    alert('Tanpri ranpli tout champ obligatwa yo.');
+    return;
+  }
+
+  var btn = form.querySelector('button[type="submit"]');
   if (btn) { btn.textContent = 'Chargement...'; btn.disabled = true; }
 
-  fetch(`${API_URL}/api/auth/inscription`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nom, email, telephone, motDePasse })
+  fetch(API_URL + '/api/auth/inscription', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nom: nom, email: email, telephone: telephone, motDePasse: motDePasse })
   })
-  .then(res => res.json())
-  .then(data => {
-    if (btn) { btn.textContent = 'CrÃ©er mon compte â†’'; btn.disabled = false; }
-
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (btn) { btn.textContent = 'Créer mon compte →'; btn.disabled = false; }
     if (data.success) {
-      // Sove token ak info user
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
       fermerModal();
-      checkUser(); // Mete ajou UI
-
-      setTimeout(() => {
-        alert(`Bienvenue ${data.user.nom}! Kont ou kreye ak siksÃ¨ ðŸ”¥`);
+      checkUser();
+      form.reset();
+      setTimeout(function() {
+        if (confirm('Kont ou kreye ak siksè! Vle ale nan dashboard ou?')) {
+          window.location.href = 'dashboard.html';
+        }
       }, 300);
-
-      form.reset(); window.location.href = 'dashboard.html'; window.location.href = 'dashboard.html';
     } else {
-      alert(data.message || "ErÃ¨ â€” eseye ankÃ² âŒ");
+      alert(data.message || 'Erè — eseye ankò');
     }
   })
-  .catch(err => {
-    if (btn) { btn.textContent = 'CrÃ©er mon compte â†’'; btn.disabled = false; }
-    console.error("Erreur enskripsyon:", err);
-    alert("ErÃ¨ koneksyon ak sÃ¨vÃ¨ âŒ");
+  .catch(function() {
+    if (btn) { btn.textContent = 'Créer mon compte →'; btn.disabled = false; }
+    alert('Erè koneksyon ak sèvè');
   });
 }
 
 // ============================================
-// KONEKSYON (LOGIN)
+// KONEKSYON
 // ============================================
 function soumettreLogin(e) {
   e.preventDefault();
-  const form = e.target;
+  var form = e.target;
 
-  const email = form.querySelector('input[name="email"]').value;
-  const motDePasse = form.querySelector('input[name="password"]') 
-    ? form.querySelector('input[name="password"]').value 
-    : form.querySelector('input[name="motDePasse"]').value;
+  var email = form.querySelector('input[name="email"]').value;
+  var pwInput = form.querySelector('input[name="password"]') || form.querySelector('input[name="motDePasse"]');
+  var motDePasse = pwInput ? pwInput.value : '';
 
-  const btn = form.querySelector('button[type="submit"]');
+  var btn = form.querySelector('button[type="submit"]');
   if (btn) { btn.textContent = 'Connexion...'; btn.disabled = true; }
 
-  fetch(`${API_URL}/api/auth/connexion`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, motDePasse })
+  fetch(API_URL + '/api/auth/connexion', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, motDePasse: motDePasse })
   })
-  .then(res => res.json())
-  .then(data => {
-    if (btn) { btn.textContent = 'Se connecter â†’'; btn.disabled = false; }
-
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (btn) { btn.textContent = 'Se connecter →'; btn.disabled = false; }
     if (data.success && data.token) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      checkUser(); // Mete ajou UI
-
-      alert(`Koneksyon reyisi! Bonjou ${data.user.nom} ðŸ”¥`);
-      window.location.reload();
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      fermerModalLogin();
+      checkUser();
+      form.reset();
+      setTimeout(function() {
+        window.location.href = 'dashboard.html';
+      }, 300);
     } else {
-      alert(data.message || "Email oswa modpas enkÃ²rÃ¨k âŒ");
+      alert(data.message || 'Email oswa modpas enkòrèk');
     }
   })
-  .catch(err => {
-    if (btn) { btn.textContent = 'Se connecter â†’'; btn.disabled = false; }
-    console.error("Erreur koneksyon:", err);
-    alert("ErÃ¨ koneksyon ak sÃ¨vÃ¨ âŒ");
+  .catch(function() {
+    if (btn) { btn.textContent = 'Se connecter →'; btn.disabled = false; }
+    alert('Erè koneksyon ak sèvè');
   });
 }
 
 // ============================================
-// VERIFIKASYON USER KONEKTE
+// CHECK USER KONEKTE
 // ============================================
 function checkUser() {
-  const token = localStorage.getItem("token");
-  const userStr = localStorage.getItem("user");
-
-  const btnCreer = document.getElementById("btn-creer-compte");
-  const btnConnecter = document.getElementById("btn-connecter");
-  const btnMonCompte = document.getElementById("btn-mon-compte");
+  var token = localStorage.getItem('token');
+  var userStr = localStorage.getItem('user');
+  var userBar = document.getElementById('user-bar');
+  var barName = document.getElementById('bar-user-name');
 
   if (token && userStr) {
-    const user = JSON.parse(userStr);
-
-    // Kache bouton enskripsyon/koneksyon, montre "Mon compte"
-    if (btnCreer) btnCreer.style.display = 'none';
-    if (btnConnecter) btnConnecter.style.display = 'none';
-    if (btnMonCompte) { btnMonCompte.style.display = 'inline-block'; btnMonCompte.textContent = `ðŸ‘¤ ${user.nom}`; }
-
-    console.log("User konekte:", user.nom);
+    var user = JSON.parse(userStr);
+    if (userBar) { userBar.style.display = 'flex'; userBar.style.alignItems = 'center'; userBar.style.gap = '8px'; }
+    if (barName) barName.textContent = user.nom || 'Mon compte';
+    var btnSignup = document.querySelector('.menu-signup');
+    var btnLogin = document.querySelector('.menu-login');
+    if (btnSignup) { btnSignup.textContent = 'Mon Dashboard'; btnSignup.onclick = function() { window.location.href = 'dashboard.html'; }; }
+    if (btnLogin) { btnLogin.textContent = 'Déconnexion'; btnLogin.onclick = logout; }
   } else {
-    if (btnCreer) btnCreer.style.display = 'inline-block';
-    if (btnConnecter) btnConnecter.style.display = 'inline-block';
-    if (btnMonCompte) btnMonCompte.style.display = 'none';
+    if (userBar) userBar.style.display = 'none';
   }
 }
 
@@ -264,9 +267,9 @@ function checkUser() {
 // LOGOUT
 // ============================================
 function logout() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  alert("Ou dekonekte!");
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  localStorage.removeItem('radioJwe');
   window.location.reload();
 }
 
@@ -277,7 +280,7 @@ var contactForm = document.querySelector('.contact-form');
 if (contactForm) {
   contactForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    alert('MÃ¨si pou mesaj ou a! Nou pral reponn ou byento.');
+    alert('Mèsi pou mesaj ou a! Nou pral reponn ou byento.');
     this.reset();
   });
 }
@@ -312,6 +315,3 @@ document.querySelectorAll('a[href^="#"]').forEach(function (lyen) {
     if (target) target.scrollIntoView({ behavior: 'smooth' });
   });
 });
-
-
-
