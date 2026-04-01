@@ -1,38 +1,64 @@
 ﻿// ============================================
-// RADIO TÉLÉ MEGA STAR — SCRIPT.JS
+// RADIO TÉLÉ MEGA STAR — SCRIPT.JS v2.0
 // ============================================
 
 const API_URL = "https://radio-megastar-backend-production.up.railway.app";
-var audio = document.getElementById('audio-player');
+var audio = null;
 
-// ============================================
-// LOAD PAGE
-// ============================================
-function checkUser() {
-  var token = localStorage.getItem('token');
-  var userStr = localStorage.getItem('user');
-  var userBar = document.getElementById('user-bar');
-  var barName = document.getElementById('bar-user-name');
-  if (token && userStr) {
-    var user = JSON.parse(userStr);
-    if (userBar) { userBar.style.display = 'flex'; userBar.style.alignItems = 'center'; userBar.style.gap = '8px'; }
-    if (barName) barName.textContent = user.nom || 'Mon compte';
-    var btnSignup = document.querySelector('.menu-signup');
-    var btnLogin = document.querySelector('.menu-login');
-    if (btnSignup) {
-      btnSignup.textContent = 'Mon Dashboard';
-      btnSignup.onclick = function() {
-        // KOREKSYON — verifye role!
-        if (user.role === 'admin') {
-          window.location.href = 'admin.html';
-        } else {
-          window.location.href = 'dashboard.html';
-        }
-      };
-    }
-    if (btnLogin) { btnLogin.textContent = 'D\u00e9connexion'; btnLogin.onclick = logout; }
+// ===== INIT =====
+window.addEventListener('load', function() {
+  // Jwenn audio element — esansyèl pou bouton play
+  audio = document.getElementById('audio-player');
+  checkUser();
+  initPlay();
+});
+
+// ===== BOUTON PLAY — KORIJE =====
+function initPlay() {
+  if (!audio) return;
+  var etat = localStorage.getItem('radioJwe');
+  if (etat === 'wi') {
+    audio.play()
+      .then(function() { meteEtatPlay(); })
+      .catch(function() { meteEtatPause(); montreNotifikasyon(); });
   } else {
-    if (userBar) userBar.style.display = 'none';
+    meteEtatPause();
+  }
+  audio.addEventListener('play',  meteEtatPlay);
+  audio.addEventListener('pause', meteEtatPause);
+  audio.addEventListener('error', function() { meteEtatPause(); });
+  // Senkronize ant paj yo
+  window.addEventListener('storage', function(e) {
+    if (e.key !== 'radioJwe') return;
+    if (e.newValue === 'wi') { audio.play().catch(() => {}); }
+    else { audio.pause(); }
+  });
+}
+
+function togglePlay() {
+  audio = document.getElementById('audio-player'); // 🔥 garanti li toujou jwenn li
+
+  if (!audio) {
+    console.log("Audio pa jwenn ❌");
+    return;
+  }
+
+  if (audio.paused) {
+    audio.play()
+      .then(() => {
+        console.log("Audio ap jwe ✅");
+        localStorage.setItem('radioJwe', 'wi');
+        meteEtatPlay();
+      })
+      .catch(err => {
+        console.log("Erè play:", err);
+        montreNotifikasyon();
+      });
+  } else {
+    audio.pause();
+    console.log("Audio an pause ⏸️");
+    localStorage.setItem('radioJwe', 'non');
+    meteEtatPause();
   }
 }
 
@@ -41,6 +67,7 @@ function meteEtatPlay() {
   var ss = document.getElementById('stream-status'); if (ss) { ss.textContent = 'En direct'; ss.style.color = '#cc0000'; }
   var pi = document.getElementById('play-icon'); if (pi) pi.textContent = '\u23F8';
   var pt = document.getElementById('play-text'); if (pt) pt.textContent = 'Pause';
+  var fp = document.getElementById('float-play'); if (fp) fp.style.background = 'rgba(0,150,0,0.85)';
 }
 
 function meteEtatPause() {
@@ -48,355 +75,166 @@ function meteEtatPause() {
   var ss = document.getElementById('stream-status'); if (ss) { ss.textContent = 'Cliquez \u25BA pour \u00e9couter'; ss.style.color = '#aaa'; }
   var pi = document.getElementById('play-icon'); if (pi) pi.textContent = '\u25B6';
   var pt = document.getElementById('play-text'); if (pt) pt.textContent = '\u00c9couter maintenant';
+  var fp = document.getElementById('float-play'); if (fp) fp.style.background = 'rgba(204,0,0,0.85)';
 }
 
-function changeVolume(val) { if (audio) audio.volume = val; }
+function changeVolume(val) { if (audio) audio.volume = parseFloat(val); }
 
-// ============================================
-// CAROUSEL EMISYON — AUTO SLIDE + SWIPE
-// ============================================
-var carouselIndex = 0;
-var carouselTotal = 6; // Nomb emisyon reyèl (pa duplike)
-var carouselTimer = null;
-var carouselDragging = false;
-var carouselStartX = 0;
-var carouselCurrentX = 0;
+function montreNotifikasyon() {
+  var n = document.getElementById('notif-play'); if (n) n.style.display = 'flex';
+}
+function kontinuePlay() {
+  if (audio) { audio.play().then(function(){localStorage.setItem('radioJwe','wi');meteEtatPlay();}).catch(()=>{}); }
+  fermerNotif();
+}
+function fermerNotif() {
+  var n = document.getElementById('notif-play'); if (n) n.style.display = 'none';
+}
+
+// ===== CAROUSEL — AUTO SLIDE + SWIPE =====
+var _carIdx = 0, _carTotal = 6, _carTimer = null, _dragging = false, _startX = 0, _curX = 0;
 
 function initCarousel() {
   var track = document.getElementById('carousel-track');
-  if (!track) return;
+  if (!track || !track.children.length) return;
 
-  // Kalkile konbyen kat ki vizib selon largè ekran
-  function getVisible() {
-    var w = window.innerWidth;
-    if (w < 480) return 2;
-    if (w < 768) return 3;
-    if (w < 1024) return 4;
-    return 6;
-  }
+  _carTotal = Math.ceil(track.children.length / 2) || 6;
 
-  function getCardWidth() {
-    var cards = track.querySelectorAll('.emission-card');
-    if (!cards.length) return 0;
-    var style = window.getComputedStyle(cards[0]);
-    var margin = parseFloat(style.marginLeft || 0) + parseFloat(style.marginRight || 0);
-    return cards[0].offsetWidth + margin;
+  function cardW() {
+    var c = track.querySelector('.emission-card');
+    if (!c) return 120;
+    var st = window.getComputedStyle(c);
+    return c.offsetWidth + parseFloat(st.marginRight||0) + parseFloat(st.marginLeft||0) + 16;
   }
 
   function goTo(idx) {
-    carouselIndex = ((idx % carouselTotal) + carouselTotal) % carouselTotal;
-    var cardW = getCardWidth();
-    track.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    track.style.transform = 'translateX(-' + (carouselIndex * cardW) + 'px)';
-    updateDots();
+    _carIdx = ((idx % _carTotal) + _carTotal) % _carTotal;
+    track.style.transition = 'transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)';
+    track.style.transform = 'translateX(-' + (_carIdx * cardW()) + 'px)';
+    document.querySelectorAll('.carousel-dot').forEach(function(d,i){ d.classList.toggle('active', i===_carIdx); });
   }
 
-  function updateDots() {
-    var dots = document.querySelectorAll('.carousel-dot');
-    dots.forEach(function(d, i) {
-      d.classList.toggle('active', i === carouselIndex);
-    });
-  }
+  function next() { goTo(_carIdx + 1); }
+  function startAuto() { stopAuto(); _carTimer = setInterval(next, 3000); }
+  function stopAuto() { if (_carTimer) { clearInterval(_carTimer); _carTimer = null; } }
 
-  function nextSlide() { goTo(carouselIndex + 1); }
-
-  function startAuto() {
-    stopAuto();
-    carouselTimer = setInterval(nextSlide, 3000);
-  }
-
-  function stopAuto() {
-    if (carouselTimer) { clearInterval(carouselTimer); carouselTimer = null; }
-  }
-
-  // SWIPE — Dwèt (touch) ak souris
-  track.addEventListener('touchstart', function(e) {
-    stopAuto();
-    carouselStartX = e.touches[0].clientX;
-    carouselDragging = true;
-  }, { passive: true });
-
-  track.addEventListener('touchmove', function(e) {
-    if (!carouselDragging) return;
-    carouselCurrentX = e.touches[0].clientX;
-  }, { passive: true });
-
+  // Touch swipe
+  track.addEventListener('touchstart', function(e) { stopAuto(); _startX = e.touches[0].clientX; _dragging = true; }, {passive:true});
+  track.addEventListener('touchmove', function(e) { if (_dragging) _curX = e.touches[0].clientX; }, {passive:true});
   track.addEventListener('touchend', function() {
-    if (!carouselDragging) return;
-    carouselDragging = false;
-    var diff = carouselStartX - carouselCurrentX;
-    if (Math.abs(diff) > 40) {
-      if (diff > 0) goTo(carouselIndex + 1);
-      else goTo(carouselIndex - 1);
-    }
+    if (!_dragging) return; _dragging = false;
+    var d = _startX - _curX;
+    if (Math.abs(d) > 40) goTo(d > 0 ? _carIdx+1 : _carIdx-1);
     startAuto();
   });
 
-  // SWIPE ak souris tou
-  track.addEventListener('mousedown', function(e) {
-    stopAuto();
-    carouselStartX = e.clientX;
-    carouselDragging = true;
-    track.style.cursor = 'grabbing';
-  });
-
-  document.addEventListener('mousemove', function(e) {
-    if (!carouselDragging) return;
-    carouselCurrentX = e.clientX;
-  });
-
+  // Mouse drag
+  track.addEventListener('mousedown', function(e) { stopAuto(); _startX = e.clientX; _dragging = true; track.style.cursor='grabbing'; });
+  document.addEventListener('mousemove', function(e) { if (_dragging) _curX = e.clientX; });
   document.addEventListener('mouseup', function() {
-    if (!carouselDragging) return;
-    carouselDragging = false;
-    track.style.cursor = 'grab';
-    var diff = carouselStartX - carouselCurrentX;
-    if (Math.abs(diff) > 40) {
-      if (diff > 0) goTo(carouselIndex + 1);
-      else goTo(carouselIndex - 1);
-    }
+    if (!_dragging) return; _dragging = false; track.style.cursor='grab';
+    var d = _startX - _curX;
+    if (Math.abs(d) > 40) goTo(d > 0 ? _carIdx+1 : _carIdx-1);
     startAuto();
   });
 
-  // Pause auto lè souris sou carousel
   track.addEventListener('mouseenter', stopAuto);
   track.addEventListener('mouseleave', startAuto);
-
-  // Expose allerSlide pou bouton dots yo
+  window.addEventListener('resize', function() { goTo(_carIdx); });
   window.allerSlide = goTo;
-
-  // Adapte si ekran chanje gwosè
-  window.addEventListener('resize', function() { goTo(carouselIndex); });
-
   startAuto();
 }
 
-// ============================================
-// RECHÈCH EMISYON
-// ============================================
-function rechercherEmission(query) {
-  var cards = document.querySelectorAll('.emission-card');
-  if (!cards.length) return;
-  var q = query.toLowerCase().trim();
-  cards.forEach(function(card) {
-    var name = card.querySelector('.emission-name');
-    if (!name) return;
-    if (!q || name.textContent.toLowerCase().includes(q)) {
-      card.style.opacity = '1';
-      card.style.transform = '';
-    } else {
-      card.style.opacity = '0.2';
-      card.style.transform = 'scale(0.9)';
-    }
+// ===== RECHÈCH =====
+function rechercherEmission(q) {
+  document.querySelectorAll('.emission-card').forEach(function(c) {
+    var n = c.querySelector('.emission-name');
+    if (!n) return;
+    var match = !q || n.textContent.toLowerCase().includes(q.toLowerCase());
+    c.style.opacity = match ? '1' : '0.2';
+    c.style.transform = match ? '' : 'scale(0.9)';
   });
 }
 
-// ============================================
-// PUBLICITE — Klike voye email
-// ============================================
-function contactezPourPub() {
-  window.location.href = 'mailto:konocompanymultiservices@gmail.com?subject=Publicit%C3%A9%20Radio%20T%C3%A9l%C3%A9%20Mega%20Star&body=Bonjour%2C%20je%20souhaite%20annoncer%20sur%20votre%20radio.';
-}
+// ===== MENU =====
+function ouvrirMenu() { var o=document.getElementById('menu-overlay'); if(o){o.classList.add('open');document.body.style.overflow='hidden';} }
+function fermerMenu() { var o=document.getElementById('menu-overlay'); if(o){o.classList.remove('open');document.body.style.overflow='';} }
+function fermerMenuOverlay(e) { if(e.target===document.getElementById('menu-overlay'))fermerMenu(); }
 
-// ============================================
-// MENU
-// ============================================
-function ouvrirMenu() {
-  var overlay = document.getElementById('menu-overlay');
-  if (overlay) { overlay.classList.add('open'); document.body.style.overflow = 'hidden'; }
-}
-function fermerMenu() {
-  var overlay = document.getElementById('menu-overlay');
-  if (overlay) { overlay.classList.remove('open'); document.body.style.overflow = ''; }
-}
-function fermerMenuOverlay(e) {
-  if (e.target === document.getElementById('menu-overlay')) fermerMenu();
-}
+// ===== MODALS =====
+function ouvrirModal() { fermerMenu();fermerModalLogin();setTimeout(function(){var m=document.getElementById('modal-overlay');if(m){m.classList.add('open');document.body.style.overflow='hidden';}},200); }
+function fermerModal() { var m=document.getElementById('modal-overlay');if(m){m.classList.remove('open');document.body.style.overflow='';} }
+function fermerModalOverlay(e) { if(e.target===document.getElementById('modal-overlay'))fermerModal(); }
 
-// ============================================
-// MODAL ENSKRIPSYON
-// ============================================
-function ouvrirModal() {
-  fermerMenu(); fermerModalLogin();
-  setTimeout(function () {
-    var modal = document.getElementById('modal-overlay');
-    if (modal) { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
-  }, 200);
-}
-function fermerModal() {
-  var modal = document.getElementById('modal-overlay');
-  if (modal) { modal.classList.remove('open'); document.body.style.overflow = ''; }
-}
-function fermerModalOverlay(e) {
-  if (e.target === document.getElementById('modal-overlay')) fermerModal();
-}
+function ouvrirModalLogin() { fermerMenu();fermerModal();setTimeout(function(){var m=document.getElementById('modal-login-overlay');if(m){m.classList.add('open');document.body.style.overflow='hidden';}},200); }
+function fermerModalLogin() { var m=document.getElementById('modal-login-overlay');if(m){m.classList.remove('open');document.body.style.overflow='';} }
+function fermerModalLoginOverlay(e) { if(e.target===document.getElementById('modal-login-overlay'))fermerModalLogin(); }
 
-// ============================================
-// MODAL KONEKSYON
-// ============================================
-function ouvrirModalLogin() {
-  fermerMenu(); fermerModal();
-  setTimeout(function () {
-    var modal = document.getElementById('modal-login-overlay');
-    if (modal) { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }
-  }, 200);
-}
-function fermerModalLogin() {
-  var modal = document.getElementById('modal-login-overlay');
-  if (modal) { modal.classList.remove('open'); document.body.style.overflow = ''; }
-}
-function fermerModalLoginOverlay(e) {
-  if (e.target === document.getElementById('modal-login-overlay')) fermerModalLogin();
-}
-
-// ============================================
-// ENSKRIPSYON
-// ============================================
+// ===== ENSKRIPSYON =====
 function soumettreFormulaire(e) {
   e.preventDefault();
-  var form = e.target;
-  var usernameInput = form.querySelector('input[name="username"]');
-  var nomInput = form.querySelector('input[name="nom"]');
-  var nom = usernameInput ? usernameInput.value : (nomInput ? nomInput.value : '');
-  var email = form.querySelector('input[name="email"]').value;
-  var phoneInput = form.querySelector('input[name="phone"]');
-  var telephone = phoneInput ? phoneInput.value : '';
-  var pwInput = form.querySelector('input[name="password"]') || form.querySelector('input[name="motDePasse"]');
-  var motDePasse = pwInput ? pwInput.value : '';
-
-  if (!nom || !email || !motDePasse) { alert('Tanpri ranpli tout champ obligatwa yo.'); return; }
-  var btn = form.querySelector('button[type="submit"]');
-  if (btn) { btn.textContent = 'Chargement...'; btn.disabled = true; }
-
- fetch(API_URL + '/api/auth/inscription', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    nom,
-    email,
-    telephone,
-    motDePasse
-  })
-})
-.then(r => r.json())
-.then(data => {
-
-  if (btn) {
-    btn.textContent = 'Créer mon compte →';
-    btn.disabled = false;
-  }
-
-  if (data.success) {
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-
-    fermerModal();
-    checkUser();
-    form.reset();
-
-   if (data.user.role === 'admin') {
-  window.location.href = 'admin.html';
-} else {
-  window.location.href = 'dashboard.html';
-}
-  } else {
-    alert(data.message || 'Erè');
-  }
-
-})
-.catch(() => {
-  if (btn) {
-    btn.textContent = 'Créer mon compte →';
-    btn.disabled = false;
-  }
-  alert('Erè serveur');
-});
+  var f = e.target;
+  var nom = (f.querySelector('[name="username"]')||f.querySelector('[name="nom"]')||{}).value || '';
+  var email = (f.querySelector('[name="email"]')||{}).value || '';
+  var tel   = (f.querySelector('[name="phone"]')||{}).value || '';
+  var mdp   = (f.querySelector('[name="password"]')||f.querySelector('[name="motDePasse"]')||{}).value || '';
+  if (!nom||!email||!mdp) { alert('Tanpri ranpli tout champ obligatwa yo.'); return; }
+  var btn = f.querySelector('button[type="submit"]');
+  if (btn) { btn.textContent='Chargement...'; btn.disabled=true; }
+  fetch(API_URL+'/api/auth/inscription',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nom,email,telephone:tel,motDePasse:mdp})})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(btn){btn.textContent='Cr\u00e9er mon compte \u2192';btn.disabled=false;}
+    if(data.success){
+      localStorage.setItem('token',data.token);
+      localStorage.setItem('user',JSON.stringify(data.user));
+      fermerModal(); checkUser(); f.reset();
+      setTimeout(function(){
+        if(confirm('Kont ou cr\u00e9\u00e9 avec succ\u00e8s! Vle ale nan dashboard ou?'))
+          window.location.href = data.user.role==='admin' ? 'admin.html' : 'dashboard.html';
+      },300);
+    } else { alert(data.message||'Er\u00e8'); }
+  }).catch(function(){if(btn){btn.textContent='Cr\u00e9er mon compte \u2192';btn.disabled=false;}alert('Er\u00e8 serveur');});
 }
 
-// ============================================
-// KONEKSYON
-// ============================================
+// ===== KONEKSYON =====
 function soumettreLogin(e) {
   e.preventDefault();
-  var form = e.target;
-  var email = form.querySelector('input[name="email"]').value;
-  var pwInput = form.querySelector('input[name="password"]') || form.querySelector('input[name="motDePasse"]');
-  var motDePasse = pwInput ? pwInput.value : '';
-  var btn = form.querySelector('button[type="submit"]');
-  if (btn) { btn.textContent = 'Connexion...'; btn.disabled = true; }
-
- fetch(API_URL + '/api/auth/connexion', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    email,
-    motDePasse
-  })
-})
-.then(r => r.json())
-.then(data => {
-
-  if (btn) {
-    btn.textContent = 'Se connecter →';
-    btn.disabled = false;
-  }
-
-  if (data.success && data.token) {
-
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-
-    fermerModalLogin();
-    checkUser();
-    form.reset();
-
-    const user = data.user;
-
-    if (user.role === 'admin') {
-      window.location.href = 'admin.html';
-    } else {
-      window.location.href = 'dashboard.html';
-    }
-
-  } else {
-    alert(data.message || 'Login incorrect');
-  }
-
-})
-.catch(() => {
-
-  if (btn) {
-    btn.textContent = 'Se connecter →';
-    btn.disabled = false;
-  }
-
-  alert('Erreur serveur');
-});
+  var f = e.target;
+  var email = (f.querySelector('[name="email"]')||{}).value || '';
+  var mdp   = (f.querySelector('[name="password"]')||f.querySelector('[name="motDePasse"]')||{}).value || '';
+  var btn = f.querySelector('button[type="submit"]');
+  if (btn) { btn.textContent='Connexion...'; btn.disabled=true; }
+  fetch(API_URL+'/api/auth/connexion',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,motDePasse:mdp})})
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(btn){btn.textContent='Se connecter \u2192';btn.disabled=false;}
+    if(data.success&&data.token){
+      localStorage.setItem('token',data.token);
+      localStorage.setItem('user',JSON.stringify(data.user));
+      fermerModalLogin(); checkUser(); f.reset();
+      setTimeout(function(){
+        window.location.href = data.user.role==='admin' ? 'admin.html' : 'dashboard.html';
+      },300);
+    } else { alert(data.message||'Email oswa modpas enkòrèk'); }
+  }).catch(function(){if(btn){btn.textContent='Se connecter \u2192';btn.disabled=false;}alert('Er\u00e8 serveur');});
 }
 
-// ============================================
-// CHECK USER KONEKTE
-// ============================================
+// ===== CHECK USER — mete menu ajou =====
 function checkUser() {
   var token = localStorage.getItem('token');
-  var userStr = localStorage.getItem('user');
-  var userBar = document.getElementById('user-bar');
-  var barName = document.getElementById('bar-user-name');
-  if (token && userStr) {
-    var user = JSON.parse(userStr);
-    if (userBar) { userBar.style.display = 'flex'; userBar.style.alignItems = 'center'; userBar.style.gap = '8px'; }
-    if (barName) barName.textContent = user.nom || 'Mon compte';
+  var uStr  = localStorage.getItem('user');
+  if (token && uStr) {
+    var user = JSON.parse(uStr);
+    // Mete ajou bouton menu
     var btnSignup = document.querySelector('.menu-signup');
-    var btnLogin = document.querySelector('.menu-login');
-    if (btnSignup) { btnSignup.textContent = 'Mon Dashboard'; btnSignup.onclick = function() { window.location.href = 'dashboard.html'; }; }
-    if (btnLogin) { btnLogin.textContent = 'D\u00e9connexion'; btnLogin.onclick = logout; }
-  } else {
-    if (userBar) userBar.style.display = 'none';
+    var btnLogin  = document.querySelector('.menu-login');
+    if (btnSignup) { btnSignup.textContent='Mon Dashboard'; btnSignup.onclick=function(){window.location.href=user.role==='admin'?'admin.html':'dashboard.html';}; }
+    if (btnLogin)  { btnLogin.textContent='D\u00e9connexion'; btnLogin.onclick=logout; }
   }
 }
 
-// ============================================
-// LOGOUT
-// ============================================
+// ===== LOGOUT =====
 function logout() {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
@@ -404,31 +242,13 @@ function logout() {
   window.location.reload();
 }
 
-// ============================================
-// AUTOPLAY NOTIFICATION
-// ============================================
-function montreNotifikasyon() {
-  var notif = document.getElementById('notif-play');
-  if (notif) notif.style.display = 'flex';
-}
-function kontinuePlay() {
-  if (audio) { audio.play(); meteEtatPlay(); }
-  fermerNotif();
-}
-function fermerNotif() {
-  var notif = document.getElementById('notif-play');
-  if (notif) notif.style.display = 'none';
-}
-
-// ============================================
-// SMOOTH SCROLL
-// ============================================
-document.querySelectorAll('a[href^="#"]').forEach(function (lyen) {
-  lyen.addEventListener('click', function (e) {
-    var href = this.getAttribute('href');
-    if (!href || href === '#') return;
+// ===== SMOOTH SCROLL =====
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    var h=this.getAttribute('href');
+    if(!h||h==='#')return;
     e.preventDefault();
-    var target = document.querySelector(href);
-    if (target) target.scrollIntoView({ behavior: 'smooth' });
+    var t=document.querySelector(h);
+    if(t)t.scrollIntoView({behavior:'smooth'});
   });
 });
