@@ -252,3 +252,15 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
     if(t)t.scrollIntoView({behavior:'smooth'});
   });
 });
+function initPubSlider() {
+  var slides = document.querySelectorAll('.pub-slide');
+  if (!slides.length) return;
+
+  var index = 0;
+
+  setInterval(function () {
+    slides[index].classList.remove('active');
+    index = (index + 1) % slides.length;
+    slides[index].classList.add('active');
+  }, 3000);
+}
