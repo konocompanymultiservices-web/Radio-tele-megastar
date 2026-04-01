@@ -3,14 +3,29 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Radio T&eacute;l&eacute; Mega Star &mdash; 97.3 FM &middot; La voix d&apos;Ha&iuml;ti</title>
+  <title>Radio T&eacute;l&eacute; Mega Star &mdash; 97.3 FM</title>
   <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
+  <style>
+    .menu-user-info{display:flex;flex-direction:column;align-items:center;gap:4px}
+    .menu-user-avatar{width:56px;height:56px;border-radius:50%;background:var(--rouge);color:var(--blan);font-family:'Oswald',sans-serif;font-size:22px;display:flex;align-items:center;justify-content:center;border:2px solid var(--jaune);margin-bottom:4px}
+    .menu-user-name{font-family:'Oswald',sans-serif;font-size:15px;color:var(--blan)}
+    .menu-user-email{font-size:11px;color:var(--gri-text);word-break:break-all;text-align:center}
+    .news-section{padding:48px 24px;background:var(--gri);border-top:1px solid var(--bod)}
+    .news-inner{max-width:1200px;margin:0 auto}
+    .news-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+    .news-card{background:var(--gri-cle);border:1px solid var(--bod);border-radius:12px;padding:20px;transition:transform .2s}
+    .news-card:hover{transform:translateY(-4px)}
+    .news-card-badge{display:inline-block;background:var(--rouge);color:var(--blan);font-size:10px;padding:2px 10px;border-radius:20px;margin-bottom:10px;font-family:'Oswald',sans-serif;letter-spacing:1px}
+    .news-card-badge.slide{background:#2196F3}
+    .news-card h3{font-family:'Oswald',sans-serif;font-size:16px;color:var(--blan);margin-bottom:8px}
+    .news-card p{font-size:13px;color:var(--gri-text);line-height:1.6}
+    .news-card-date{font-size:11px;color:#555;margin-top:12px}
+  </style>
 </head>
 <body>
 
-  <!-- HEADER -->
   <header>
     <div class="header-inner">
       <a href="index.html" class="logo">
@@ -24,14 +39,10 @@
         <span>&#128269;</span>
         <input type="text" placeholder="Rechercher une &eacute;mission..." class="search-input" oninput="rechercherEmission(this.value)"/>
       </div>
-      <button class="menu-btn" onclick="ouvrirMenu()">
-        <span class="menu-btn-icon">&#9776;</span>
-        Menu
-      </button>
+      <button class="menu-btn" onclick="ouvrirMenu()"><span class="menu-btn-icon">&#9776;</span> Menu</button>
     </div>
   </header>
 
-  <!-- MENU OVERLAY -->
   <div class="menu-overlay" id="menu-overlay" onclick="fermerMenuOverlay(event)">
     <div class="menu-panel">
       <button class="menu-close" onclick="fermerMenu()">&#10005;</button>
@@ -46,19 +57,22 @@
         <a href="contact.html" class="menu-nav-link">&#9993; Contact</a>
       </nav>
       <div class="menu-divider"></div>
-      <div class="menu-auth">
-        <p class="menu-auth-title">Rejoignez notre communaut&eacute;</p>
-        <button class="menu-auth-btn menu-signup" onclick="ouvrirModal()">Cr&eacute;er un compte</button>
-        <button class="menu-auth-btn menu-login" onclick="ouvrirModalLogin()">Se connecter</button>
+      <!-- AUTH SECTION — chanje selon si user konekte -->
+      <div id="menu-auth-section">
+        <div class="menu-auth">
+          <p class="menu-auth-title">Rejoignez notre communaut&eacute;</p>
+          <button class="menu-auth-btn menu-signup" onclick="ouvrirModal()">Cr&eacute;er un compte</button>
+          <button class="menu-auth-btn menu-login" onclick="ouvrirModalLogin()">Se connecter</button>
+        </div>
       </div>
       <div class="menu-footer">
         <p>&copy; 2026 Radio T&eacute;l&eacute; Mega Star</p>
-        <p>La voix qui unit, informe et inspire Ha&iuml;ti ht</p>
+        <p>La voix qui unit, informe et inspire Ha&iuml;ti &#127462;&#127481;</p>
       </div>
     </div>
   </div>
 
-  <!-- MODAL KREYE KONT -->
+  <!-- MODAL ENSKRIPSYON -->
   <div class="modal-overlay" id="modal-overlay" onclick="fermerModalOverlay(event)">
     <div class="modal">
       <button class="modal-close" onclick="fermerModal()">&#10005;</button>
@@ -68,22 +82,10 @@
         <p class="modal-sub">Rejoignez la famille Radio T&eacute;l&eacute; Mega Star</p>
       </div>
       <form class="modal-form" onsubmit="soumettreFormulaire(event)">
-        <div class="modal-field">
-          <label>Nom complet</label>
-          <input type="text" name="username" placeholder="Ex: Jean Pierre" required/>
-        </div>
-        <div class="modal-field">
-          <label>Adresse email</label>
-          <input type="email" name="email" placeholder="Ex: jean@email.com" required/>
-        </div>
-        <div class="modal-field">
-          <label>Num&eacute;ro de t&eacute;l&eacute;phone</label>
-          <input type="tel" name="phone" placeholder="Ex: +509 3X XX XXXX"/>
-        </div>
-        <div class="modal-field">
-          <label>Mot de passe</label>
-          <input type="password" name="password" placeholder="Minimum 6 caract&egrave;res" required/>
-        </div>
+        <div class="modal-field"><label>Nom complet</label><input type="text" name="username" placeholder="Ex: Jean Pierre" required/></div>
+        <div class="modal-field"><label>Adresse email</label><input type="email" name="email" placeholder="Ex: jean@email.com" required/></div>
+        <div class="modal-field"><label>T&eacute;l&eacute;phone</label><input type="tel" name="phone" placeholder="Ex: +509 3X XX XXXX"/></div>
+        <div class="modal-field"><label>Mot de passe</label><input type="password" name="password" placeholder="Minimum 6 caract&egrave;res" required/></div>
         <button type="submit" class="modal-submit">Cr&eacute;er mon compte &#8594;</button>
         <p class="modal-login-text">D&eacute;j&agrave; membre? <a href="#" class="modal-login-link" onclick="ouvrirModalLogin()">Se connecter</a></p>
       </form>
@@ -100,144 +102,91 @@
         <p class="modal-sub">Bon retour sur Radio T&eacute;l&eacute; Mega Star</p>
       </div>
       <form class="modal-form" onsubmit="soumettreLogin(event)">
-        <div class="modal-field">
-          <label>Adresse email</label>
-          <input type="email" name="email" placeholder="Votre email" required/>
-        </div>
-        <div class="modal-field">
-          <label>Mot de passe</label>
-          <input type="password" name="password" placeholder="Votre mot de passe" required/>
-        </div>
+        <div class="modal-field"><label>Adresse email</label><input type="email" name="email" placeholder="Votre email" required/></div>
+        <div class="modal-field"><label>Mot de passe</label><input type="password" name="password" placeholder="Votre mot de passe" required/></div>
         <button type="submit" class="modal-submit">Se connecter &#8594;</button>
-        <p class="modal-login-text">Pas encore membre? <a href="#" class="modal-login-link" onclick="ouvrirModal()">Cr&eacute;er un compte</a></p>
+        <p class="modal-login-text">
+          Pas encore membre? <a href="#" class="modal-login-link" onclick="ouvrirModal()">Cr&eacute;er un compte</a><br/>
+          <a href="#" onclick="ouvrirModalOublie()" style="color:#888;font-size:12px;margin-top:6px;display:inline-block;">&#128274; Mot de passe oubli&eacute;?</a>
+        </p>
       </form>
     </div>
   </div>
 
-  <!-- HERO — banner + badge EN DIRECT sèlman, PAS DE PLAYER STRIP -->
+  <!-- MODAL MOT DE PASSE OUBLIÉ -->
+  <div class="modal-overlay" id="modal-oublie-overlay" onclick="if(event.target===this)fermerModalOublie()">
+    <div class="modal">
+      <button class="modal-close" onclick="fermerModalOublie()">&#10005;</button>
+      <div class="modal-header">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="modal-logo"/>
+        <h2 class="modal-title">Mot de passe oubli&eacute;</h2>
+        <p class="modal-sub">Entrez votre email pour recevoir un lien</p>
+      </div>
+      <form class="modal-form" onsubmit="soumettreOublie(event)">
+        <div class="modal-field"><label>Adresse email</label><input type="email" name="email" placeholder="Email de votre compte" required/></div>
+        <div id="oublie-msg" style="display:none;padding:10px;border-radius:8px;font-size:13px;margin-bottom:8px;"></div>
+        <button type="submit" class="modal-submit">&#128140; Envoyer le lien de r&eacute;initialisation</button>
+        <p class="modal-login-text"><a href="#" class="modal-login-link" onclick="ouvrirModalLogin()">&#8592; Retour &agrave; la connexion</a></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- HERO -->
   <section id="ecouter" class="hero">
     <div class="hero-banner">
       <img src="images/banner_radio_megastar.jpg" alt="Banner" class="hero-banner-img"/>
       <div class="hero-overlay">
-        <div class="hero-badge">
-          <span class="live-dot"></span>
-          EN DIRECT
-        </div>
+        <div class="hero-badge"><span class="live-dot"></span> EN DIRECT</div>
         <h2 class="hero-title">Radio T&eacute;l&eacute; <span>Mega Star</span></h2>
         <p class="hero-sub">La voix qui unit, informe et inspire Ha&iuml;ti &#127462;&#127481;</p>
       </div>
     </div>
   </section>
 
-  <!-- AUDIO KACHE -->
   <audio id="audio-player" src="https://stream.zeno.fm/nlhqgiwj4obtv" preload="none"></audio>
 
-  <!-- PUBLICITE #1 -->
+  <!-- PUB TOP -->
   <div class="ad-zone">
     <span class="ad-tag">PUBLICIT&Eacute;</span>
-    <div class="ad-content" onclick="contactezPourPub()">
+    <div class="ad-content" id="pub-top-content" onclick="clicPub()">
       &#128226; Votre publicit&eacute; ici &mdash; Contactez-nous pour annoncer sur Radio T&eacute;l&eacute; Mega Star
     </div>
   </div>
 
-  <!-- EMISYON CAROUSEL -->
+  <!-- CAROUSEL EMISYON -->
   <section class="emissions-section">
     <div class="section-top">
       <h2 class="section-heading">Nos &eacute;missions</h2>
       <a href="programmes.html" class="voir-tout">Voir tout &#8594;</a>
     </div>
-
-    <!-- CAROUSEL WRAPPER -->
     <div class="carousel-outer">
-      <div class="carousel-track" id="carousel-track">
-        <a href="programmes.html" class="emission-card">
-          <div class="emission-circle" style="background:linear-gradient(135deg,#cc0000,#ff6666)">&#127749;</div>
-          <p class="emission-name">R&eacute;veil Matinal</p>
-          <p class="emission-time">05h &mdash; 08h</p>
-        </a>
-        <a href="programmes.html" class="emission-card">
-          <div class="emission-circle" style="background:linear-gradient(135deg,#1a5a1a,#4CAF50)">&#128240;</div>
-          <p class="emission-name">Actualit&eacute;s</p>
-          <p class="emission-time">08h &mdash; 10h</p>
-        </a>
-        <a href="programmes.html" class="emission-card">
-          <div class="emission-circle" style="background:linear-gradient(135deg,#996600,#FFD600)">&#127925;</div>
-          <p class="emission-name">Vibes Ha&iuml;tiennes</p>
-          <p class="emission-time">10h &mdash; 14h</p>
-        </a>
-        <a href="programmes.html" class="emission-card">
-          <div class="emission-circle" style="background:linear-gradient(135deg,#cc0000,#cc6600)">&#127908;</div>
-          <p class="emission-name">D&eacute;bat Citoyen</p>
-          <p class="emission-time">14h &mdash; 17h</p>
-        </a>
-        <a href="programmes.html" class="emission-card">
-          <div class="emission-circle" style="background:linear-gradient(135deg,#4a0080,#9C27B0)">&#128591;</div>
-          <p class="emission-name">Heure Spirituelle</p>
-          <p class="emission-time">17h &mdash; 19h</p>
-        </a>
-        <a href="programmes.html" class="emission-card">
-          <div class="emission-circle" style="background:linear-gradient(135deg,#0a0a3a,#1a1a6a)">&#127769;</div>
-          <p class="emission-name">Soir&eacute;e Mega Star</p>
-          <p class="emission-time">19h &mdash; 22h</p>
-        </a>
-        <!-- Duplike pou carousel infini -->
-        <a href="programmes.html" class="emission-card">
-          <div class="emission-circle" style="background:linear-gradient(135deg,#cc0000,#ff6666)">&#127749;</div>
-          <p class="emission-name">R&eacute;veil Matinal</p>
-          <p class="emission-time">05h &mdash; 08h</p>
-        </a>
-        <a href="programmes.html" class="emission-card">
-          <div class="emission-circle" style="background:linear-gradient(135deg,#1a5a1a,#4CAF50)">&#128240;</div>
-          <p class="emission-name">Actualit&eacute;s</p>
-          <p class="emission-time">08h &mdash; 10h</p>
-        </a>
-        <a href="programmes.html" class="emission-card">
-          <div class="emission-circle" style="background:linear-gradient(135deg,#996600,#FFD600)">&#127925;</div>
-          <p class="emission-name">Vibes Ha&iuml;tiennes</p>
-          <p class="emission-time">10h &mdash; 14h</p>
-        </a>
-        <a href="programmes.html" class="emission-card">
-          <div class="emission-circle" style="background:linear-gradient(135deg,#cc0000,#cc6600)">&#127908;</div>
-          <p class="emission-name">D&eacute;bat Citoyen</p>
-          <p class="emission-time">14h &mdash; 17h</p>
-        </a>
-        <a href="programmes.html" class="emission-card">
-          <div class="emission-circle" style="background:linear-gradient(135deg,#4a0080,#9C27B0)">&#128591;</div>
-          <p class="emission-name">Heure Spirituelle</p>
-          <p class="emission-time">17h &mdash; 19h</p>
-        </a>
-        <a href="programmes.html" class="emission-card">
-          <div class="emission-circle" style="background:linear-gradient(135deg,#0a0a3a,#1a1a6a)">&#127769;</div>
-          <p class="emission-name">Soir&eacute;e Mega Star</p>
-          <p class="emission-time">19h &mdash; 22h</p>
-        </a>
-      </div>
+      <div class="carousel-track" id="carousel-track"></div>
     </div>
-    <!-- INDICATEURS CAROUSEL -->
-    <div class="carousel-dots" id="carousel-dots">
-      <span class="carousel-dot active" onclick="allerSlide(0)"></span>
-      <span class="carousel-dot" onclick="allerSlide(1)"></span>
-      <span class="carousel-dot" onclick="allerSlide(2)"></span>
-      <span class="carousel-dot" onclick="allerSlide(3)"></span>
-      <span class="carousel-dot" onclick="allerSlide(4)"></span>
-      <span class="carousel-dot" onclick="allerSlide(5)"></span>
-    </div>
+    <div class="carousel-dots" id="carousel-dots"></div>
   </section>
 
-  <!-- PUBLICITE #2 -->
+  <!-- PUB MIDDLE -->
   <div class="ad-zone ad-zone-large">
     <span class="ad-tag">PUBLICIT&Eacute;</span>
-    <div class="ad-content" onclick="contactezPourPub()">
+    <div class="ad-content" id="pub-middle-content" onclick="clicPub()">
       &#127919; Annoncez votre entreprise sur Radio T&eacute;l&eacute; Mega Star &mdash; Contactez-nous!
     </div>
   </div>
 
-  <!-- KREYE KONT SECTION -->
-  <section class="signup-section">
+  <!-- NEWS DEPI BACKEND -->
+  <section class="news-section" id="news-section" style="display:none;">
+    <div class="news-inner">
+      <h2 class="section-heading" style="margin-bottom:20px;">Derni&egrave;res actualit&eacute;s</h2>
+      <div class="news-grid" id="news-grid"></div>
+    </div>
+  </section>
+
+  <!-- SIGNUP -->
+  <section class="signup-section" id="signup-section">
     <div class="signup-inner">
       <div class="signup-text">
         <h2 class="signup-title">Rejoignez notre communaut&eacute;</h2>
-        <p class="signup-desc">Cr&eacute;ez votre compte gratuit et acc&eacute;dez &agrave; nos programmes, actualit&eacute;s et bien plus encore!</p>
+        <p class="signup-desc">Cr&eacute;ez votre compte gratuit et acc&eacute;dez &agrave; nos programmes!</p>
         <ul class="signup-perks">
           <li>&#9989; Acc&egrave;s &agrave; tous nos programmes</li>
           <li>&#9989; Notifications des &eacute;missions</li>
@@ -259,7 +208,6 @@
     </div>
   </section>
 
-  <!-- FOOTER -->
   <footer>
     <div class="footer-inner">
       <div class="footer-logo-box">
@@ -279,25 +227,182 @@
     </div>
   </footer>
 
-  <!-- BOUTON PLAY FL&Ograve;TAN -->
-  <button class="float-play" id="float-play" onclick="togglePlay()" title="&Eacute;couter Radio T&eacute;l&eacute; Mega Star">
+  <!-- BOUTON PLAY FLÒTAN -->
+  <button class="float-play" id="float-play" onclick="togglePlay()" title="&Eacute;couter">
     <span id="float-icon">&#9654;</span>
   </button>
 
-  <!-- NOTIFIKASYON AUTOPLAY -->
   <div id="notif-play" style="display:none;position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1e1e1e;border:1px solid #cc0000;border-radius:12px;padding:16px 24px;z-index:999;align-items:center;gap:12px;">
-    <p style="color:#fff;font-size:14px;">Cliquez pour &eacute;couter la radio</p>
+    <p style="color:#fff;font-size:14px;">Cliquez pour &eacute;couter</p>
     <button onclick="kontinuePlay()" style="background:#cc0000;color:#fff;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;">&#9654; &Eacute;couter</button>
     <button onclick="fermerNotif()" style="background:transparent;color:#aaa;border:none;cursor:pointer;">&#10005;</button>
   </div>
 
-  <!-- BAR STATUS USER -->
-  <div id="user-bar" style="display:none;position:fixed;top:64px;right:0;background:#1e1e1e;border-left:2px solid #cc0000;border-bottom:2px solid #cc0000;padding:8px 16px;z-index:99;border-radius:0 0 0 8px;align-items:center;gap:8px;">
-    <span id="bar-user-name" style="color:#FFD600;font-family:'Oswald',sans-serif;font-size:14px;"></span>
-    <a href="dashboard.html" style="color:#fff;font-size:12px;margin-left:12px;">Dashboard</a>
-    <button onclick="logout()" style="background:transparent;color:#aaa;border:none;font-size:12px;margin-left:8px;cursor:pointer;">D&eacute;connexion</button>
-  </div>
-
   <script src="script.js"></script>
+  <script>
+  const API = "https://radio-megastar-backend-production.up.railway.app";
+
+  // ===== CHAJE EMISYON =====
+  function chargerEmissions() {
+    fetch(API + '/api/admin/emissions')
+    .then(r => r.json())
+    .then(data => {
+      const emissions = (data.success && data.emissions) ? data.emissions : getEmissionsDefaut();
+      afficherCarousel(emissions);
+    })
+    .catch(() => afficherCarousel(getEmissionsDefaut()));
+  }
+
+  function getEmissionsDefaut() {
+    return [
+      { nom: 'R\u00e9veil Matinal', emoji: '\u{1F305}', heureDebut: '05:00', heureFin: '08:00', couleur: 'linear-gradient(135deg,#cc0000,#ff6666)' },
+      { nom: 'Actualit\u00e9s', emoji: '\u{1F4F0}', heureDebut: '08:00', heureFin: '10:00', couleur: 'linear-gradient(135deg,#1a5a1a,#4CAF50)' },
+      { nom: 'Vibes Ha\u00eftiennes', emoji: '\u{1F3B5}', heureDebut: '10:00', heureFin: '14:00', couleur: 'linear-gradient(135deg,#996600,#FFD600)' },
+      { nom: 'D\u00e9bat Citoyen', emoji: '\u{1F3A4}', heureDebut: '14:00', heureFin: '17:00', couleur: 'linear-gradient(135deg,#cc0000,#cc6600)' },
+      { nom: 'Heure Spirituelle', emoji: '\u{1F64F}', heureDebut: '17:00', heureFin: '19:00', couleur: 'linear-gradient(135deg,#4a0080,#9C27B0)' },
+      { nom: 'Soir\u00e9e Mega Star', emoji: '\u{1F319}', heureDebut: '19:00', heureFin: '22:00', couleur: 'linear-gradient(135deg,#0a0a3a,#1a1a6a)' }
+    ];
+  }
+
+  function afficherCarousel(emissions) {
+    const track = document.getElementById('carousel-track');
+    const dots = document.getElementById('carousel-dots');
+    if (!track) return;
+    track.innerHTML = [...emissions, ...emissions].map(e =>
+      `<a href="programmes.html" class="emission-card">
+        <div class="emission-circle" style="background:${e.couleur||'linear-gradient(135deg,#cc0000,#ff6666)'}">${e.emoji||'&#127897;'}</div>
+        <p class="emission-name">${e.nom}</p>
+        <p class="emission-time">${(e.heureDebut||'').substring(0,5)} &mdash; ${(e.heureFin||'').substring(0,5)}</p>
+      </a>`).join('');
+    if (dots) dots.innerHTML = emissions.map((_,i) =>
+      `<span class="carousel-dot${i===0?' active':''}" onclick="allerSlide(${i})"></span>`).join('');
+    if (typeof initCarousel === 'function') initCarousel();
+  }
+
+  // ===== CHAJE NEWS =====
+  function chargerNews() {
+    fetch(API + '/api/admin/news')
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success || !data.news || !data.news.length) return;
+      const grid = document.getElementById('news-grid');
+      const sec = document.getElementById('news-section');
+      grid.innerHTML = data.news.map(n =>
+        `<div class="news-card">
+          <span class="news-card-badge ${n.type}">${n.type==='breaking'?'&#128308; BREAKING':n.type==='slide'?'&#128204; SLIDE':'&#128240; ACTUALIT\u00c9'}</span>
+          ${n.imageUrl?`<img src="${n.imageUrl}" style="width:100%;border-radius:8px;margin-bottom:10px;max-height:140px;object-fit:cover;" onerror="this.style.display='none'"/>`:''}
+          <h3>${n.titre}</h3>
+          <p>${n.contenu||''}</p>
+          <p class="news-card-date">${new Date(n.createdAt).toLocaleDateString('fr-FR')}</p>
+        </div>`).join('');
+      sec.style.display = 'block';
+    }).catch(() => {});
+  }
+
+  // ===== CHAJE PIBLISITE =====
+  function chargerPublicites() {
+    fetch(API + '/api/admin/publicites')
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success || !data.publicites) return;
+      data.publicites.forEach(pub => {
+        const el = document.getElementById('pub-' + pub.position + '-content');
+        if (el && pub.texte) {
+          el.textContent = pub.texte;
+          if (pub.lien) el.onclick = () => window.open(pub.lien, '_blank');
+          else el.onclick = clicPub;
+        }
+      });
+    }).catch(() => {});
+  }
+
+  // ===== CLIC PUB =====
+  function clicPub() {
+    window.location.href = 'mailto:konocompanymultiservices@gmail.com?subject=Publicit%C3%A9%20Radio%20T%C3%A9l%C3%A9%20Mega%20Star&body=Bonjour%2C%20je%20souhaite%20annoncer%20sur%20votre%20radio.';
+  }
+
+  // ===== MENU USER =====
+  function updateMenuUser() {
+    const token = localStorage.getItem('token');
+    const uStr = localStorage.getItem('user');
+    const authSec = document.getElementById('menu-auth-section');
+    if (token && uStr) {
+      const user = JSON.parse(uStr);
+      const ini = (user.nom || 'U').charAt(0).toUpperCase();
+      authSec.innerHTML = `
+        <div class="menu-user-info">
+          <div class="menu-user-avatar">${ini}</div>
+          <p class="menu-user-name">${user.nom || 'Mon compte'}</p>
+          <p class="menu-user-email">${user.email || ''}</p>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;width:100%;">
+            <button class="menu-auth-btn menu-signup" onclick="allerDashboard()">&#128202; Mon Dashboard</button>
+            <button class="menu-auth-btn menu-login" onclick="logout()">D&eacute;connexion</button>
+          </div>
+        </div>`;
+      // Kache signup section
+      const sec = document.getElementById('signup-section');
+      if (sec) sec.style.display = 'none';
+    }
+  }
+
+  function allerDashboard() {
+    const uStr = localStorage.getItem('user');
+    if (!uStr) return;
+    const user = JSON.parse(uStr);
+    window.location.href = user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+  }
+
+  // ===== MOT DE PASSE OUBLIÉ =====
+  function ouvrirModalOublie() {
+    fermerModalLogin();
+    setTimeout(() => {
+      const m = document.getElementById('modal-oublie-overlay');
+      if (m) { m.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    }, 200);
+  }
+
+  function fermerModalOublie() {
+    const m = document.getElementById('modal-oublie-overlay');
+    if (m) { m.classList.remove('open'); document.body.style.overflow = ''; }
+  }
+
+  function soumettreOublie(e) {
+    e.preventDefault();
+    const email = e.target.querySelector('input[name="email"]').value.trim();
+    const msg = document.getElementById('oublie-msg');
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.textContent = 'Envoi...'; btn.disabled = true;
+    fetch(API + '/api/auth/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    })
+    .then(r => r.json())
+    .then(data => {
+      btn.textContent = '\u2709\ufe0f Envoyer le lien'; btn.disabled = false;
+      msg.style.display = 'block';
+      if (data.success) {
+        msg.style.cssText = 'display:block;padding:10px;border-radius:8px;background:rgba(76,175,80,.15);border:1px solid #4CAF50;color:#4CAF50;font-size:13px;margin-bottom:8px;';
+        msg.textContent = '\u2713 Email envoy\u00e9! V\u00e9rifiez votre bo\u00eete mail.';
+      } else {
+        msg.style.cssText = 'display:block;padding:10px;border-radius:8px;background:rgba(204,0,0,.15);border:1px solid #cc0000;color:#ff6666;font-size:13px;margin-bottom:8px;';
+        msg.textContent = data.message || 'Email introuvable';
+      }
+    })
+    .catch(() => {
+      btn.textContent = '\u2709\ufe0f Envoyer le lien'; btn.disabled = false;
+      msg.style.cssText = 'display:block;padding:10px;border-radius:8px;background:rgba(204,0,0,.15);border:1px solid #cc0000;color:#ff6666;font-size:13px;margin-bottom:8px;';
+      msg.textContent = 'Erreur serveur \u2014 r\u00e9essayez';
+    });
+  }
+
+  // ===== INIT =====
+  window.addEventListener('load', function() {
+    chargerEmissions();
+    chargerNews();
+    chargerPublicites();
+    updateMenuUser();
+  });
+  </script>
 </body>
 </html>
