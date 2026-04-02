@@ -139,6 +139,7 @@
         <div class="hero-badge"><span class="live-dot"></span> EN DIRECT</div>
         <h2 class="hero-title">Radio T&eacute;l&eacute; <span>Mega Star</span></h2>
         <p class="hero-sub">La voix qui unit, informe et inspire Ha&iuml;ti &#127462;&#127481;</p>
+        <p id="online-count" style="color:#fff;margin-top:10px;font-size:14px;"></p>
       </div>
     </div>
   </section>
@@ -251,9 +252,20 @@
   </div>
 
   <script src="script.js"></script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script>
   const API = "https://radio-megastar-backend-production.up.railway.app";
 
+  const socket = io("https://radio-megastar-backend-production.up.railway.app");
+  socket.on("onlineUsers", (count) => {
+  console.log("👥 Moun online:", count);
+
+  // si ou vle afiche li sou site la
+  let el = document.getElementById("online-count");
+  if (el) {
+    el.textContent = count + " moun ap gade kounya";
+  }
+});
   // ===== CHAJE EMISYON =====
   function chargerEmissions() {
     fetch(API + '/api/admin/emissions')
