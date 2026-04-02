@@ -102,6 +102,14 @@ router.post('/news', async (req, res) => {
     const { titre, contenu, type, imageUrl } = req.body;
     if (!titre) return res.status(400).json({ success: false, message: 'Titre requis' });
     const news = await News.create({ titre, contenu, type: type || 'news', imageUrl: imageUrl || '' });
+    
+    // 🔌 AJOUTE SA A IKI - PALE A CLIENTS:
+    req.io.emit('news:created', {
+      success: true,
+      news: news,
+      message: '📰 Nouvo nouvèl!'
+    });
+    
     res.json({ success: true, news });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Erè sèvè' });
@@ -111,6 +119,14 @@ router.post('/news', async (req, res) => {
 router.put('/news/:id', async (req, res) => {
   try {
     const news = await News.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    
+    // 🔌 AJOUTE SA:
+    req.io.emit('news:updated', {
+      success: true,
+      news: news,
+      message: '✏️ Nouvèl mete ajou'
+    });
+    
     res.json({ success: true, news });
   } catch (err) {
     res.status(500).json({ success: false });
@@ -120,6 +136,14 @@ router.put('/news/:id', async (req, res) => {
 router.delete('/news/:id', async (req, res) => {
   try {
     await News.findByIdAndDelete(req.params.id);
+    
+    // 🔌 AJOUTE SA:
+    req.io.emit('news:deleted', {
+      success: true,
+      newsId: req.params.id,
+      message: '🗑️ Nouvèl efase'
+    });
+    
     res.json({ success: true, message: 'Atik efase' });
   } catch (err) {
     res.status(500).json({ success: false });
@@ -155,6 +179,14 @@ router.post('/emissions', async (req, res) => {
     const { nom, emoji, heureDebut, heureFin, description, couleur } = req.body;
     if (!nom || !heureDebut || !heureFin) return res.status(400).json({ success: false, message: 'Champ manke' });
     const emission = await Emission.create({ nom, emoji: emoji || '🎙️', heureDebut, heureFin, description: description || '', couleur: couleur || 'linear-gradient(135deg,#cc0000,#ff6666)' });
+    
+    // 🔌 AJOUTE:
+    req.io.emit('emission:created', {
+      success: true,
+      emission: emission,
+      message: '📻 Nouvo emisyon!'
+    });
+    
     res.json({ success: true, emission });
   } catch (err) {
     res.status(500).json({ success: false });
@@ -164,6 +196,14 @@ router.post('/emissions', async (req, res) => {
 router.put('/emissions/:id', async (req, res) => {
   try {
     const emission = await Emission.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    
+    // 🔌 AJOUTE:
+    req.io.emit('emission:updated', {
+      success: true,
+      emission: emission,
+      message: '✏️ Emisyon mete ajou'
+    });
+    
     res.json({ success: true, emission });
   } catch (err) {
     res.status(500).json({ success: false });
@@ -173,12 +213,19 @@ router.put('/emissions/:id', async (req, res) => {
 router.delete('/emissions/:id', async (req, res) => {
   try {
     await Emission.findByIdAndDelete(req.params.id);
+    
+    // 🔌 AJOUTE:
+    req.io.emit('emission:deleted', {
+      success: true,
+      emissionId: req.params.id,
+      message: '🗑️ Emisyon efase'
+    });
+    
     res.json({ success: true, message: 'Emisyon efase' });
   } catch (err) {
     res.status(500).json({ success: false });
   }
 });
-
 // ===== PIBLISITE =====
 router.get('/publicites', async (req, res) => {
   try {

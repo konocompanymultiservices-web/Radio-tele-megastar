@@ -25,17 +25,19 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-const io = new Server(server, {
-  cors: {
-    origin: [
-      'https://radiotelemegastar.netlify.app',
-      'https://radio-tele-megastar.pages.dev',
-      'http://localhost:3000',
-      'http://127.0.0.1:5500'
-    ],
-    methods: ["GET", "POST"]
-  }
+// ← AJOUTE SA A IKI:
+app.use((req, res, next) => {
+  req.io = io;  // Bay io a routes!
+  next();
 });
+
+const io = new Server(server, {
+  // ...
+});
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
 let onlineUsers = 0;
 
 io.on('connection', (socket) => {

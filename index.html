@@ -7,6 +7,9 @@
   <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
+
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
   <style>
     .menu-user-info{display:flex;flex-direction:column;align-items:center;gap:4px}
     .menu-user-avatar{width:56px;height:56px;border-radius:50%;background:var(--rouge);color:var(--blan);font-family:'Oswald',sans-serif;font-size:22px;display:flex;align-items:center;justify-content:center;border:2px solid var(--jaune);margin-bottom:4px}
@@ -257,6 +260,12 @@
   const API = "https://radio-megastar-backend-production.up.railway.app";
 
   const socket = io("https://radio-megastar-backend-production.up.railway.app");
+
+  socket.on('onlineCount', (count) => {
+  document.getElementById('online-count').textContent = count;
+  document.getElementById('overview-online').textContent = count;
+});
+
   socket.on("onlineUsers", (count) => {
   console.log("👥 Moun online:", count);
 
@@ -428,5 +437,94 @@
     updateMenuUser();
   });
   </script>
+  <script src="socket-client.js"></script>
+  <!-- 🔌 SOCKET.IO CLIENT -->
+<script>
+  // Konekte a server
+  const socket = io('http://localhost:5000');
+
+  // =========================
+  // 📰 NEWS UPDATES
+  // =========================
+
+  // Lè admin pòste nouvèl
+  socket.on('news:created', (data) => {
+    console.log('📰 Nouvo nouvèl:', data.news.titre);
+    
+    // Afiche notification
+    alert('📰 ' + data.message);
+    
+    // Recharge news section (oswa ajoute dirèk)
+    location.reload(); // Pou kounye a - pita ou pwal fè pi prè
+  });
+
+  // Lè admin mete ajou nouvèl
+  socket.on('news:updated', (data) => {
+    console.log('✏️ Nouvèl mete ajou:', data.news.titre);
+    alert('✏️ ' + data.message);
+    location.reload();
+  });
+
+  // Lè admin efase nouvèl
+  socket.on('news:deleted', (data) => {
+    console.log('🗑️ Nouvèl efase');
+    alert('🗑️ ' + data.message);
+    location.reload();
+  });
+
+  // =========================
+  // 📻 EMISSION UPDATES
+  // =========================
+
+  // Lè admin pòste emisyon
+  socket.on('emission:created', (data) => {
+    console.log('📻 Nouvo emisyon:', data.emission.nom);
+    alert('📻 ' + data.message);
+    location.reload();
+  });
+
+  // Lè admin mete ajou emisyon
+  socket.on('emission:updated', (data) => {
+    console.log('✏️ Emisyon mete ajou:', data.emission.nom);
+    alert('✏️ ' + data.message);
+    location.reload();
+  });
+
+  // Lè admin efase emisyon
+  socket.on('emission:deleted', (data) => {
+    console.log('🗑️ Emisyon efase');
+    alert('🗑️ ' + data.message);
+    location.reload();
+  });
+
+  // =========================
+  // 📢 PUBLICITE UPDATES
+  // =========================
+
+  socket.on('publicite:created', (data) => {
+    console.log('📢 Nouvo piblisite');
+    alert('📢 ' + data.message);
+    location.reload();
+  });
+
+  socket.on('publicite:deleted', (data) => {
+    console.log('🗑️ Piblisite efase');
+    alert('🗑️ ' + data.message);
+    location.reload();
+  });
+
+  // =========================
+  // CONNECTION STATUS
+  // =========================
+
+  socket.on('connect', () => {
+    console.log('✅ Konekte a server!');
+  });
+
+  socket.on('disconnect', () => {
+    console.log('❌ Dekonekte soti server');
+  });
+</script>
+</body>
 </body>
 </html>

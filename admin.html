@@ -419,6 +419,11 @@
   <script>
     const API_URL = "https://radio-megastar-backend-production.up.railway.app";
     let adminToken = null, refreshTimer = null;
+    const socket = io("https://radio-megastar-backend-production.up.railway.app");
+    socket.on('onlineCount', (count) => {
+  document.getElementById('online-count').textContent = count;
+  document.getElementById('overview-online').textContent = count;
+});
 
     // ===== CREDENTIALS LOKAUX — pa depann backend pou login =====
     const ADMINS = [
@@ -462,7 +467,6 @@
       loadMembres();
       loadAbonnements();
       simulateOnline();
-      refreshTimer = setInterval(simulateOnline, 30000);
     }
 
     function logoutAdmin() {
@@ -488,11 +492,7 @@
       if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
     }
 
-    function simulateOnline() {
-      const n = Math.floor(Math.random() * 40) + 5;
-      setText('online-count', n);
-      setText('overview-online', n);
-    }
+    
 
     function loadMembres() {
       fetch(API_URL + '/api/admin/membres', { headers: { 'Authorization': 'Bearer ' + adminToken } })
