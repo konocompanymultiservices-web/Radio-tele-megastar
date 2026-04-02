@@ -11,6 +11,7 @@ window.addEventListener('load', function() {
   audio = document.getElementById('audio-player');
   checkUser();
   initPlay();
+  initPubSlider();
 });
 
 // ===== BOUTON PLAY — KORIJE =====
