@@ -435,8 +435,8 @@ const socket = io("http://localhost:5000");
       const n = sessionStorage.getItem('adminName');
       if (t) { adminToken = t; showAdmin(n || 'Administrateur'); }
     });
-
-    function loginAdmin() {
+    
+function loginAdmin() {
   const email = (document.getElementById('admin-email').value || '').trim().toLowerCase();
   const pass  = document.getElementById('admin-password').value || '';
   const err   = document.getElementById('login-err');
