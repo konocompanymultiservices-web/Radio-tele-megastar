@@ -417,9 +417,8 @@
   </div>
 
   <script>
-    const API_URL = "https://radio-megastar-backend-production.up.railway.app";
-    let adminToken = null, refreshTimer = null;
-    const socket = io("https://radio-megastar-backend-production.up.railway.app");
+const API_URL = "http://localhost:5000";
+const socket = io("http://localhost:5000");
     socket.on('onlineCount', (count) => {
   document.getElementById('online-count').textContent = count;
   document.getElementById('overview-online').textContent = count;
