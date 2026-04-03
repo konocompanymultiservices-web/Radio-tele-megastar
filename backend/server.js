@@ -16,8 +16,10 @@ app.use(cors({
     'https://radio-tele-megastar.pages.dev',
     'http://localhost:3000',
     'http://localhost:5000',
+    'http://localhost:8080',
     'http://127.0.0.1:5500',
-    'http://127.0.0.1:3000'
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:8080'
   ],
   credentials: true
 }));
@@ -25,18 +27,26 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// ← AJOUTE SA A IKI:
+// ===== SOCKET.IO SETUP =====
+const io = new Server(server, {
+  cors: {
+    origin: [
+      'https://radiotelemegastar.netlify.app',
+      'https://radio-tele-megastar.pages.dev',
+      'http://localhost:3000',
+      'http://localhost:8080',
+      'http://127.0.0.1:5500',
+      'http://127.0.0.1:8080'
+    ],
+    methods: ["GET", "POST"]
+  }
+});
+
+// ===== MAKE IO AVAILABLE TO ROUTES =====
 app.use((req, res, next) => {
-  req.io = io;  // Bay io a routes!
+  req.io = io;  // ← KOUNYE A io defini!
   next();
 });
-
-const io = new Server(server, {
-  // ...
-});
-
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
 
 let onlineUsers = 0;
 
@@ -61,7 +71,7 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // ROUT YO
 const authRoutes  = require('./routes/auth');
-const userRoutes  = require('./routes/user');
+const userRoutes  = require('./routes//user');
 const adminRoutes = require('./routes/admin');
 
 app.use('/api/auth',  authRoutes);
@@ -83,4 +93,7 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`🚀 Sèvè ap kouri sou pò ${PORT}`);
   console.log(`📻 Radio Télé Mega Star Backend prè!`);
+  console.log(`🔌 Socket.io ready pou real-time updates!`);
 });
+
+module.exports = { app, server, io };

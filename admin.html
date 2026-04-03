@@ -438,11 +438,38 @@
     });
 
     function loginAdmin() {
-      const email = (document.getElementById('admin-email').value || '').trim().toLowerCase();
-      const pass  = document.getElementById('admin-password').value || '';
-      const err   = document.getElementById('login-err');
-      const btn   = document.getElementById('login-btn');
-      err.style.display = 'none';
+  const email = (document.getElementById('admin-email').value || '').trim().toLowerCase();
+  const pass  = document.getElementById('admin-password').value || '';
+  const err   = document.getElementById('login-err');
+  const btn   = document.getElementById('login-btn');
+  err.style.display = 'none';
+  btn.disabled = true;
+
+  // Envoye a backend pou verifye
+  fetch('http://localhost:5000/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, motDePasse: pass })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success && data.user && data.user.role === 'admin') {
+      sessionStorage.setItem('adminToken', data.token);
+      sessionStorage.setItem('adminName', data.user.nom);
+      showAdmin(data.user.nom);
+    } else {
+      err.textContent = 'Admin credentials incorrect oswa pa admin account';
+      err.style.display = 'block';
+      document.getElementById('admin-password').focus();
+    }
+    btn.disabled = false;
+  })
+  .catch(e => {
+    err.textContent = 'Erreur serveur - verifye connection backend';
+    err.style.display = 'block';
+    btn.disabled = false;
+  });
+}
 
       // Verifye credentials lokaux an premye — rapid, san network
       const admin = ADMINS.find(a => a.email === email && a.pass === pass);
@@ -458,7 +485,6 @@
       err.textContent = 'Email ou mot de passe incorrect';
       err.style.display = 'block';
       document.getElementById('admin-password').focus();
-    }
 
     function showAdmin(name) {
       document.getElementById('login-screen').style.display = 'none';

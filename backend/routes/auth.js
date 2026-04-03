@@ -37,13 +37,13 @@ router.post("/signup", async (req, res) => {
       return res.status(400).json({ success: false, message: 'Email deja itilize' });
     }
 
-    const nouvelUser = new User({
-      nom,
-      email,
-      telephone: telephone || '',
-      motDePasse,
-      role: 'user'   // 🔥 FIX ENPÒTAN
-    });
+  const nouvelUser = new User({
+  nom,
+  email,
+  telephone: telephone || '',
+  motDePasse,
+  role: email === 'admin@megastar.com' ? 'admin' : 'user'  // ← Admin check!
+});
 
     await nouvelUser.save();
 
