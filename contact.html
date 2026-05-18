@@ -31,9 +31,9 @@
   </header>
 
   <!-- MENU OVERLAY -->
-  <div class="menu-overlay" id="menu-overlay" onclick="fèmenMenuOverlay(event)">
+  <div class="menu-overlay" id="menu-overlay" onclick="fermerMenuOverlay(event)">
     <div class="menu-panel">
-      <button class="menu-close" onclick="fèmenMenu()">✕</button>
+      <button class="menu-close" onclick="fermerMenu()">✕</button>
       <div class="menu-logo">
         <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo"/>
         <p>Radio Télé Mega Star</p>
@@ -58,15 +58,15 @@
   </div>
 
   <!-- MODAL -->
-  <div class="modal-overlay" id="modal-overlay" onclick="fèmenModalOverlay(event)">
+  <div class="modal-overlay" id="modal-overlay" onclick="fermerModalOverlay(event)">
     <div class="modal">
-      <button class="modal-close" onclick="fèmenModal()">✕</button>
+      <button class="modal-close" onclick="fermerModal()">✕</button>
       <div class="modal-header">
         <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="modal-logo"/>
         <h2 class="modal-title">Créer un compte</h2>
         <p class="modal-sub">Rejoignez la famille Radio Télé Mega Star</p>
       </div>
-      <form class="modal-form" onsubmit="soumèt(event)">
+      <form class="modal-form" onsubmit="soumettreFormulaire(event)">
         <div class="modal-field"><label>Nom complet</label><input type="text" placeholder="Ex: Jean Pierre" required/></div>
         <div class="modal-field"><label>Adresse email</label><input type="email" placeholder="Ex: jean@email.com" required/></div>
         <div class="modal-field"><label>Numéro de téléphone</label><input type="tel" placeholder="Ex: +509 3X XX XXXX"/></div>
@@ -112,7 +112,7 @@
             <div class="contact-page-icon">🌐</div>
             <div>
               <p class="contact-page-item-title">Site web</p>
-              <p>radiotelemegastar.netlify.app</p>
+              <p>radio-tele-megastar.pages.dev</p>
             </div>
           </div>
           <div class="contact-page-item">
@@ -192,5 +192,17 @@
 
   <audio id="audio-player" src="https://stream.zeno.fm/nlhqgiwj4obtv" preload="none"></audio>
   <script src="script.js"></script>
+  <script>
+    function soumètContact(e) {
+      e.preventDefault();
+      var btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true; btn.textContent = 'Envoi en cours...';
+      setTimeout(function() {
+        btn.disabled = false; btn.textContent = 'Envoyer le message →';
+        e.target.reset();
+        afficherToast('Message envoyé! Nous vous répondrons bientôt.', 'succes', 4000);
+      }, 1000);
+    }
+  </script>
 </body>
 </html>

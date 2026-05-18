@@ -1115,3 +1115,313 @@ button:focus-visible, a:focus-visible {
   font-size: 14px;
 }
 .skip-link:focus { top: 0; }
+
+/* ============================================================
+   PAJES ENTERYÈ — Programmes · À propos · Contact
+   ============================================================ */
+
+/* PAGE HERO */
+.page-hero {
+  background: var(--nwa-2);
+  border-bottom: 1px solid var(--nwa-4);
+  padding: 56px 24px 48px;
+  text-align: center;
+}
+.page-hero-label {
+  font-size: 11px;
+  color: var(--jaune);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.page-hero-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(28px, 5vw, 48px);
+  color: var(--blan);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.page-hero-sub {
+  font-size: 15px;
+  color: var(--text-secondary);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ===== PROGRAMMES ===== */
+.prog-table-section {
+  background: var(--nwa);
+  padding: 56px 24px;
+  min-height: 60vh;
+}
+.prog-table-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  overflow-x: auto;
+}
+.prog-table-inner table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 500px;
+}
+.prog-table-inner th {
+  background: var(--nwa-2);
+  padding: 14px 20px;
+  text-align: left;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  color: var(--jaune);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--rouge);
+}
+.prog-table-inner td {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--nwa-4);
+  vertical-align: top;
+}
+.prog-table-inner tr:hover td {
+  background: var(--nwa-3);
+  color: var(--blan);
+}
+.prog-table-inner td:first-child {
+  font-family: 'Oswald', sans-serif;
+  color: var(--rouge);
+  white-space: nowrap;
+  font-size: 13px;
+}
+.prog-table-inner td:nth-child(2) {
+  font-family: 'Oswald', sans-serif;
+  color: var(--blan);
+  font-size: 15px;
+}
+
+/* ===== À PROPOS ===== */
+.about-page-section {
+  background: var(--nwa);
+  padding: 56px 24px;
+}
+.about-page-inner {
+  max-width: 960px;
+  margin: 0 auto;
+}
+.about-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  margin-bottom: 64px;
+}
+.about-page-img {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  aspect-ratio: 16/9;
+  border: 1px solid var(--nwa-4);
+}
+.about-block-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 26px;
+  color: var(--blan);
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--rouge);
+}
+.about-block-text p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin-bottom: 12px;
+}
+.about-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 64px;
+}
+.about-stat-box {
+  background: var(--nwa-2);
+  border: 1px solid var(--nwa-4);
+  border-top: 2px solid var(--rouge);
+  border-radius: 12px;
+  padding: 24px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.about-stat-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 32px;
+  color: var(--jaune);
+}
+.about-stat-lab {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+.about-values-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 26px;
+  color: var(--blan);
+  margin-bottom: 24px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--rouge);
+}
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+.value-card {
+  background: var(--nwa-2);
+  border: 1px solid var(--nwa-4);
+  border-radius: 12px;
+  padding: 28px 20px;
+  text-align: center;
+  transition: var(--trans);
+}
+.value-card:hover {
+  border-color: var(--jaune);
+  transform: translateY(-4px);
+}
+.value-icon { font-size: 32px; margin-bottom: 12px; }
+.value-card h4 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  color: var(--blan);
+  margin-bottom: 8px;
+}
+.value-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ===== CONTACT ===== */
+.contact-page-section {
+  background: var(--nwa);
+  padding: 56px 24px;
+}
+.contact-page-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+.contact-page-title, .contact-form-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  color: var(--blan);
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--rouge);
+}
+.contact-page-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.contact-page-items { display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px; }
+.contact-page-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--nwa-2);
+  border: 1px solid var(--nwa-4);
+  border-radius: 10px;
+}
+.contact-page-icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
+.contact-page-item-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  color: var(--jaune);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.contact-page-item p { font-size: 13px; color: var(--text-secondary); }
+.contact-ad-box {
+  background: var(--nwa-2);
+  border: 1px solid var(--nwa-4);
+  border-left: 3px solid var(--jaune);
+  border-radius: 10px;
+  padding: 20px;
+}
+.contact-ad-box h4 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  color: var(--blan);
+  margin-bottom: 8px;
+}
+.contact-ad-box p { font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.6; }
+.contact-ad-btn {
+  display: inline-block;
+  background: var(--jaune);
+  color: var(--nwa);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: var(--trans);
+}
+.contact-ad-btn:hover { background: var(--jaune-2); }
+.contact-page-form-box {
+  background: var(--nwa-2);
+  border: 1px solid var(--nwa-4);
+  border-radius: 14px;
+  padding: 32px;
+}
+.contact-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.contact-form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.contact-form-field label {
+  font-size: 11px;
+  color: var(--jaune);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.contact-form-field input,
+.contact-form-field textarea {
+  background: var(--nwa);
+  border: 1px solid var(--nwa-4);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: var(--blan);
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  width: 100%;
+  transition: border-color .2s;
+}
+.contact-form-field input:focus,
+.contact-form-field textarea:focus { outline: none; border-color: var(--rouge); }
+.contact-form-field textarea { resize: vertical; min-height: 120px; }
+.contact-submit-btn {
+  width: 100%;
+  background: var(--rouge);
+  color: var(--blan);
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.contact-submit-btn:hover { background: #aa0000; }
+
+/* Responsive — paj enteryè */
+@media (max-width: 768px) {
+  .about-block { grid-template-columns: 1fr; gap: 24px; }
+  .contact-page-inner { grid-template-columns: 1fr; gap: 32px; }
+  .contact-form-row { grid-template-columns: 1fr; }
+  .contact-page-form-box { padding: 20px; }
+  .page-hero { padding: 40px 16px 32px; }
+  .prog-table-section, .about-page-section, .contact-page-section { padding: 40px 16px; }
+}
