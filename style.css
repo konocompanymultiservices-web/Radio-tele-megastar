@@ -543,6 +543,7 @@ header {
   display: flex;
   gap: 14px;
   transition: transform .45s cubic-bezier(.25,.46,.45,.94);
+  will-change: transform;
 }
 
 .emission-card {

@@ -17,6 +17,11 @@ app.use((req, res, next) => {
   res.setHeader('X-XSS-Protection', '0'); // Disabled — modern browsers use CSP instead
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'geolocation=(), camera=(), microphone=()');
+  // Content Security Policy — API-only backend: no scripts/styles/frames served from here
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'none'; frame-ancestors 'none'"
+  );
   // Remove Express fingerprinting
   res.removeHeader('X-Powered-By');
   next();
