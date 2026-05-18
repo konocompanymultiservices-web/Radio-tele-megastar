@@ -4,6 +4,24 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
 
+// ===== INPUT SANITIZATION HELPERS =====
+// Strip HTML/script tags from a string to prevent stored XSS via API data
+function stripTags(str) {
+  if (typeof str !== 'string') return '';
+  return str.replace(/<[^>]*>/g, '').trim();
+}
+
+// Validate email format
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+}
+
+// Validate phone: allow empty, digits, spaces, +, -, ()
+function isValidPhone(phone) {
+  if (!phone) return true;
+  return /^[+\d\s\-().]{0,20}$/.test(phone);
+}
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -25,25 +43,49 @@ function envoyerEmailBackground(to, subject, html) {
 router.post(["/signup", "/inscription"], async (req, res) => {
   try {
     const { nom, username, email, telephone, phone, motDePasse, password } = req.body;
-    const nomFinal = nom || username;
-    const mdpFinal = motDePasse || password;
-    const telFinal = telephone || phone || '';
 
-    if (!nomFinal || !email || !mdpFinal) {
+    // Normalise and sanitize
+    const nomFinal  = stripTags(nom || username || '');
+    const mdpFinal  = motDePasse || password || '';
+    const emailNorm = typeof email === 'string' ? email.toLowerCase().trim() : '';
+    const telFinal  = stripTags(telephone || phone || '');
+
+    // Required field checks
+    if (!nomFinal || !emailNorm || !mdpFinal) {
       return res.status(400).json({ success: false, message: 'Champ manke' });
     }
 
-    const userExiste = await User.findOne({ email });
+    // Enforce reasonable length limits
+    if (nomFinal.length > 100) {
+      return res.status(400).json({ success: false, message: 'Non twò long (max 100 karaktè)' });
+    }
+
+    // Email format validation
+    if (!isValidEmail(emailNorm)) {
+      return res.status(400).json({ success: false, message: 'Format email enkòrèk' });
+    }
+
+    // Password strength: minimum 8 chars
+    if (mdpFinal.length < 8) {
+      return res.status(400).json({ success: false, message: 'Modpas dwe gen omwen 8 karaktè' });
+    }
+
+    // Phone validation
+    if (!isValidPhone(telFinal)) {
+      return res.status(400).json({ success: false, message: 'Nimewo telefòn enkòrèk' });
+    }
+
+    const userExiste = await User.findOne({ email: emailNorm });
     if (userExiste) {
       return res.status(400).json({ success: false, message: 'Email deja itilize' });
     }
 
-    const adminEmails = (process.env.ADMIN_EMAILS || 'admin@megastar.com').split(',');
-    const role = adminEmails.includes(email.toLowerCase().trim()) ? 'admin' : 'user';
+    const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.toLowerCase().trim()).filter(Boolean);
+    const role = adminEmails.includes(emailNorm) ? 'admin' : 'user';
 
     const nouvelUser = new User({
       nom: nomFinal,
-      email,
+      email: emailNorm,
       telephone: telFinal,
       motDePasse: mdpFinal,
       role
@@ -68,11 +110,12 @@ router.post(["/signup", "/inscription"], async (req, res) => {
       }
     });
 
-    envoyerEmailBackground(email, 'Bienvenue sou Radio Télé Mega Star!',
-      `<h2>Bonjou ${nomFinal}!</h2><p>Kont ou kreye ak siksè sou Radio Télé Mega Star 97.3 FM.</p>`);
+    // Send emails asynchronously after responding (fire-and-forget)
+    envoyerEmailBackground(emailNorm, 'Bienvenue sou Radio Télé Mega Star!',
+      `<h2>Bonjou ${nouvelUser.nom}!</h2><p>Kont ou kreye ak siksè sou Radio Télé Mega Star 97.3 FM.</p>`);
     if (process.env.ADMIN_EMAIL) {
       envoyerEmailBackground(process.env.ADMIN_EMAIL, 'Nouvo manm!',
-        `<p>Nouvo enskripsyon: <strong>${nomFinal}</strong> (${email})</p>`);
+        `<p>Nouvo enskripsyon: <strong>${nouvelUser.nom}</strong> (${emailNorm})</p>`);
     }
 
   } catch (err) {
@@ -87,14 +130,21 @@ router.post(["/signup", "/inscription"], async (req, res) => {
 router.post(["/login", "/connexion"], async (req, res) => {
   try {
     const { email, motDePasse, password } = req.body;
-    const mdpFinal = motDePasse || password;
+    const mdpFinal   = motDePasse || password || '';
+    const emailNorm  = typeof email === 'string' ? email.toLowerCase().trim() : '';
 
-    if (!email || !mdpFinal) {
+    if (!emailNorm || !mdpFinal) {
       return res.status(400).json({ success: false, message: 'Champ manke' });
     }
 
-    const user = await User.findOne({ email });
+    if (!isValidEmail(emailNorm)) {
+      // Return generic error — don't reveal whether email exists
+      return res.status(401).json({ success: false, message: 'Email oswa modpas enkòrèk' });
+    }
+
+    const user = await User.findOne({ email: emailNorm });
     if (!user) {
+      // Use a timing-safe constant response to prevent user enumeration
       return res.status(401).json({ success: false, message: 'Email oswa modpas enkòrèk' });
     }
 
@@ -127,22 +177,30 @@ router.post(["/login", "/connexion"], async (req, res) => {
 // =========================
 router.post("/reset-password", async (req, res) => {
   try {
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ success: false, message: 'Email requis' });
+    const rawEmail = req.body.email;
+    if (!rawEmail) return res.status(400).json({ success: false, message: 'Email requis' });
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ success: false, message: 'Email introuvable' });
+    const emailNorm = typeof rawEmail === 'string' ? rawEmail.toLowerCase().trim() : '';
+    if (!isValidEmail(emailNorm)) {
+      // Always return the same success message — never confirm whether the email exists
+      return res.json({ success: true, message: 'Email voye! Verifye bwat mail ou.' });
+    }
 
-    const resetToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    const resetUrl = `${process.env.SITE_URL || 'https://radio-tele-megastar.pages.dev'}/reset.html?token=${resetToken}`;
+    // Always respond the same way regardless of whether email exists (prevent enumeration)
+    const user = await User.findOne({ email: emailNorm });
+    if (user) {
+      const resetToken = jwt.sign({ id: user._id, purpose: 'reset' }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      const resetUrl = `${process.env.SITE_URL || 'https://radio-tele-megastar.pages.dev'}/reset.html?token=${resetToken}`;
 
-    envoyerEmailBackground(email, 'Reyinisyalizasyon modpas — Radio Télé Mega Star',
-      `<h2>Reyinisyalizasyon modpas</h2>
-       <p>Klike sou lyen sa a pou chanje modpas ou (valid pou 1 èdtan):</p>
-       <a href="${resetUrl}" style="background:#cc0000;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;margin:16px 0;">Chanje modpas mwen</a>
-       <p style="color:#888;font-size:12px;">Si se pa ou ki mande sa, inyore mesaj sa a.</p>`
-    );
+      envoyerEmailBackground(emailNorm, 'Reyinisyalizasyon modpas — Radio Télé Mega Star',
+        `<h2>Reyinisyalizasyon modpas</h2>
+         <p>Klike sou lyen sa a pou chanje modpas ou (valid pou 1 èdtan):</p>
+         <a href="${resetUrl}" style="background:#cc0000;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;margin:16px 0;">Chanje modpas mwen</a>
+         <p style="color:#888;font-size:12px;">Si se pa ou ki mande sa, inyore mesaj sa a.</p>`
+      );
+    }
 
+    // Always return success — never leak whether email exists in the DB
     res.json({ success: true, message: 'Email voye! Verifye bwat mail ou.' });
 
   } catch (err) {

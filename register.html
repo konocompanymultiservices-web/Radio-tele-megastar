@@ -3,19 +3,20 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cr&eacute;er un compte &mdash; Radio T&eacute;l&eacute; Mega Star</title>
+  <title>Créer un compte &mdash; Radio Télé Mega Star</title>
   <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
       --bg:#0a0a0a;--s1:#111;--s2:#1a1a1a;--s3:#222;--s4:#2a2a2a;
-      --t1:#f0f0f0;--t2:#a0a0a0;--t3:#666;
+      --t1:#f0f0f0;--t2:#a0a0a0;--t3:#555;
       --y:#FFD600;--y2:#E5C000;--r:#cc0000;--g:#22c55e;
     }
     body{background:var(--bg);color:var(--t1);font-family:'Lato',sans-serif;min-height:100vh}
     a{text-decoration:none;color:inherit}
 
+    /* LAYOUT */
     .auth-wrap{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
 
     /* BRAND */
@@ -30,7 +31,6 @@
     .brand-logo{width:76px;height:76px;border-radius:50%;border:3px solid var(--y);object-fit:cover;margin-bottom:24px}
     .brand-name{font-family:'Oswald',sans-serif;font-size:36px;font-weight:700;color:var(--t1);line-height:1.1;margin-bottom:8px}
     .brand-freq{font-size:12px;color:var(--y);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:32px}
-
     .perks{display:flex;flex-direction:column;gap:14px}
     .perk{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--t2)}
     .perk-check{
@@ -42,39 +42,99 @@
 
     /* FORM PANEL */
     .auth-panel{background:var(--s1);display:flex;align-items:center;justify-content:center;padding:40px;overflow-y:auto}
-    .auth-box{width:100%;max-width:420px;padding:20px 0}
+    .auth-box{width:100%;max-width:440px;padding:20px 0}
     .auth-box h2{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:var(--t1);margin-bottom:6px}
     .auth-box>p{font-size:14px;color:var(--t2);margin-bottom:28px}
 
+    /* Messages */
     .auth-msg{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
     .auth-msg.ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--g)}
     .auth-msg.err{background:rgba(204,0,0,.1);border:1px solid rgba(204,0,0,.3);color:#ff8080}
 
+    /* Form */
     form{display:flex;flex-direction:column;gap:14px}
-    .field{display:flex;flex-direction:column;gap:7px}
+    .field{display:flex;flex-direction:column;gap:6px}
     .field label{font-size:11px;color:var(--t2);font-weight:700;letter-spacing:.8px;text-transform:uppercase}
     .field input{
       background:var(--s2);border:1px solid var(--s3);border-radius:8px;
       padding:13px 16px;color:var(--t1);font-family:'Lato',sans-serif;
-      font-size:14px;outline:none;transition:border-color .2s;
+      font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s;width:100%;
     }
-    .field input:focus{border-color:var(--y)}
+    .field input:focus{border-color:var(--y);box-shadow:0 0 0 3px rgba(255,214,0,.08)}
+    .field input:focus-visible{outline:none}
     .field input::placeholder{color:var(--t3)}
-    .field-hint{font-size:11px;color:var(--t3);margin-top:3px}
+    .field input[aria-invalid="true"]{border-color:var(--r)}
+    .field-hint{font-size:11px;color:var(--t3);margin-top:2px}
+    .field-err{font-size:11px;color:#ff8080;margin-top:2px;display:none}
+    .field-err.show{display:block}
+
+    /* Password wrapper */
+    .pwd-wrap{position:relative}
+    .pwd-wrap input{padding-right:44px}
+    .pwd-toggle{
+      position:absolute;right:12px;top:50%;transform:translateY(-50%);
+      background:none;border:none;color:var(--t3);cursor:pointer;
+      font-size:16px;padding:4px;transition:color .2s;line-height:1;
+    }
+    .pwd-toggle:hover{color:var(--t2)}
+
+    /* Password strength */
+    .pwd-strength{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+    .pwd-strength-bar{height:3px;border-radius:2px;background:var(--s3);overflow:hidden}
+    .pwd-strength-fill{height:100%;width:0;border-radius:2px;transition:width .3s,background .3s}
+    .pwd-strength-label{font-size:10px;color:var(--t3);letter-spacing:.5px;text-transform:uppercase}
+
+    /* Submit */
     .btn-submit{
       background:var(--y);color:#000;border:none;border-radius:8px;
       padding:14px;font-family:'Oswald',sans-serif;font-size:15px;font-weight:600;
       letter-spacing:.5px;cursor:pointer;transition:all .2s;margin-top:4px;
+      display:flex;align-items:center;justify-content:center;gap:10px;
     }
-    .btn-submit:hover{background:var(--y2);transform:translateY(-1px)}
-    .btn-submit:disabled{opacity:.6;cursor:wait;transform:none}
+    .btn-submit:hover:not(:disabled){background:var(--y2);transform:translateY(-1px)}
+    .btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+    /* Spinner */
+    .spinner{
+      width:16px;height:16px;border:2px solid rgba(0,0,0,.25);
+      border-top-color:#000;border-radius:50%;
+      animation:spin .6s linear infinite;flex-shrink:0;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Success overlay */
+    .success-overlay{
+      display:none;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:32px 0;gap:16px;
+    }
+    .success-overlay.show{display:flex}
+    form.hidden{display:none}
+    .success-icon{
+      width:64px;height:64px;border-radius:50%;
+      background:rgba(34,197,94,.15);border:2px solid rgba(34,197,94,.4);
+      color:var(--g);font-size:28px;display:flex;align-items:center;justify-content:center;
+      animation:popIn .4s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+    .success-overlay h3{font-family:'Oswald',sans-serif;font-size:22px;color:var(--t1)}
+    .success-overlay p{font-size:14px;color:var(--t2)}
+    .success-bar{width:100%;height:3px;background:var(--s3);border-radius:2px;overflow:hidden;margin-top:4px}
+    .success-bar-fill{height:100%;background:var(--g);width:0;animation:fillBar 1s linear forwards}
+    @keyframes fillBar{to{width:100%}}
+
+    /* Footer */
     .auth-footer{text-align:center;margin-top:20px;font-size:13px;color:var(--t3)}
     .auth-footer a{color:var(--y);font-weight:700}
 
+    /* Mobile */
     @media(max-width:768px){
       .auth-wrap{grid-template-columns:1fr}
       .auth-brand{display:none}
-      .auth-panel{padding:40px 24px}
+      .auth-panel{padding:40px 20px;align-items:flex-start;padding-top:56px}
+      .auth-box{max-width:100%}
+    }
+    @media(max-width:400px){
+      .auth-panel{padding:32px 16px}
     }
   </style>
 </head>
@@ -106,25 +166,77 @@
 
       <div id="reg-msg" class="auth-msg"></div>
 
-      <form onsubmit="soumettreInscription(event)">
+      <!-- Success overlay -->
+      <div class="success-overlay" id="success-overlay">
+        <div class="success-icon">&#10003;</div>
+        <h3>Kont ou kreye!</h3>
+        <p>Koneksyon ap fèt otomatikman...</p>
+        <div class="success-bar"><div class="success-bar-fill"></div></div>
+      </div>
+
+      <form id="reg-form" onsubmit="soumettreInscription(event)" novalidate>
         <div class="field">
-          <label>Nom complet *</label>
-          <input type="text" name="username" placeholder="Jean Pierre" required/>
+          <label for="reg-name">Nom complet *</label>
+          <input type="text" id="reg-name" name="username"
+            placeholder="Jean Pierre" required
+            autocomplete="name" aria-required="true" aria-describedby="err-name"/>
+          <span id="err-name" class="field-err" role="alert"></span>
         </div>
+
         <div class="field">
-          <label>Adresse email *</label>
-          <input type="email" name="email" placeholder="jean@email.com" required/>
+          <label for="reg-email">Adresse email *</label>
+          <input type="email" id="reg-email" name="email"
+            placeholder="jean@email.com" required
+            autocomplete="email" aria-required="true" aria-describedby="err-email"/>
+          <span id="err-email" class="field-err" role="alert"></span>
         </div>
+
         <div class="field">
-          <label>Num&eacute;ro de t&eacute;l&eacute;phone</label>
-          <input type="tel" name="phone" placeholder="+509 3X XX XXXX"/>
+          <label for="reg-phone">Num&eacute;ro de t&eacute;l&eacute;phone</label>
+          <input type="tel" id="reg-phone" name="phone"
+            placeholder="+509 3X XX XXXX"
+            autocomplete="tel" aria-describedby="err-phone hint-phone"/>
+          <span id="hint-phone" class="field-hint">Format: +509 3X XX XXXX</span>
+          <span id="err-phone" class="field-err" role="alert"></span>
         </div>
+
         <div class="field">
-          <label>Mot de passe *</label>
-          <input type="password" name="password" placeholder="Minimum 6 caract&egrave;res" minlength="6" required/>
-          <span class="field-hint">Minimum 6 caract&egrave;res</span>
+          <label for="reg-password">Mot de passe *</label>
+          <div class="pwd-wrap">
+            <input type="password" id="reg-password" name="password"
+              placeholder="Minimum 6 caract&egrave;res" minlength="6" required
+              autocomplete="new-password" aria-required="true"
+              aria-describedby="err-pwd pwd-strength-label"
+              oninput="checkStrength(this.value)"/>
+            <button type="button" class="pwd-toggle" id="pwd-toggle"
+              onclick="togglePassword('reg-password','pwd-toggle')"
+              aria-label="Afficher le mot de passe">&#128065;</button>
+          </div>
+          <div class="pwd-strength" id="pwd-strength" aria-hidden="true">
+            <div class="pwd-strength-bar"><div class="pwd-strength-fill" id="pwd-fill"></div></div>
+            <span class="pwd-strength-label" id="pwd-strength-label"></span>
+          </div>
+          <span id="err-pwd" class="field-err" role="alert"></span>
         </div>
-        <button type="submit" class="btn-submit">Cr&eacute;er mon compte &#8594;</button>
+
+        <div class="field">
+          <label for="reg-confirm">Confirmer le mot de passe *</label>
+          <div class="pwd-wrap">
+            <input type="password" id="reg-confirm" name="confirm"
+              placeholder="R&eacute;p&eacute;tez votre mot de passe" required
+              autocomplete="new-password" aria-required="true"
+              aria-describedby="err-confirm"/>
+            <button type="button" class="pwd-toggle"
+              onclick="togglePassword('reg-confirm','pwd-toggle-confirm')"
+              id="pwd-toggle-confirm"
+              aria-label="Afficher la confirmation">&#128065;</button>
+          </div>
+          <span id="err-confirm" class="field-err" role="alert"></span>
+        </div>
+
+        <button type="submit" class="btn-submit" id="reg-btn">
+          Cr&eacute;er mon compte &#8594;
+        </button>
       </form>
 
       <div class="auth-footer">
@@ -137,6 +249,56 @@
 <script>
 const API = "https://radio-megastar-backend-production.up.railway.app";
 
+/* ===== FIELD ERRORS ===== */
+function setFieldError(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.toggle('show', !!msg);
+  const input = el.closest('.field')?.querySelector('input');
+  if (input) input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+}
+function clearErrors() {
+  ['err-name','err-email','err-phone','err-pwd','err-confirm'].forEach(id => setFieldError(id,''));
+}
+
+/* ===== PASSWORD TOGGLE ===== */
+function togglePassword(inputId, btnId) {
+  const input = document.getElementById(inputId);
+  const btn   = document.getElementById(btnId);
+  if (!input) return;
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  if (btn) btn.setAttribute('aria-label', show ? 'Cacher le mot de passe' : 'Afficher le mot de passe');
+}
+
+/* ===== PASSWORD STRENGTH ===== */
+function checkStrength(val) {
+  const fill  = document.getElementById('pwd-fill');
+  const label = document.getElementById('pwd-strength-label');
+  if (!fill || !label) return;
+
+  let score = 0;
+  if (val.length >= 6)  score++;
+  if (val.length >= 10) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+
+  const levels = [
+    { pct:'20%', color:'#cc0000', text:'Très faible' },
+    { pct:'40%', color:'#ff6600', text:'Faible' },
+    { pct:'60%', color:'#FFD600', text:'Moyen' },
+    { pct:'80%', color:'#66cc00', text:'Fort' },
+    { pct:'100%',color:'#22c55e', text:'Très fort' },
+  ];
+  const lv = levels[Math.max(0, score - 1)] || levels[0];
+  fill.style.width    = val.length ? lv.pct : '0';
+  fill.style.background = lv.color;
+  label.textContent   = val.length ? lv.text : '';
+}
+
+/* ===== TOP MESSAGE ===== */
 function showMsg(texte, ok) {
   const m = document.getElementById('reg-msg');
   m.style.display = 'block';
@@ -144,43 +306,124 @@ function showMsg(texte, ok) {
   m.textContent = texte;
 }
 
+/* ===== LOADING STATE ===== */
+function setLoading(on) {
+  const btn    = document.getElementById('reg-btn');
+  const inputs = document.querySelectorAll('#reg-form input');
+  if (on) {
+    btn.innerHTML = '<span class="spinner"></span> Création...';
+    btn.disabled  = true;
+    inputs.forEach(i => i.disabled = true);
+  } else {
+    btn.innerHTML = 'Créer mon compte &#8594;';
+    btn.disabled  = false;
+    inputs.forEach(i => i.disabled = false);
+  }
+}
+
+/* ===== VALIDATION ===== */
+function validate(username, email, phone, password, confirm) {
+  let ok = true;
+  clearErrors();
+
+  if (!username.trim() || username.trim().length < 2) {
+    setFieldError('err-name', 'Nom dwe gen omwen 2 karaktè');
+    ok = false;
+  }
+
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRe.test(email)) {
+    setFieldError('err-email', 'Adresse email pa valid');
+    ok = false;
+  }
+
+  if (phone) {
+    const phoneRe = /^\+?[0-9\s\-]{7,15}$/;
+    if (!phoneRe.test(phone)) {
+      setFieldError('err-phone', 'Nimewo telefòn pa valid (egz: +509 3X XX XXXX)');
+      ok = false;
+    }
+  }
+
+  if (password.length < 6) {
+    setFieldError('err-pwd', 'Modpas dwe gen omwen 6 karaktè');
+    ok = false;
+  }
+
+  if (password !== confirm) {
+    setFieldError('err-confirm', 'Modpas yo pa menm');
+    ok = false;
+  }
+
+  return ok;
+}
+
+/* ===== SUBMIT ===== */
 function soumettreInscription(e) {
   e.preventDefault();
-  const f = e.target;
+  const f        = e.target;
   const username = f.querySelector('[name="username"]').value;
   const email    = f.querySelector('[name="email"]').value;
   const phone    = f.querySelector('[name="phone"]').value;
   const password = f.querySelector('[name="password"]').value;
-  const btn = f.querySelector('button');
-  btn.textContent = 'Création...'; btn.disabled = true;
+  const confirm  = f.querySelector('[name="confirm"]').value;
+
+  if (!validate(username, email, phone, password, confirm)) return;
+
+  setLoading(true);
+  document.getElementById('reg-msg').style.display = 'none';
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
 
   fetch(API + '/api/auth/inscription', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nom: username, email, telephone: phone, motDePasse: password })
+    body: JSON.stringify({ nom: username, email, telephone: phone, motDePasse: password }),
+    signal: controller.signal
   })
   .then(r => r.json())
   .then(data => {
-    btn.textContent = 'Créer mon compte →'; btn.disabled = false;
+    clearTimeout(timeout);
+    setLoading(false);
     if (data.success && data.token) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      showMsg('Kont ou kreye ak siksè! Redireksyon...', true);
-      setTimeout(() => {
-        window.location.href = data.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
-      }, 1000);
+      showSuccess(data.user);
     } else {
       showMsg(data.message || 'Erè pandan enskripsyon an', false);
     }
   })
-  .catch(() => { btn.textContent = 'Créer mon compte →'; btn.disabled = false; showMsg('Erè serveur', false); });
+  .catch(err => {
+    clearTimeout(timeout);
+    setLoading(false);
+    if (err.name === 'AbortError') {
+      showMsg('Koneksyon an twò long. Eseye ankò.', false);
+    } else {
+      showMsg('Erè rezò. Verifye koneksyon ou epi eseye ankò.', false);
+    }
+  });
 }
 
-const token = localStorage.getItem('token');
-const user  = localStorage.getItem('user');
-if (token && user) {
-  const u = JSON.parse(user);
-  window.location.href = u.role === 'admin' ? 'admin.html' : 'dashboard.html';
+/* ===== SUCCESS ANIMATION ===== */
+function showSuccess(user) {
+  document.getElementById('reg-form').classList.add('hidden');
+  document.getElementById('reg-msg').style.display = 'none';
+  const overlay = document.getElementById('success-overlay');
+  overlay.classList.add('show');
+  setTimeout(() => {
+    window.location.href = user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+  }, 1100);
+}
+
+/* ===== REDIRECT IF LOGGED IN ===== */
+const _token = localStorage.getItem('token');
+const _user  = localStorage.getItem('user');
+if (_token && _user) {
+  try {
+    const u = JSON.parse(_user);
+    window.location.href = u.role === 'admin' ? 'admin.html' : 'dashboard.html';
+  } catch {}
 }
 </script>
 </body>

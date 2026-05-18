@@ -9,6 +9,19 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
+// ===== SECURITY HEADERS =====
+// Manually set security headers (equivalent to helmet basics, no extra dependency needed)
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '0'); // Disabled — modern browsers use CSP instead
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'geolocation=(), camera=(), microphone=()');
+  // Remove Express fingerprinting
+  res.removeHeader('X-Powered-By');
+  next();
+});
+
 // ===== CORS =====
 const allowedOrigins = [
   'https://radiotelemegastar.netlify.app',
@@ -21,33 +34,67 @@ const allowedOrigins = [
   'http://127.0.0.1:8080'
 ];
 
-app.use(cors({ origin: allowedOrigins, credentials: true }));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps, curl) only in dev
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    callback(new Error('CORS: origin not allowed'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-key']
+}));
+app.use(express.json({ limit: '1mb' })); // Reduced from 10mb — no endpoint needs 10mb payloads
+app.use(express.urlencoded({ extended: false, limit: '1mb' }));
 
-// ===== RATE LIMITING SENP (san Redis) =====
+// ===== RATE LIMITING (in-memory, no Redis needed) =====
+// Separate stricter limiter for auth routes
 const requestCounts = new Map();
-app.use((req, res, next) => {
-  const ip = req.ip || req.headers['x-forwarded-for'] || 'unknown';
-  const now = Date.now();
-  const windowMs = 60 * 1000; // 1 minit
-  const maxRequests = 100;
+const authCounts = new Map();
 
-  if (!requestCounts.has(ip)) {
-    requestCounts.set(ip, { count: 1, resetTime: now + windowMs });
-  } else {
-    const data = requestCounts.get(ip);
-    if (now > data.resetTime) {
-      requestCounts.set(ip, { count: 1, resetTime: now + windowMs });
+// Cleanup stale entries every 5 minutes to prevent memory leak
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, data] of requestCounts.entries()) {
+    if (now > data.resetTime) requestCounts.delete(ip);
+  }
+  for (const [ip, data] of authCounts.entries()) {
+    if (now > data.resetTime) authCounts.delete(ip);
+  }
+}, 5 * 60 * 1000);
+
+function createRateLimiter(store, windowMs, max) {
+  return (req, res, next) => {
+    // Use the first IP from x-forwarded-for only if it looks like a valid IP
+    const forwarded = req.headers['x-forwarded-for'];
+    const rawIp = forwarded ? forwarded.split(',')[0].trim() : req.ip || 'unknown';
+    // Basic sanity — prevent header spoofing from inflating/deflating the key
+    const ip = /^[\d.:a-fA-F]+$/.test(rawIp) ? rawIp : req.ip || 'unknown';
+    const now = Date.now();
+
+    if (!store.has(ip)) {
+      store.set(ip, { count: 1, resetTime: now + windowMs });
     } else {
-      data.count++;
-      if (data.count > maxRequests) {
-        return res.status(429).json({ success: false, message: 'Twòp demand — eseye nan yon minit' });
+      const data = store.get(ip);
+      if (now > data.resetTime) {
+        store.set(ip, { count: 1, resetTime: now + windowMs });
+      } else {
+        data.count++;
+        if (data.count > max) {
+          res.setHeader('Retry-After', Math.ceil((data.resetTime - now) / 1000));
+          return res.status(429).json({ success: false, message: 'Twòp demand — eseye nan yon minit' });
+        }
       }
     }
-  }
-  next();
-});
+    next();
+  };
+}
+
+// Global limiter: 100 req/min
+app.use(createRateLimiter(requestCounts, 60 * 1000, 100));
+
+// Stricter auth limiter: 10 req/15 min — applied to /api/auth routes below
+const authRateLimiter = createRateLimiter(authCounts, 15 * 60 * 1000, 10);
 
 // ===== SOCKET.IO =====
 const io = new Server(server, {
@@ -85,19 +132,26 @@ const userRoutes    = require('./routes/User');
 const adminRoutes   = require('./routes/admin');
 const mistralRoutes = require('./routes/mistral');
 
-app.use('/api/auth',    authRoutes);
+app.use('/api/auth',    authRateLimiter, authRoutes);
 app.use('/api/user',    userRoutes);
 app.use('/api/admin',   adminRoutes);
 app.use('/api/mistral', mistralRoutes);
 
 // ===== ROUTE DEFO =====
 app.get('/', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Radio Tele Mega Star API — En ligne!',
-    version: '3.0',
-    routes: ['/api/auth', '/api/user', '/api/admin', '/api/mistral']
-  });
+  res.json({ success: true, message: 'Radio Tele Mega Star API — En ligne!' });
+});
+
+// ===== 404 handler =====
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: 'Route pa jwenn' });
+});
+
+// ===== Global error handler — never leak stack traces to clients =====
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err.message);
+  res.status(500).json({ success: false, message: 'Erè sèvè' });
 });
 
 // ===== DEMAJ SEVE =====

@@ -82,8 +82,12 @@ Enfòmasyon sou radyo a:
 // ===== ROUTE: MODERE YON MESAJ =====
 router.post('/moderer', async (req, res) => {
   try {
-    const { message, userId } = req.body;
+    const { message } = req.body;
     if (!message) return res.status(400).json({ success: false, message: 'Mesaj requis' });
+    // Limit input length to prevent prompt injection and excessive Mistral API costs
+    if (typeof message !== 'string' || message.length > 500) {
+      return res.status(400).json({ success: false, message: 'Mesaj twò long (max 500 karaktè)' });
+    }
 
     const score = await modererMessage(message);
 
@@ -115,6 +119,9 @@ router.post('/faq', async (req, res) => {
   try {
     const { question } = req.body;
     if (!question) return res.status(400).json({ success: false, message: 'Kesyon requis' });
+    if (typeof question !== 'string' || question.length > 500) {
+      return res.status(400).json({ success: false, message: 'Kesyon twò long (max 500 karaktè)' });
+    }
 
     const repon = await reponFAQ(question);
 
@@ -139,8 +146,13 @@ router.post('/tradui', async (req, res) => {
   try {
     const { texte, lang } = req.body;
     if (!texte) return res.status(400).json({ success: false, message: 'Texte requis' });
+    if (typeof texte !== 'string' || texte.length > 1000) {
+      return res.status(400).json({ success: false, message: 'Teks twò long (max 1000 karaktè)' });
+    }
 
-    const langCib = lang || 'fr';
+    // Whitelist allowed target languages
+    const ALLOWED_LANGS = ['fr', 'ht'];
+    const langCib = ALLOWED_LANGS.includes(lang) ? lang : 'fr';
     const langNon = langCib === 'fr' ? 'Fransè' : 'Kreyòl Ayisyen';
 
     const response = await fetch(MISTRAL_API_URL, {

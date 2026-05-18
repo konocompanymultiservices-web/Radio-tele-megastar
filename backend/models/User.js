@@ -18,6 +18,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
+  },
+  // plan field is referenced by admin routes and dashboard; must be in schema
+  plan: {
+    type: String,
+    enum: ['Gratuit', 'Premium', 'VIP'],
+    default: 'Gratuit'
   }
 }, { timestamps: true });
 

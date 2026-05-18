@@ -127,7 +127,7 @@
     </div>
     <form class="modal-form" onsubmit="soumettreOublie(event)">
       <div class="modal-field"><label>Adresse email</label><input type="email" name="email" placeholder="Email de votre compte" required/></div>
-      <div id="oublie-msg" style="display:none;padding:10px;border-radius:8px;font-size:13px;margin-bottom:8px;"></div>
+      <div id="oublie-msg" style="display:none;padding:12px 14px;border-radius:8px;font-size:13px;margin-bottom:4px;line-height:1.5;"></div>
       <button type="submit" class="modal-submit">&#128140; Envoyer le lien</button>
       <p class="modal-login-text"><a href="#" class="modal-login-link" onclick="ouvrirModalLogin()">&#8592; Retour à la connexion</a></p>
     </form>
@@ -196,12 +196,12 @@
   <div class="signup-inner">
     <div class="signup-text">
       <h2 class="signup-title">Rejoignez notre<br/><span>communauté</span></h2>
-      <p class="signup-desc">Créez votre compte gratuit et accédez à nos programmes, notifications et contenu exclusif.</p>
+      <p class="signup-desc">Créez votre compte gratuit et accédez à tous nos programmes, notifications et contenu exclusif.</p>
       <ul class="signup-perks">
         <li>Accès à tous nos programmes</li>
-        <li>Notifications des émissions</li>
-        <li>Contenu exclusif</li>
-        <li>Gratuit pour toujours</li>
+        <li>Notifications des émissions en direct</li>
+        <li>Contenu exclusif pour les membres</li>
+        <li>100% gratuit, pour toujours</li>
       </ul>
     </div>
     <div class="signup-form-box">
@@ -209,9 +209,9 @@
       <form class="signup-form" onsubmit="soumettreFormulaire(event)">
         <input type="text" name="username" placeholder="Nom complet" required/>
         <input type="email" name="email" placeholder="Adresse email" required/>
-        <input type="tel" name="phone" placeholder="Numéro de téléphone"/>
-        <input type="password" name="password" placeholder="Mot de passe"/>
-        <button type="submit" class="signup-submit">Créer mon compte &#8594;</button>
+        <input type="tel" name="phone" placeholder="Numéro de téléphone (facultatif)"/>
+        <input type="password" name="password" placeholder="Mot de passe" required/>
+        <button type="submit" class="signup-submit">Créer mon compte &rarr;</button>
       </form>
       <p class="signup-login">Déjà membre? <a href="#" onclick="ouvrirModalLogin()">Se connecter</a></p>
     </div>
@@ -270,10 +270,10 @@
   <span id="float-icon">&#9654;</span>
 </button>
 
-<div id="notif-play" style="display:none;position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--nwa-2);border:1px solid var(--nwa-4);border-radius:12px;padding:16px 24px;z-index:999;display:none;align-items:center;gap:12px;white-space:nowrap;">
-  <p style="color:var(--blan);font-size:14px;">Klike pou écouter</p>
-  <button onclick="kontinuePlay()" style="background:var(--jaune);color:var(--nwa);border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-weight:700;">&#9654; Écouter</button>
-  <button onclick="fermerNotif()" style="background:transparent;color:var(--gri-4);border:none;cursor:pointer;font-size:1.1rem;">&#10005;</button>
+<div id="notif-play" style="display:none;position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:14px 22px;z-index:999;align-items:center;gap:14px;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.4);">
+  <p style="color:#f0f0f0;font-size:13px;font-weight:500;">Klike pou écouter</p>
+  <button onclick="kontinuePlay()" style="background:#FFD600;color:#000;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-weight:700;font-size:13px;font-family:inherit;">&#9654; Écouter</button>
+  <button onclick="fermerNotif()" style="background:transparent;color:#606060;border:none;cursor:pointer;font-size:1rem;line-height:1;">&#10005;</button>
 </div>
 
 <!-- ===================== SCRIPTS ===================== -->
@@ -325,15 +325,40 @@ function afficherCarousel(emissions) {
   const track = document.getElementById('carousel-track');
   const dots  = document.getElementById('carousel-dots');
   if (!track) return;
-  track.innerHTML = [...emissions, ...emissions].map(e =>
-    `<a href="programmes.html" class="emission-card">
-      <div class="emission-circle" style="background:${e.couleur||'linear-gradient(135deg,#cc0000,#ff6666)'}">${e.emoji||'📻'}</div>
-      <p class="emission-name">${e.nom}</p>
-      <p class="emission-time">${(e.heureDebut||'').substring(0,5)} — ${(e.heureFin||'').substring(0,5)}</p>
-    </a>`).join('');
+  // Use escapeHtml for all API-derived data injected into innerHTML
+  track.innerHTML = [...emissions, ...emissions].map(e => {
+    const couleur = escapeHtml(e.couleur || 'linear-gradient(135deg,#cc0000,#ff6666)');
+    const emoji   = escapeHtml(e.emoji || '📻');
+    const nom     = escapeHtml(e.nom || '');
+    const debut   = escapeHtml((e.heureDebut || '').substring(0, 5));
+    const fin     = escapeHtml((e.heureFin   || '').substring(0, 5));
+    return `<a href="programmes.html" class="emission-card">
+      <div class="emission-circle" style="background:${couleur}">${emoji}</div>
+      <p class="emission-name">${nom}</p>
+      <p class="emission-time">${debut} — ${fin}</p>
+    </a>`;
+  }).join('');
   if (dots) dots.innerHTML = emissions.map((_,i) =>
     `<span class="carousel-dot${i===0?' active':''}" onclick="allerSlide(${i})"></span>`).join('');
   if (typeof initCarousel === 'function') initCarousel();
+}
+
+// ===== XSS-SAFE HTML ESCAPING =====
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Returns a safe https:// URL or empty string — prevents javascript: URLs
+function safeUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  return /^https?:\/\//i.test(trimmed) ? trimmed : '';
 }
 
 // ===== NEWS =====
@@ -344,14 +369,20 @@ function chargerNews() {
     if (!data.success || !data.news || !data.news.length) return;
     const grid = document.getElementById('news-grid');
     const sec  = document.getElementById('news-section');
-    grid.innerHTML = data.news.map(n =>
-      `<div class="news-card">
-        <span class="news-card-badge ${n.type}">${n.type==='breaking'?'BREAKING':n.type==='slide'?'SLIDE':'ACTUALITÉ'}</span>
-        ${n.imageUrl?`<img src="${n.imageUrl}" style="width:100%;border-radius:8px;margin-bottom:10px;max-height:160px;object-fit:cover;" onerror="this.style.display='none'" alt=""/>`:''}
-        <h3>${n.titre}</h3>
-        <p>${n.contenu||''}</p>
-        <p class="news-card-date">${new Date(n.createdAt).toLocaleDateString('fr-FR')}</p>
-      </div>`).join('');
+    const ALLOWED_TYPES = ['breaking', 'slide', 'news'];
+    grid.innerHTML = data.news.map(n => {
+      const safeType = ALLOWED_TYPES.includes(n.type) ? n.type : 'news';
+      const badgeTxt = safeType === 'breaking' ? 'BREAKING' : safeType === 'slide' ? 'SLIDE' : 'ACTUALITÉ';
+      const imgUrl   = safeUrl(n.imageUrl);
+      const imgTag   = imgUrl ? `<img src="${escapeHtml(imgUrl)}" style="width:100%;border-radius:8px;margin-bottom:10px;max-height:160px;object-fit:cover;" onerror="this.style.display='none'" alt=""/>` : '';
+      return `<div class="news-card">
+        <span class="news-card-badge ${escapeHtml(safeType)}">${badgeTxt}</span>
+        ${imgTag}
+        <h3>${escapeHtml(n.titre)}</h3>
+        <p>${escapeHtml(n.contenu || '')}</p>
+        <p class="news-card-date">${escapeHtml(new Date(n.createdAt).toLocaleDateString('fr-FR'))}</p>
+      </div>`;
+    }).join('');
     sec.style.display = 'block';
   }).catch(() => {});
 }
@@ -362,11 +393,16 @@ function chargerPublicites() {
   .then(r => r.json())
   .then(data => {
     if (!data.success || !data.publicites) return;
+    const ALLOWED_POSITIONS = ['top', 'middle', 'bottom'];
     data.publicites.forEach(pub => {
+      // Whitelist position to prevent DOM clobbering via pub-<anything>-content
+      if (!ALLOWED_POSITIONS.includes(pub.position)) return;
       const el = document.getElementById('pub-' + pub.position + '-content');
       if (el && pub.texte) {
-        el.textContent = pub.texte;
-        el.onclick = pub.lien ? () => window.open(pub.lien, '_blank') : clicPub;
+        el.textContent = pub.texte; // Safe: textContent never executes scripts
+        // Validate lien before using in window.open to prevent javascript: URLs
+        const safeLien = safeUrl(pub.lien);
+        el.onclick = safeLien ? () => window.open(safeLien, '_blank', 'noopener,noreferrer') : clicPub;
       }
     });
   }).catch(() => {});
@@ -381,19 +417,49 @@ function updateMenuUser() {
   const token = localStorage.getItem('token');
   const uStr  = localStorage.getItem('user');
   const authSec = document.getElementById('menu-auth-section');
+  if (!authSec) return;
   if (token && uStr) {
-    const user = JSON.parse(uStr);
-    const ini  = (user.nom || 'U').charAt(0).toUpperCase();
-    authSec.innerHTML = `
-      <div class="menu-user-info">
-        <div class="menu-user-avatar">${ini}</div>
-        <p class="menu-user-name">${user.nom || 'Mon compte'}</p>
-        <p class="menu-user-email">${user.email || ''}</p>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;width:100%;">
-          <button class="menu-auth-btn menu-signup" onclick="allerDashboard()">&#128202; Mon Dashboard</button>
-          <button class="menu-auth-btn menu-login" onclick="logout()">Déconnexion</button>
-        </div>
-      </div>`;
+    let user;
+    try { user = JSON.parse(uStr); } catch(e) { return; }
+    // Use textContent via DOM nodes — never inject localStorage data via innerHTML
+    const wrap = document.createElement('div');
+    wrap.className = 'menu-user-info';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'menu-user-avatar';
+    avatar.textContent = (user.nom || 'U').charAt(0).toUpperCase();
+
+    const nameEl = document.createElement('p');
+    nameEl.className = 'menu-user-name';
+    nameEl.textContent = user.nom || 'Mon compte';
+
+    const emailEl = document.createElement('p');
+    emailEl.className = 'menu-user-email';
+    emailEl.textContent = user.email || '';
+
+    const btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-top:12px;width:100%;';
+
+    const btnDash = document.createElement('button');
+    btnDash.className = 'menu-auth-btn menu-signup';
+    btnDash.innerHTML = '&#128202; Mon Dashboard';
+    btnDash.onclick = allerDashboard;
+
+    const btnLogout = document.createElement('button');
+    btnLogout.className = 'menu-auth-btn menu-login';
+    btnLogout.textContent = 'Déconnexion';
+    btnLogout.onclick = logout;
+
+    btnRow.appendChild(btnDash);
+    btnRow.appendChild(btnLogout);
+    wrap.appendChild(avatar);
+    wrap.appendChild(nameEl);
+    wrap.appendChild(emailEl);
+    wrap.appendChild(btnRow);
+
+    authSec.innerHTML = '';
+    authSec.appendChild(wrap);
+
     const sec = document.getElementById('signup-section');
     if (sec) sec.style.display = 'none';
   }
@@ -402,7 +468,9 @@ function updateMenuUser() {
 function allerDashboard() {
   const uStr = localStorage.getItem('user');
   if (!uStr) return;
-  const user = JSON.parse(uStr);
+  let user;
+  try { user = JSON.parse(uStr); } catch(e) { return; }
+  // Only navigate to known internal pages
   window.location.href = user.role === 'admin' ? 'admin.html' : 'dashboard.html';
 }
 

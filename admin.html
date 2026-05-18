@@ -517,10 +517,23 @@ const API_URL = "https://radio-megastar-backend-production.up.railway.app";
 let adminToken = null;
 let refreshTimer = null;
 
-const ADMINS = [
-  { email: "admin@megastar.com",                 pass: "MegaStar2026!", nom: "Administrateur"   },
-  { email: "konocompanymultiservices@gmail.com", pass: "MegaStar2026!", nom: "Admin Principal"  }
-];
+// ===== XSS-SAFE HTML ESCAPING =====
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// NOTE (Security): The local ADMINS fallback array has been removed.
+// Admin login now goes exclusively through the backend API which validates
+// credentials against the database. This removes the critical vulnerability
+// of having plaintext admin passwords embedded in a public-facing HTML file.
+// If the backend is unreachable, the admin panel is inaccessible — this is
+// the correct security posture.
 
 /* ===== SOCKET.IO ===== */
 try {
@@ -545,20 +558,17 @@ function loginAdmin() {
   const err   = document.getElementById('login-err');
   const btn   = document.getElementById('login-btn');
   err.style.display = 'none';
+  err.textContent = '';
   btn.disabled = true;
 
-  // Verifye lokal an premye (rapid)
-  const local = ADMINS.find(a => a.email === email && a.pass === pass);
-  if (local) {
-    adminToken = 'admin-' + Date.now();
-    sessionStorage.setItem('adminToken', adminToken);
-    sessionStorage.setItem('adminName', local.nom);
-    showAdmin(local.nom);
+  if (!email || !pass) {
+    err.textContent = 'Veuillez remplir tous les champs';
+    err.style.display = 'block';
     btn.disabled = false;
     return;
   }
 
-  // Eseye backend
+  // Backend-only authentication — no local credential bypass
   fetch(API_URL + '/api/auth/connexion', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -579,7 +589,7 @@ function loginAdmin() {
   })
   .catch(() => {
     btn.disabled = false;
-    err.textContent = 'Email ou mot de passe incorrect';
+    err.textContent = 'Erreur de connexion — réessayez';
     err.style.display = 'block';
   });
 }
@@ -623,20 +633,24 @@ function loadMembres() {
     if (!data.success) return;
     const m = data.membres || [];
     setText('ov-membres', m.length);
+    // Whitelist allowed plan values to prevent CSS injection via badge class
+    const VALID_PLANS = ['VIP', 'Premium', 'Gratuit'];
     const planBadge = p => p === 'VIP' ? 'badge-jaune' : p === 'Premium' ? 'badge-vert' : 'badge-bleu';
+    const safePlan  = p => VALID_PLANS.includes(p) ? p : 'Gratuit';
+    // Escape all user-supplied strings before injecting into innerHTML
     const row6 = x => `<tr>
-      <td style="color:var(--t1)">${x.nom||'&mdash;'}</td>
-      <td>${x.email||'&mdash;'}</td>
-      <td>${x.telephone||'&mdash;'}</td>
-      <td><span class="badge ${planBadge(x.plan)}">${x.plan||'Gratuit'}</span></td>
-      <td>${x.createdAt ? new Date(x.createdAt).toLocaleDateString('fr-FR') : '&mdash;'}</td>
+      <td style="color:var(--t1)">${escapeHtml(x.nom)||'&mdash;'}</td>
+      <td>${escapeHtml(x.email)||'&mdash;'}</td>
+      <td>${escapeHtml(x.telephone)||'&mdash;'}</td>
+      <td><span class="badge ${planBadge(safePlan(x.plan))}">${escapeHtml(safePlan(x.plan))}</span></td>
+      <td>${x.createdAt ? escapeHtml(new Date(x.createdAt).toLocaleDateString('fr-FR')) : '&mdash;'}</td>
       <td><span class="badge badge-vert">Actif</span></td>
     </tr>`;
     const row4 = x => `<tr>
-      <td style="color:var(--t1)">${x.nom||'&mdash;'}</td>
-      <td>${x.email||'&mdash;'}</td>
-      <td><span class="badge ${x.plan==='Premium'||x.plan==='VIP' ? 'badge-vert' : 'badge-bleu'}">${x.plan||'Gratuit'}</span></td>
-      <td>${x.createdAt ? new Date(x.createdAt).toLocaleDateString('fr-FR') : '&mdash;'}</td>
+      <td style="color:var(--t1)">${escapeHtml(x.nom)||'&mdash;'}</td>
+      <td>${escapeHtml(x.email)||'&mdash;'}</td>
+      <td><span class="badge ${safePlan(x.plan)==='Premium'||safePlan(x.plan)==='VIP' ? 'badge-vert' : 'badge-bleu'}">${escapeHtml(safePlan(x.plan))}</span></td>
+      <td>${x.createdAt ? escapeHtml(new Date(x.createdAt).toLocaleDateString('fr-FR')) : '&mdash;'}</td>
     </tr>`;
     const tb = document.getElementById('membres-body');
     const lb = document.getElementById('last-membres-body');
@@ -664,15 +678,20 @@ function loadAbonnements() {
     setText('rev-mois', '$' + t.toFixed(2)); setText('rev-total', '$' + t.toFixed(2));
     setText('rev-premium', '$' + (p*5).toFixed(2)); setText('rev-vip', '$' + (v*15).toFixed(2));
     setText('ov-abonnes', p + v); setText('ov-revenus', '$' + t.toFixed(2));
+    const VALID_PLANS_AB = ['VIP', 'Premium', 'Gratuit'];
+    const safePlanAb = p => VALID_PLANS_AB.includes(p) ? p : 'Gratuit';
     const tb = document.getElementById('abonnements-body');
-    tb.innerHTML = a.length ? a.map(x => `<tr>
-      <td style="color:var(--t1)">${x.nom||'&mdash;'}</td>
-      <td><span class="badge ${x.plan==='VIP'?'badge-jaune':x.plan==='Premium'?'badge-vert':'badge-bleu'}">${x.plan}</span></td>
-      <td style="color:var(--y)">${x.plan==='VIP'?'$15':x.plan==='Premium'?'$5':'$0'}</td>
-      <td>${x.methodePaiement||'&mdash;'}</td>
-      <td>${x.createdAt ? new Date(x.createdAt).toLocaleDateString('fr-FR') : '&mdash;'}</td>
+    tb.innerHTML = a.length ? a.map(x => {
+      const sp = safePlanAb(x.plan);
+      return `<tr>
+      <td style="color:var(--t1)">${escapeHtml(x.nom)||'&mdash;'}</td>
+      <td><span class="badge ${sp==='VIP'?'badge-jaune':sp==='Premium'?'badge-vert':'badge-bleu'}">${escapeHtml(sp)}</span></td>
+      <td style="color:var(--y)">${sp==='VIP'?'$15':sp==='Premium'?'$5':'$0'}</td>
+      <td>${escapeHtml(x.methodePaiement)||'&mdash;'}</td>
+      <td>${x.createdAt ? escapeHtml(new Date(x.createdAt).toLocaleDateString('fr-FR')) : '&mdash;'}</td>
       <td><span class="badge badge-vert">Actif</span></td>
-    </tr>`).join('') : '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3)">Aucun abonnement</td></tr>';
+    </tr>`;
+    }).join('') : '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3)">Aucun abonnement</td></tr>';
   }).catch(() => {});
 }
 
@@ -707,17 +726,51 @@ function creerAnnonce() {
 }
 
 function makeItem(titre, desc, typeLabel, dot) {
+  // Build DOM nodes instead of innerHTML to prevent XSS from user-typed input
+  const SAFE_DOTS = ['live', 'pub', 'special'];
+  const safeDot = SAFE_DOTS.includes(dot) ? dot : 'pub';
+
   const d = document.createElement('div');
   d.className = 'annonce-item';
-  d.innerHTML = `<div class="annonce-dot annonce-${dot}"></div>
-    <div class="annonce-info" style="flex:1">
-      <h4>${titre}</h4><p>${desc || '&mdash;'}</p>
-      <p class="annonce-time">${typeLabel} &bull; ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</p>
-    </div>
-    <div style="display:flex;gap:6px">
-      <button class="btn-edit">&#9998;</button>
-      <button class="btn-del" onclick="this.closest('.annonce-item').remove()">&#128465;</button>
-    </div>`;
+
+  const dotEl = document.createElement('div');
+  dotEl.className = 'annonce-dot annonce-' + safeDot;
+
+  const info = document.createElement('div');
+  info.className = 'annonce-info';
+  info.style.flex = '1';
+
+  const h4 = document.createElement('h4');
+  h4.textContent = titre;
+
+  const p1 = document.createElement('p');
+  p1.textContent = desc || '—';
+
+  const p2 = document.createElement('p');
+  p2.className = 'annonce-time';
+  p2.textContent = typeLabel + ' • ' + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+
+  info.appendChild(h4);
+  info.appendChild(p1);
+  info.appendChild(p2);
+
+  const btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:6px';
+
+  const btnEdit = document.createElement('button');
+  btnEdit.className = 'btn-edit';
+  btnEdit.innerHTML = '&#9998;';
+
+  const btnDel = document.createElement('button');
+  btnDel.className = 'btn-del';
+  btnDel.innerHTML = '&#128465;';
+  btnDel.onclick = function() { this.closest('.annonce-item').remove(); };
+
+  btnRow.appendChild(btnEdit);
+  btnRow.appendChild(btnDel);
+  d.appendChild(dotEl);
+  d.appendChild(info);
+  d.appendChild(btnRow);
   return d;
 }
 
@@ -728,14 +781,36 @@ function ajouterEmission() {
   const fin   = document.getElementById('sch-fin').value;
   const emoji = document.getElementById('sch-emoji').value || '🎙️';
   if (!nom || !debut || !fin) { showAlert('alert-schedule', 'Nom et horaires requis', 'error'); return; }
+  // Build DOM nodes — no innerHTML with user input
   const item = document.createElement('div');
   item.className = 'schedule-item';
-  item.innerHTML = `<span class="schedule-time">${debut} &mdash; ${fin}</span>
-    <span class="schedule-name">${emoji} ${nom}</span>
-    <div class="schedule-actions">
-      <button class="btn-edit">&#9998;</button>
-      <button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button>
-    </div>`;
+
+  const timeEl = document.createElement('span');
+  timeEl.className = 'schedule-time';
+  timeEl.textContent = debut + ' — ' + fin;
+
+  const nameEl = document.createElement('span');
+  nameEl.className = 'schedule-name';
+  nameEl.textContent = emoji + ' ' + nom;
+
+  const actions = document.createElement('div');
+  actions.className = 'schedule-actions';
+
+  const btnEdit = document.createElement('button');
+  btnEdit.className = 'btn-edit';
+  btnEdit.innerHTML = '&#9998;';
+
+  const btnDel = document.createElement('button');
+  btnDel.className = 'btn-del';
+  btnDel.innerHTML = '&#128465;';
+  btnDel.onclick = function() { this.closest('.schedule-item').remove(); };
+
+  actions.appendChild(btnEdit);
+  actions.appendChild(btnDel);
+  item.appendChild(timeEl);
+  item.appendChild(nameEl);
+  item.appendChild(actions);
+
   document.getElementById('schedule-list').appendChild(item);
   showAlert('alert-schedule', 'Émission ajoutée ✓', 'success');
   toggleForm('schedule-form');
@@ -748,14 +823,47 @@ function ajouterAnimateur() {
   const em  = document.getElementById('anim-emission').value.trim();
   const hor = document.getElementById('anim-horaire').value.trim();
   const ph  = document.getElementById('anim-photo').value.trim();
+  // Build DOM nodes — never inject user-controlled strings into innerHTML
   const card = document.createElement('div');
   card.className = 'anim-card';
-  card.innerHTML = `<div class="anim-photo">${ph ? `<img src="${ph}" style="display:block"/>` : nom.charAt(0).toUpperCase()}</div>
-    <div class="anim-info"><h4>${nom}</h4><p>${em || '&mdash;'}${hor ? ' &bull; ' + hor : ''}</p></div>
-    <div style="display:flex;gap:6px">
-      <button class="btn-edit">&#9998;</button>
-      <button class="btn-del" onclick="this.closest('.anim-card').remove()">&#128465;</button>
-    </div>`;
+
+  const photoDiv = document.createElement('div');
+  photoDiv.className = 'anim-photo';
+  if (ph && /^https?:\/\//i.test(ph)) {
+    const img = document.createElement('img');
+    img.src = ph;
+    img.style.display = 'block';
+    img.alt = '';
+    photoDiv.appendChild(img);
+  } else {
+    photoDiv.textContent = nom.charAt(0).toUpperCase();
+  }
+
+  const infoDiv = document.createElement('div');
+  infoDiv.className = 'anim-info';
+  const h4 = document.createElement('h4');
+  h4.textContent = nom;
+  const p = document.createElement('p');
+  p.textContent = (em || '—') + (hor ? ' • ' + hor : '');
+  infoDiv.appendChild(h4);
+  infoDiv.appendChild(p);
+
+  const btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:6px';
+  const btnEdit = document.createElement('button');
+  btnEdit.className = 'btn-edit';
+  btnEdit.innerHTML = '&#9998;';
+  const btnDel = document.createElement('button');
+  btnDel.className = 'btn-del';
+  btnDel.innerHTML = '&#128465;';
+  btnDel.onclick = function() { this.closest('.anim-card').remove(); };
+  btnRow.appendChild(btnEdit);
+  btnRow.appendChild(btnDel);
+
+  card.appendChild(photoDiv);
+  card.appendChild(infoDiv);
+  card.appendChild(btnRow);
+
   document.getElementById('animateurs-list').insertBefore(card, document.getElementById('animateurs-list').firstChild);
   showAlert('alert-anim', 'Animateur ajouté ✓', 'success');
   toggleForm('anim-form');
@@ -763,7 +871,14 @@ function ajouterAnimateur() {
 
 function previewAnimPhoto(url) {
   const img = document.getElementById('anim-preview');
-  if (url) { img.src = url; img.style.display = 'block'; } else { img.style.display = 'none'; }
+  // Only allow https:// URLs in preview to prevent javascript: injection
+  if (url && /^https?:\/\//i.test(url.trim())) {
+    img.src = url.trim();
+    img.style.display = 'block';
+  } else {
+    img.src = '';
+    img.style.display = 'none';
+  }
 }
 
 /* ===== REPORTAGE ===== */
@@ -773,14 +888,42 @@ function publierReportage() {
   if (!t || !c) { showAlert('alert-reportage', 'Titre et contenu requis', 'error'); return; }
   const l = document.getElementById('rep-lieu').value.trim();
   const s = document.getElementById('rep-statut').value;
+  const VALID_STATUTS = ['draft', 'live', 'published'];
+  const safeStatut = VALID_STATUTS.includes(s) ? s : 'draft';
+
+  // Build DOM nodes — no innerHTML with user input
   const item = document.createElement('div');
   item.className = 'annonce-item';
-  item.innerHTML = `<div class="annonce-dot ${s==='live'?'annonce-live':'annonce-pub'}"></div>
-    <div class="annonce-info" style="flex:1">
-      <h4>${t}</h4><p>${c.substring(0,100)}${c.length>100?'...':''}</p>
-      <p class="annonce-time">${l ? l + ' &bull; ' : ''}${new Date().toLocaleDateString('fr-FR')}</p>
-    </div>
-    <span class="badge ${s==='live'?'badge-rouge':'badge-vert'}">${s.toUpperCase()}</span>`;
+
+  const dotEl = document.createElement('div');
+  dotEl.className = 'annonce-dot ' + (safeStatut === 'live' ? 'annonce-live' : 'annonce-pub');
+
+  const info = document.createElement('div');
+  info.className = 'annonce-info';
+  info.style.flex = '1';
+
+  const h4 = document.createElement('h4');
+  h4.textContent = t;
+
+  const pContent = document.createElement('p');
+  pContent.textContent = c.substring(0, 100) + (c.length > 100 ? '...' : '');
+
+  const pTime = document.createElement('p');
+  pTime.className = 'annonce-time';
+  pTime.textContent = (l ? l + ' • ' : '') + new Date().toLocaleDateString('fr-FR');
+
+  info.appendChild(h4);
+  info.appendChild(pContent);
+  info.appendChild(pTime);
+
+  const badge = document.createElement('span');
+  badge.className = 'badge ' + (safeStatut === 'live' ? 'badge-rouge' : 'badge-vert');
+  badge.textContent = safeStatut.toUpperCase();
+
+  item.appendChild(dotEl);
+  item.appendChild(info);
+  item.appendChild(badge);
+
   const list = document.getElementById('reportages-list');
   if (list.querySelector('p')) list.innerHTML = '';
   list.insertBefore(item, list.firstChild);
