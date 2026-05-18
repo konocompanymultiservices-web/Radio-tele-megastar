@@ -2,7 +2,7 @@
 // RADIO TÉLÉ MEGA STAR — SCRIPT.JS v3.0
 // ============================================
 
-const API_URL = "https://radio-megastar-backend-production.up.railway.app";
+const API_URL = "https://radio-tele-megastar.onrender.com";
 var audio = null;
 
 // ===== UTILITÈ =====
