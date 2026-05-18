@@ -3,7 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const User = require('../models/User');
-const { News, Emission, Publicite, Animateur, Reportage, Online } = require('../models/Content');
+const { News, Emission, Publicite, Animateur, Reportage, Online } = require('../models/content');
 
 // ===== SANITIZATION HELPER =====
 function stripTags(str) {
