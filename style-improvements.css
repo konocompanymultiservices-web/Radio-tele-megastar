@@ -1,0 +1,152 @@
+/* ============================================================
+   STYLE.CSS - AMÉLIORATIONS v3.1
+   Ajouter ceci à la fin de style.css
+   ============================================================ */
+
+/* ===== ANIMATIONS TOAST ===== */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+}
+
+/* ===== TOAST NOTIFICATIONS ===== */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 14px 24px;
+  border-radius: 8px;
+  z-index: 2000;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+  max-width: 90%;
+}
+
+.toast-success {
+  background: #00c851;
+  color: white;
+}
+
+.toast-error {
+  background: #cc0000;
+  color: white;
+}
+
+.toast-info {
+  background: #333;
+  color: white;
+}
+
+.toast-warning {
+  background: #ff9800;
+  color: white;
+}
+
+/* ===== BOUTONS - DISABLED STATE ===== */
+button:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+/* ===== MODAL - IMPROVED ===== */
+.modal-field input:focus,
+.modal-field textarea:focus,
+.modal-field select:focus {
+  border-color: var(--jaune);
+  box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.1);
+}
+
+/* ===== CAROUSEL - OPTIMISATION ===== */
+.carousel-track {
+  will-change: transform;
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ===== RESPONSIVE CHAT WIDGET ===== */
+@media (max-width: 480px) {
+  .chat-widget {
+    width: calc(100vw - 16px) !important;
+    height: calc(100vh - 120px);
+    bottom: 100px;
+    right: 8px;
+    border-radius: 12px 12px 0 0;
+    max-height: unset;
+  }
+  
+  .chat-messages {
+    max-height: calc(100vh - 200px);
+  }
+}
+
+/* ===== IMAGES - LAZY LOADING ===== */
+img[loading="lazy"] {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+img[loading="lazy"][src] {
+  animation: none;
+  background: none;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ===== ACCESSIBILITY ===== */
+/* Améliorer le focus visible pour clavier */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--jaune);
+  outline-offset: 2px;
+}
+
+/* Couleurs avec meilleur contraste */
+.search-input::placeholder {
+  color: var(--gri-4);
+  opacity: 0.7;
+}
+
+/* ===== SKIP TO CONTENT LINK ===== */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--jaune);
+  color: var(--nwa);
+  padding: 8px;
+  text-decoration: none;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
