@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mon Dashboard &mdash; Radio T&eacute;l&eacute; Mega Star</title>
+  <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --noir: #0d0d0d; --gri: #161616; --gri-cle: #1e1e1e;
+      --bod: #2a2a2a; --blan: #f0f0f0; --rouge: #cc0000;
+      --jaune: #FFD600; --gri-text: #888;
+    }
+    body { background: var(--noir); color: var(--blan); font-family: 'Lato', sans-serif; min-height: 100vh; }
+    a { text-decoration: none; color: inherit; }
+
+    /* HEADER */
+    .dash-header {
+      background: var(--gri); border-bottom: 2px solid var(--rouge);
+      padding: 0 24px; height: 64px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 100;
+    }
+    .dash-logo { display: flex; align-items: center; gap: 12px; }
+    .dash-logo img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--jaune); }
+    .dash-logo-text h1 { font-family: 'Oswald', sans-serif; font-size: 16px; color: var(--blan); }
+    .dash-logo-text p { font-size: 11px; color: var(--gri-text); }
+    .dash-header-right { display: flex; align-items: center; gap: 12px; }
+    .dash-user-name { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--jaune); }
+    .btn-logout { background: transparent; border: 1px solid #444; color: var(--gri-text); padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all .2s; }
+    .btn-logout:hover { border-color: var(--rouge); color: var(--rouge); }
+
+    /* LAYOUT */
+    .dash-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 64px); }
+
+    /* SIDEBAR */
+    .dash-sidebar { background: var(--gri); border-right: 1px solid var(--bod); padding: 24px 16px; }
+    .sidebar-avatar { text-align: center; padding-bottom: 20px; border-bottom: 1px solid var(--bod); margin-bottom: 16px; }
+    .avatar-circle {
+      width: 72px; height: 72px; border-radius: 50%; background: var(--rouge);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Oswald', sans-serif; font-size: 26px; color: var(--blan);
+      border: 3px solid var(--jaune); margin: 0 auto 10px; cursor: pointer;
+      position: relative; overflow: hidden;
+    }
+    .avatar-circle img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: none; }
+    .avatar-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,.6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; text-align: center; opacity: 0; transition: .2s;
+    }
+    .avatar-circle:hover .avatar-overlay { opacity: 1; }
+    .sidebar-name { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--blan); }
+    .sidebar-email { font-size: 11px; color: var(--gri-text); margin-top: 3px; word-break: break-all; }
+    .sidebar-plan { display: inline-block; margin-top: 8px; background: var(--rouge); color: var(--blan); font-size: 10px; font-family: 'Oswald', sans-serif; padding: 2px 10px; border-radius: 20px; letter-spacing: 1px; }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
+    .sidebar-nav-item {
+      display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+      border-radius: 8px; background: transparent; border: none; color: var(--gri-text);
+      font-family: 'Lato', sans-serif; font-size: 13px; cursor: pointer; text-align: left; transition: all .2s;
+    }
+    .sidebar-nav-item:hover { background: var(--gri-cle); color: var(--blan); }
+    .sidebar-nav-item.active { background: rgba(204,0,0,.15); color: var(--blan); border-left: 3px solid var(--rouge); }
+    .nav-icon { font-size: 16px; }
+
+    /* MAIN */
+    .dash-main { padding: 32px; overflow-y: auto; }
+    .dash-section { display: none; }
+    .dash-section.active { display: block; }
+    .section-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: var(--blan); margin-bottom: 1.5rem; padding-bottom: 8px; border-bottom: 2px solid var(--rouge); display: inline-block; }
+
+    /* STATS */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 12px; padding: 1.5rem; text-align: center; }
+    .stat-icon { font-size: 28px; margin-bottom: 8px; }
+    .stat-value { font-family: 'Oswald', sans-serif; font-size: 26px; color: var(--jaune); }
+    .stat-label { font-size: 12px; color: var(--gri-text); margin-top: 4px; }
+
+    /* ALERT */
+    .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 1rem; font-size: 14px; display: none; }
+    .alert-success { background: rgba(76,175,80,.15); border: 1px solid #4CAF50; color: #4CAF50; }
+    .alert-error { background: rgba(204,0,0,.15); border: 1px solid var(--rouge); color: #ff6666; }
+
+    /* PLAN */
+    .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .plan-card { background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 12px; padding: 2rem 1.5rem; text-align: center; position: relative; transition: transform .2s; }
+    .plan-card:hover { transform: translateY(-4px); }
+    .plan-card.current-plan { border: 2px solid var(--jaune); }
+    .plan-card.premium-card { border: 2px solid var(--rouge); }
+    .plan-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--rouge); color: var(--blan); font-family: 'Oswald', sans-serif; font-size: 11px; padding: 3px 16px; border-radius: 20px; }
+    .plan-badge.current-badge { background: var(--jaune); color: var(--noir); }
+    .plan-name { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--blan); margin-bottom: 8px; }
+    .plan-price { font-family: 'Oswald', sans-serif; font-size: 34px; color: var(--jaune); }
+    .plan-price span { font-size: 13px; color: var(--gri-text); }
+    .plan-features { list-style: none; margin: 1rem 0 1.5rem; text-align: left; }
+    .plan-features li { font-size: 13px; color: var(--gri-text); padding: 6px 0; border-bottom: 1px solid var(--bod); }
+    .plan-features li::before { content: "&#10003; "; color: var(--jaune); font-weight: 700; }
+    .btn-plan { width: 100%; padding: 10px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 14px; cursor: pointer; border: none; transition: all .2s; }
+    .btn-plan-current { background: var(--jaune); color: var(--noir); cursor: default; }
+    .btn-plan-upgrade { background: var(--rouge); color: var(--blan); }
+    .btn-plan-upgrade:hover { background: #aa0000; }
+
+    /* PEMAN */
+    .peman-section { margin-top: 2rem; }
+    .peman-title { font-family: 'Oswald', sans-serif; font-size: 13px; color: var(--gri-text); margin-bottom: 1rem; letter-spacing: .06em; text-transform: uppercase; }
+    .peman-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+    .peman-card { background: var(--gri-cle); border: 2px solid var(--bod); border-radius: 10px; padding: 1.2rem; text-align: center; cursor: pointer; transition: all .2s; }
+    .peman-card:hover { border-color: var(--rouge); }
+    .peman-card.selected { border-color: var(--jaune); background: rgba(255,214,0,.05); }
+    .peman-icon { font-size: 32px; margin-bottom: 8px; }
+    .peman-name { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--blan); }
+    .peman-desc { font-size: 11px; color: var(--gri-text); margin-top: 4px; }
+
+    /* PROFIL */
+    .profil-form { max-width: 500px; }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-size: 12px; color: var(--gri-text); margin-bottom: 6px; font-family: 'Oswald', sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+    .form-group input { width: 100%; background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 6px; padding: 12px 16px; color: var(--blan); font-family: 'Lato', sans-serif; font-size: 14px; transition: border-color .2s; }
+    .form-group input:focus { outline: none; border-color: var(--rouge); }
+    .form-group input:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-save { background: var(--rouge); color: var(--blan); border: none; padding: 12px 32px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 15px; cursor: pointer; transition: background .2s; }
+    .btn-save:hover { background: #aa0000; }
+    .btn-save:disabled { opacity: .6; cursor: wait; }
+
+    /* PHOTO */
+    .photo-upload-area { display: flex; align-items: center; gap: 2rem; margin-bottom: 2rem; padding: 1.5rem; background: var(--gri-cle); border-radius: 12px; border: 1px solid var(--bod); }
+    .photo-avatar-big { width: 90px; height: 90px; border-radius: 50%; background: var(--rouge); display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; font-size: 32px; color: var(--blan); border: 3px solid var(--jaune); overflow: hidden; flex-shrink: 0; position: relative; }
+    .photo-avatar-big img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: none; }
+    .btn-photo { background: transparent; border: 1px solid var(--jaune); color: var(--jaune); padding: 8px 20px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 13px; cursor: pointer; transition: all .2s; display: block; margin-bottom: 8px; }
+    .btn-photo:hover { background: var(--jaune); color: var(--noir); }
+    .btn-photo-del { background: transparent; border: 1px solid #555; color: var(--gri-text); padding: 6px 16px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all .2s; }
+    .btn-photo-del:hover { border-color: var(--rouge); color: var(--rouge); }
+
+    /* NOTIF */
+    .notif-grid { display: grid; gap: 1rem; margin-bottom: 2rem; }
+    .notif-item { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.2rem; background: var(--gri-cle); border-radius: 10px; border: 1px solid var(--bod); }
+    .notif-info h4 { font-family: 'Oswald', sans-serif; font-size: 15px; color: var(--blan); }
+    .notif-info p { font-size: 12px; color: var(--gri-text); margin-top: 2px; }
+    .toggle-switch { position: relative; width: 48px; height: 26px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: #333; border-radius: 26px; cursor: pointer; transition: .3s; }
+    .toggle-slider::before { content: ''; position: absolute; width: 20px; height: 20px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .3s; }
+    .toggle-switch input:checked + .toggle-slider { background: var(--rouge); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(22px); }
+
+    /* EMISSION LIST */
+    .emission-list { list-style: none; }
+    .emission-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--gri-cle); border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--bod); }
+    .emission-emoji { font-size: 22px; width: 36px; text-align: center; }
+    .emission-info { flex: 1; }
+    .emission-info h4 { font-family: 'Oswald', sans-serif; font-size: 14px; color: var(--blan); }
+    .emission-info p { font-size: 12px; color: var(--gri-text); }
+    .emission-badge { background: var(--rouge); color: var(--blan); font-size: 10px; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+
+    /* CONTACT */
+    .contact-box { background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 12px; padding: 2rem; max-width: 500px; }
+    .contact-box p { color: var(--gri-text); font-size: 14px; margin-bottom: 1.5rem; line-height: 1.6; }
+    .contact-links { display: flex; flex-direction: column; gap: 12px; }
+    .contact-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--noir); border-radius: 8px; text-decoration: none; color: var(--blan); font-size: 14px; border: 1px solid var(--bod); transition: border-color .2s; }
+    .contact-link:hover { border-color: var(--rouge); }
+    .contact-link-icon { font-size: 20px; width: 28px; text-align: center; }
+
+    @media(max-width:768px) { .dash-layout { grid-template-columns: 1fr; } .dash-sidebar { display: none; } }
+  </style>
+</head>
+<body>
+
+  <header class="dash-header">
+    <a href="index.html" class="dash-logo">
+      <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo"/>
+      <div class="dash-logo-text">
+        <h1>Radio T&eacute;l&eacute; Mega Star</h1>
+        <p>97.3 FM &middot; Mon Dashboard</p>
+      </div>
+    </a>
+    <div class="dash-header-right">
+      <span class="dash-user-name" id="header-username">...</span>
+      <button class="btn-logout" onclick="dekonekte()">D&eacute;connexion</button>
+    </div>
+  </header>
+
+  <div class="dash-layout">
+    <aside class="dash-sidebar">
+      <div class="sidebar-avatar">
+        <div class="avatar-circle" onclick="document.getElementById('photo-input').click()">
+          <span id="avatar-initials">?</span>
+          <img id="avatar-img" alt="Photo"/>
+          <div class="avatar-overlay">&#128247;<br/>Changer</div>
+        </div>
+        <p class="sidebar-name" id="sidebar-name">...</p>
+        <p class="sidebar-email" id="sidebar-email">...</p>
+        <span class="sidebar-plan" id="sidebar-plan">GRATUIT</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="sidebar-nav-item active" onclick="nav('overview',this)"><span class="nav-icon">&#128202;</span> Vue d&apos;ensemble</button>
+        <button class="sidebar-nav-item" onclick="nav('ecoute',this)"><span class="nav-icon">&#128251;</span> Mon &eacute;coute</button>
+        <button class="sidebar-nav-item" onclick="nav('abonnement',this)"><span class="nav-icon">&#11088;</span> Mon abonnement</button>
+        <button class="sidebar-nav-item" onclick="nav('notif',this)"><span class="nav-icon">&#128276;</span> Notifications</button>
+        <button class="sidebar-nav-item" onclick="nav('profil',this)"><span class="nav-icon">&#128100;</span> Mon profil</button>
+        <button class="sidebar-nav-item" onclick="nav('modpas',this)"><span class="nav-icon">&#128274;</span> Mot de passe</button>
+        <button class="sidebar-nav-item" onclick="nav('contact',this)"><span class="nav-icon">&#128140;</span> Nous contacter</button>
+      </nav>
+    </aside>
+
+    <main class="dash-main">
+
+      <!-- OVERVIEW -->
+      <section class="dash-section active" id="section-overview">
+        <h2 class="section-title">Vue d&apos;ensemble</h2>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon">&#9201;</div><div class="stat-value" id="stat-temps">0h</div><div class="stat-label">Temps d&apos;&eacute;coute</div></div>
+          <div class="stat-card"><div class="stat-icon">&#127897;</div><div class="stat-value" id="stat-emissions">0</div><div class="stat-label">&Eacute;missions</div></div>
+          <div class="stat-card"><div class="stat-icon">&#128197;</div><div class="stat-value" id="stat-jours">0</div><div class="stat-label">Jours membre</div></div>
+          <div class="stat-card"><div class="stat-icon">&#11088;</div><div class="stat-value" id="stat-plan" style="font-size:16px;">Gratuit</div><div class="stat-label">Plan actuel</div></div>
+        </div>
+        <p style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:13px;margin-bottom:1rem;letter-spacing:.06em;">DERNI&Egrave;RE ACTIVIT&Eacute;</p>
+        <div class="emission-item">
+          <div class="emission-emoji">&#128251;</div>
+          <div class="emission-info"><h4>Radio T&eacute;l&eacute; Mega Star &mdash; En direct</h4><p id="derniere-ecoute">Aucune &eacute;coute enregistr&eacute;e</p></div>
+        </div>
+      </section>
+
+      <!-- ECOUTE -->
+      <section class="dash-section" id="section-ecoute">
+        <h2 class="section-title">Mon &eacute;coute</h2>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon">&#9201;</div><div class="stat-value" id="ecoute-temps">0h</div><div class="stat-label">Temps total</div></div>
+          <div class="stat-card"><div class="stat-icon">&#127897;</div><div class="stat-value" id="ecoute-nb">0</div><div class="stat-label">&Eacute;missions</div></div>
+        </div>
+        <p style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:13px;margin-bottom:1rem;letter-spacing:.06em;">&Eacute;MISSIONS DISPONIBLES</p>
+        <ul class="emission-list">
+          <li class="emission-item"><div class="emission-emoji">&#127749;</div><div class="emission-info"><h4>R&eacute;veil Matinal</h4><p>05h &mdash; 08h</p></div><span class="emission-badge">Populaire</span></li>
+          <li class="emission-item"><div class="emission-emoji">&#128240;</div><div class="emission-info"><h4>Actualit&eacute;s</h4><p>08h &mdash; 10h</p></div></li>
+          <li class="emission-item"><div class="emission-emoji">&#127925;</div><div class="emission-info"><h4>Vibes Ha&iuml;tiennes</h4><p>10h &mdash; 14h</p></div><span class="emission-badge">Top</span></li>
+          <li class="emission-item"><div class="emission-emoji">&#127908;</div><div class="emission-info"><h4>D&eacute;bat Citoyen</h4><p>14h &mdash; 17h</p></div></li>
+          <li class="emission-item"><div class="emission-emoji">&#128591;</div><div class="emission-info"><h4>Heure Spirituelle</h4><p>17h &mdash; 19h</p></div></li>
+          <li class="emission-item"><div class="emission-emoji">&#127769;</div><div class="emission-info"><h4>Soir&eacute;e Mega Star</h4><p>19h &mdash; 22h</p></div></li>
+        </ul>
+      </section>
+
+      <!-- ABONNEMENT + PEMAN -->
+      <section class="dash-section" id="section-abonnement">
+        <h2 class="section-title">Mon abonnement</h2>
+        <div id="alert-plan" class="alert"></div>
+        <div class="plan-grid">
+          <div class="plan-card current-plan">
+            <span class="plan-badge current-badge">Plan actuel</span>
+            <p class="plan-name">Gratuit</p>
+            <p class="plan-price">$0 <span>/mois</span></p>
+            <ul class="plan-features">
+              <li>&Eacute;coute radio en direct</li>
+              <li>Acc&egrave;s aux programmes</li>
+              <li>Compte personnel</li>
+            </ul>
+            <button class="btn-plan btn-plan-current" disabled>Plan actuel</button>
+          </div>
+          <div class="plan-card premium-card">
+            <span class="plan-badge">Recommand&eacute;</span>
+            <p class="plan-name">Premium</p>
+            <p class="plan-price">$5 <span>/mois</span></p>
+            <ul class="plan-features">
+              <li>Tout du plan Gratuit</li>
+              <li>Contenu exclusif</li>
+              <li>Sans publicit&eacute;</li>
+              <li>Notifications prioritaires</li>
+              <li>Support d&eacute;di&eacute;</li>
+            </ul>
+            <button class="btn-plan btn-plan-upgrade" onclick="choisirPlan('Premium','$5/mois')">Passer &agrave; Premium</button>
+          </div>
+          <div class="plan-card">
+            <p class="plan-name">VIP</p>
+            <p class="plan-price">$15 <span>/mois</span></p>
+            <ul class="plan-features">
+              <li>Tout du plan Premium</li>
+              <li>Acc&egrave;s backstage</li>
+              <li>Badge VIP exclusif</li>
+              <li>Invitations &eacute;v&eacute;nements</li>
+              <li>Contact animateurs</li>
+            </ul>
+            <button class="btn-plan btn-plan-upgrade" onclick="choisirPlan('VIP','$15/mois')">Passer &agrave; VIP</button>
+          </div>
+        </div>
+
+        <!-- METOD PEMAN -->
+        <div class="peman-section" id="peman-section" style="display:none;">
+          <p class="peman-title">M&eacute;thode de paiement &mdash; <span id="plan-choisi" style="color:var(--jaune);"></span></p>
+          <div class="peman-grid">
+            <div class="peman-card" onclick="selPeman(this,'carte')">
+              <div class="peman-icon">&#128179;</div>
+              <div class="peman-name">Carte bancaire</div>
+              <div class="peman-desc">Visa, Mastercard</div>
+            </div>
+            <div class="peman-card" onclick="selPeman(this,'moncash')">
+              <div class="peman-icon">&#128241;</div>
+              <div class="peman-name">MonCash</div>
+              <div class="peman-desc">Paiement Ha&iuml;ti</div>
+            </div>
+            <div class="peman-card" onclick="selPeman(this,'paypal')">
+              <div class="peman-icon">&#128176;</div>
+              <div class="peman-name">PayPal</div>
+              <div class="peman-desc">International</div>
+            </div>
+          </div>
+          <div id="peman-confirm" style="margin-top:1.5rem;display:none;">
+            <button class="btn-save" onclick="confirmerPeman()">Confirmer le paiement &#8594;</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- NOTIFIKASYON -->
+      <section class="dash-section" id="section-notif">
+        <h2 class="section-title">Notifications</h2>
+        <div id="alert-notif" class="alert"></div>
+        <div style="margin-bottom:1.5rem;padding:1rem 1.2rem;background:var(--gri-cle);border-radius:10px;border:1px solid var(--bod);">
+          <p style="font-size:13px;color:var(--gri-text);margin-bottom:12px;">Activez les notifications pour recevoir des alertes en temps r&eacute;el.</p>
+          <button class="btn-save" id="btn-notif-browser" onclick="activerNotifBrowser()" style="font-size:13px;padding:10px 20px;">&#128276; Activer les notifications browser</button>
+          <span id="notif-browser-status" style="margin-left:12px;font-size:12px;color:var(--gri-text);"></span>
+        </div>
+        <p style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:13px;margin-bottom:1rem;letter-spacing:.06em;">&Eacute;MISSIONS &mdash; ALERTES EMAIL</p>
+        <div class="notif-grid">
+          <div class="notif-item"><div class="notif-info"><h4>R&eacute;veil Matinal</h4><p>Alerte 15 min avant (05h00)</p></div><label class="toggle-switch"><input type="checkbox" id="notif-reveil" onchange="saveNotif()"/><span class="toggle-slider"></span></label></div>
+          <div class="notif-item"><div class="notif-info"><h4>Actualit&eacute;s</h4><p>Alerte 15 min avant (08h00)</p></div><label class="toggle-switch"><input type="checkbox" id="notif-actu" onchange="saveNotif()"/><span class="toggle-slider"></span></label></div>
+          <div class="notif-item"><div class="notif-info"><h4>Vibes Ha&iuml;tiennes</h4><p>Alerte 15 min avant (10h00)</p></div><label class="toggle-switch"><input type="checkbox" id="notif-vibes" onchange="saveNotif()"/><span class="toggle-slider"></span></label></div>
+          <div class="notif-item"><div class="notif-info"><h4>D&eacute;bat Citoyen</h4><p>Alerte 15 min avant (14h00)</p></div><label class="toggle-switch"><input type="checkbox" id="notif-debat" onchange="saveNotif()"/><span class="toggle-slider"></span></label></div>
+          <div class="notif-item"><div class="notif-info"><h4>Heure Spirituelle</h4><p>Alerte 15 min avant (17h00)</p></div><label class="toggle-switch"><input type="checkbox" id="notif-spirit" onchange="saveNotif()"/><span class="toggle-slider"></span></label></div>
+          <div class="notif-item"><div class="notif-info"><h4>Soir&eacute;e Mega Star</h4><p>Alerte 15 min avant (19h00)</p></div><label class="toggle-switch"><input type="checkbox" id="notif-soiree" onchange="saveNotif()"/><span class="toggle-slider"></span></label></div>
+        </div>
+      </section>
+
+      <!-- PROFIL -->
+      <section class="dash-section" id="section-profil">
+        <h2 class="section-title">Mon profil</h2>
+        <div id="alert-profil" class="alert"></div>
+        <div class="photo-upload-area">
+          <div class="photo-avatar-big">
+            <span id="photo-initials">?</span>
+            <img id="photo-img" alt="Photo profil"/>
+          </div>
+          <div>
+            <p style="font-family:'Oswald',sans-serif;font-size:16px;margin-bottom:4px;">Photo de profil</p>
+            <p style="font-size:12px;color:var(--gri-text);margin-bottom:12px;">JPG ou PNG &mdash; Max 2MB</p>
+            <button class="btn-photo" onclick="document.getElementById('photo-input').click()">&#128247; Changer la photo</button>
+            <button class="btn-photo-del" onclick="supprimerPhoto()">Supprimer la photo</button>
+            <input type="file" id="photo-input" accept="image/jpeg,image/png" onchange="changerPhoto(this)" style="display:none;"/>
+          </div>
+        </div>
+        <form class="profil-form" onsubmit="saveProfil(event)">
+          <div class="form-group"><label>Nom complet</label><input type="text" id="profil-nom" required/></div>
+          <div class="form-group"><label>Email</label><input type="email" id="profil-email" disabled/></div>
+          <div class="form-group"><label>T&eacute;l&eacute;phone</label><input type="tel" id="profil-tel" placeholder="+509 3X XX XXXX"/></div>
+          <button type="submit" class="btn-save" id="btn-save-profil">&#128190; Sauvegarder</button>
+        </form>
+      </section>
+
+      <!-- MOT DE PASSE -->
+      <section class="dash-section" id="section-modpas">
+        <h2 class="section-title">Changer le mot de passe</h2>
+        <div id="alert-modpas" class="alert"></div>
+        <form class="profil-form" onsubmit="saveModpas(event)">
+          <div class="form-group"><label>Mot de passe actuel</label><input type="password" id="ancien-modpas" required/></div>
+          <div class="form-group"><label>Nouveau mot de passe</label><input type="password" id="nouveau-modpas" placeholder="Minimum 6 caract&egrave;res" required/></div>
+          <div class="form-group"><label>Confirmer</label><input type="password" id="confirm-modpas" required/></div>
+          <button type="submit" class="btn-save">&#128274; Changer le mot de passe</button>
+        </form>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="dash-section" id="section-contact">
+        <h2 class="section-title">Nous contacter</h2>
+        <div class="contact-box">
+          <p>Vous avez une question ou souhaitez annoncer sur Radio T&eacute;l&eacute; Mega Star&nbsp;? Contactez-nous&nbsp;!</p>
+          <div class="contact-links">
+            <a href="mailto:konocompanymultiservices@gmail.com?subject=Contact%20Radio%20T%C3%A9l%C3%A9%20Mega%20Star" class="contact-link">
+              <span class="contact-link-icon">&#9993;</span>
+              <div>
+                <p style="font-family:'Oswald',sans-serif;font-size:14px;">Email g&eacute;n&eacute;ral</p>
+                <p style="font-size:12px;color:var(--gri-text);">konocompanymultiservices@gmail.com</p>
+              </div>
+            </a>
+            <a href="mailto:konocompanymultiservices@gmail.com?subject=Publicit%C3%A9%20Radio%20T%C3%A9l%C3%A9%20Mega%20Star&body=Bonjour%2C%20je%20souhaite%20annoncer%20sur%20votre%20radio." class="contact-link">
+              <span class="contact-link-icon">&#127919;</span>
+              <div>
+                <p style="font-family:'Oswald',sans-serif;font-size:14px;">Publicit&eacute;</p>
+                <p style="font-size:12px;color:var(--gri-text);">Annoncer sur notre radio</p>
+              </div>
+            </a>
+            <a href="mailto:konocompanymultiservices@gmail.com?subject=Abonnement%20Premium%2FVIP" class="contact-link">
+              <span class="contact-link-icon">&#11088;</span>
+              <div>
+                <p style="font-family:'Oswald',sans-serif;font-size:14px;">Abonnement Premium / VIP</p>
+                <p style="font-size:12px;color:var(--gri-text);">Questions sur les plans</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    const API_URL = "https://radio-megastar-backend-production.up.railway.app";
+    let currentUser = null, authToken = null;
+
+    window.addEventListener('load', function() {
+      authToken = localStorage.getItem('token');
+      const u = localStorage.getItem('user');
+      if (!authToken || !u) { window.location.href = 'index.html'; return; }
+      currentUser = JSON.parse(u);
+      initDashboard();
+      loadNotifs();
+      checkNotifBrowser();
+    });
+
+    function initDashboard() {
+      const nom = currentUser.nom || 'Utilisateur';
+      const email = currentUser.email || '';
+      const ini = nom.charAt(0).toUpperCase();
+      setText('header-username', nom);
+      setText('sidebar-name', nom);
+      setText('sidebar-email', email);
+      setText('avatar-initials', ini);
+      setText('photo-initials', ini);
+      val('profil-nom', nom);
+      val('profil-email', email);
+      val('profil-tel', currentUser.telephone || '');
+      // Restore foto pwofil si li egziste
+      const foto = currentUser.fotoPwofil || localStorage.getItem('fotoPwofil_' + currentUser.id);
+      if (foto) showPhoto(foto);
+      loadStats();
+    }
+
+    function loadStats() {
+      fetch(API_URL + '/api/user/dashboard', { headers: { 'Authorization': 'Bearer ' + authToken } })
+      .then(r => r.json()).then(data => {
+        if (!data.success) return;
+        const s = data.dashboard.statistiques;
+        const p = data.dashboard.profil;
+        const h = Math.floor((s.tempsEcoute || 0) / 60);
+        setText('stat-temps', h + 'h'); setText('ecoute-temps', h + 'h');
+        setText('stat-emissions', s.emissionsEcoutees || 0); setText('ecoute-nb', s.emissionsEcoutees || 0);
+        const jou = Math.max(0, Math.floor((new Date() - new Date(p.membreDepuis)) / 86400000));
+        setText('stat-jours', jou);
+        if (s.dernierEcoute) setText('derniere-ecoute', new Date(s.dernierEcoute).toLocaleDateString('fr-FR'));
+      }).catch(() => {});
+    }
+
+    function nav(id, btn) {
+      document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
+      document.getElementById('section-' + id).classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    function showPhoto(url) {
+      ['avatar-img','photo-img'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.src = url; el.style.display = 'block'; }
+      });
+      ['avatar-initials','photo-initials'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+    }
+
+    function hidePhoto() {
+      ['avatar-img','photo-img'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.src = ''; el.style.display = 'none'; }
+      });
+      const ini = (currentUser.nom || 'U').charAt(0).toUpperCase();
+      ['avatar-initials','photo-initials'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.style.display = ''; el.textContent = ini; }
+      });
+    }
+
+    function changerPhoto(input) {
+      const file = input.files[0];
+      if (!file) return;
+      if (file.size > 2097152) { showAlert('alert-profil', 'Foto a twò gwo — max 2MB', 'error'); return; }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const url = e.target.result;
+        showPhoto(url);
+        // Save lokalman IMEDYATMAN pou persist apre dekoneksyon
+        localStorage.setItem('fotoPwofil_' + currentUser.id, url);
+        currentUser.fotoPwofil = url;
+        localStorage.setItem('user', JSON.stringify(currentUser));
+        // Eseye save sou backend tou
+        fetch(API_URL + '/api/user/profil', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+          body: JSON.stringify({ fotoPwofil: url })
+        })
+        .then(r => r.json()).then(data => {
+          if (data.success) {
+            if (data.user) { currentUser = {...currentUser, ...data.user}; }
+            localStorage.setItem('user', JSON.stringify(currentUser));
+            showAlert('alert-profil', 'Photo mise à jour ! ✓', 'success');
+          } else {
+            // Menm si backend echwe, foto a deja save lokalman
+            showAlert('alert-profil', 'Photo sauvegardée localement ✓', 'success');
+          }
+        }).catch(() => {
+          showAlert('alert-profil', 'Photo sauvegardée localement ✓', 'success');
+        });
+      };
+      reader.readAsDataURL(file);
+      input.value = '';
+    }
+
+    function supprimerPhoto() {
+      if (!confirm('Supprimer la photo ?')) return;
+      localStorage.removeItem('fotoPwofil_' + currentUser.id);
+      currentUser.fotoPwofil = '';
+      localStorage.setItem('user', JSON.stringify(currentUser));
+      hidePhoto();
+      fetch(API_URL + '/api/user/profil', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ fotoPwofil: '' })
+      }).catch(() => {});
+      showAlert('alert-profil', 'Photo supprimée ✓', 'success');
+    }
+
+    function saveProfil(e) {
+      e.preventDefault();
+      const nom = document.getElementById('profil-nom').value.trim();
+      const telephone = document.getElementById('profil-tel').value.trim();
+      const btn = document.getElementById('btn-save-profil');
+      btn.textContent = 'Sauvegarde...'; btn.disabled = true;
+      fetch(API_URL + '/api/user/profil', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ nom, telephone })
+      })
+      .then(r => r.json()).then(data => {
+        btn.textContent = '&#128190; Sauvegarder'; btn.disabled = false;
+        if (data.success) {
+          currentUser.nom = nom;
+          currentUser.telephone = telephone;
+          localStorage.setItem('user', JSON.stringify(currentUser));
+          setText('sidebar-name', nom);
+          setText('header-username', nom);
+          setText('avatar-initials', nom.charAt(0).toUpperCase());
+          showAlert('alert-profil', 'Profil mis à jour ! ✓', 'success');
+        } else {
+          showAlert('alert-profil', data.message || 'Erreur', 'error');
+        }
+      }).catch(() => {
+        btn.textContent = 'Sauvegarder'; btn.disabled = false;
+        showAlert('alert-profil', 'Erreur serveur', 'error');
+      });
+    }
+
+    function saveModpas(e) {
+      e.preventDefault();
+      const ancien = document.getElementById('ancien-modpas').value;
+      const nouveau = document.getElementById('nouveau-modpas').value;
+      const conf = document.getElementById('confirm-modpas').value;
+      if (nouveau !== conf) { showAlert('alert-modpas', 'Les mots de passe ne correspondent pas !', 'error'); return; }
+      if (nouveau.length < 6) { showAlert('alert-modpas', 'Minimum 6 caractères', 'error'); return; }
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.textContent = 'Changement...'; btn.disabled = true;
+      fetch(API_URL + '/api/user/changer-modpas', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ ancienModpas: ancien, nouveauModpas: nouveau })
+      })
+      .then(r => r.json()).then(data => {
+        btn.textContent = 'Changer le mot de passe'; btn.disabled = false;
+        if (data.success) { showAlert('alert-modpas', 'Mot de passe changé ! ✓', 'success'); e.target.reset(); }
+        else { showAlert('alert-modpas', data.message || 'Erreur', 'error'); }
+      }).catch(() => { btn.textContent = 'Changer le mot de passe'; btn.disabled = false; });
+    }
+
+    function choisirPlan(nom, prix) {
+      document.getElementById('plan-choisi').textContent = nom + ' — ' + prix;
+      document.getElementById('peman-section').style.display = 'block';
+      document.getElementById('peman-confirm').style.display = 'none';
+      document.querySelectorAll('.peman-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById('peman-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function selPeman(el, m) {
+      document.querySelectorAll('.peman-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('peman-confirm').style.display = 'block';
+    }
+
+    function confirmerPeman() {
+      showAlert('alert-plan', 'Mèsi ! Nou pral kontakte ou pa email pou finalize peman an. ✓', 'success');
+      document.getElementById('peman-section').style.display = 'none';
+    }
+
+    function checkNotifBrowser() {
+      if (!('Notification' in window)) { document.getElementById('notif-browser-status').textContent = 'Non supporté'; return; }
+      if (Notification.permission === 'granted') {
+        const btn = document.getElementById('btn-notif-browser');
+        btn.textContent = '✓ Notifications activées'; btn.style.background = '#4CAF50';
+        document.getElementById('notif-browser-status').textContent = 'Activées';
+      } else if (Notification.permission === 'denied') {
+        document.getElementById('notif-browser-status').textContent = 'Bloquées par navigateur';
+      }
+    }
+
+    function activerNotifBrowser() {
+      if (!('Notification' in window)) return;
+      Notification.requestPermission().then(p => {
+        if (p === 'granted') {
+          new Notification('Radio Télé Mega Star', { body: 'Notifikasyon aktive !', icon: 'images/radio_tele_mega_star_logo.jpg' });
+          checkNotifBrowser();
+          showAlert('alert-notif', 'Notifications browser activées ! ✓', 'success');
+        } else { showAlert('alert-notif', 'Notifications refusées.', 'error'); }
+      });
+    }
+
+    function saveNotif() {
+      const n = {
+        reveil: g('notif-reveil'), actu: g('notif-actu'), vibes: g('notif-vibes'),
+        debat: g('notif-debat'), spirit: g('notif-spirit'), soiree: g('notif-soiree')
+      };
+      localStorage.setItem('notifs_' + currentUser.id, JSON.stringify(n));
+      showAlert('alert-notif', 'Préférences sauvegardées ✓', 'success');
+    }
+
+    function loadNotifs() {
+      if (!currentUser) return;
+      const saved = localStorage.getItem('notifs_' + currentUser.id);
+      if (!saved) return;
+      const n = JSON.parse(saved);
+      Object.keys(n).forEach(k => { const el = document.getElementById('notif-' + k); if (el) el.checked = n[k]; });
+    }
+
+    function g(id) { const el = document.getElementById(id); return el ? el.checked : false; }
+    function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
+    function val(id, v) { const el = document.getElementById(id); if (el) el.value = v; }
+
+    function showAlert(id, msg, type) {
+      const el = document.getElementById(id); if (!el) return;
+      el.textContent = msg; el.className = 'alert alert-' + type; el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+
+    function dekonekte() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

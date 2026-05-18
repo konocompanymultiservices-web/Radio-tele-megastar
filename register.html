@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Créer un compte &mdash; Radio Télé Mega Star</title>
+  <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body { background: #000; display: flex; min-height: 100vh; flex-direction: column; }
+    .register-page {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .register-card {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 460px;
+      text-align: center;
+    }
+    .register-logo { width: 72px; height: 72px; border-radius: 50%; border: 3px solid var(--jaune); margin: 0 auto 16px; }
+    .register-title { font-family: 'Oswald', sans-serif; font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .register-sub { color: #666; font-size: .9rem; margin-bottom: 32px; }
+    .register-form { display: flex; flex-direction: column; gap: 14px; text-align: left; }
+    .reg-label { font-size: .78rem; color: #888; font-weight: 500; display: block; margin-bottom: 5px; }
+    .reg-input {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 13px 16px;
+      color: #fff;
+      font-size: .9rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .reg-input:focus { border-color: var(--jaune); }
+    .reg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .register-btn {
+      background: var(--jaune);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-weight: 700;
+      font-size: .95rem;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: all .2s;
+    }
+    .register-btn:hover { background: var(--jaune-2); transform: translateY(-1px); }
+    .register-links { margin-top: 20px; font-size: .85rem; color: #666; }
+    .register-links a { color: var(--jaune); font-weight: 700; }
+    .perks {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+    .perk-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .83rem;
+      color: #888;
+    }
+    .perk-check {
+      width: 18px; height: 18px;
+      background: var(--jaune);
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .6rem;
+    }
+    #reg-msg { display: none; padding: 12px; border-radius: 8px; font-size: .85rem; margin-bottom: 8px; text-align: center; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="logo-img"/>
+      <div class="logo-text">
+        <h1>Radio Télé Mega Star</h1>
+        <p>97.3 FM &middot; CH. 60 &middot; Cable 116</p>
+      </div>
+    </a>
+  </div>
+</header>
+
+<div class="register-page">
+  <div class="register-card">
+    <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="register-logo"/>
+    <h1 class="register-title">Créer un compte</h1>
+    <p class="register-sub">Rejoignez la famille Radio Télé Mega Star — Gratis!</p>
+
+    <div class="perks">
+      <div class="perk-item"><div class="perk-check">&#10003;</div>Accès à tous nos programmes</div>
+      <div class="perk-item"><div class="perk-check">&#10003;</div>Notifications des émissions</div>
+      <div class="perk-item"><div class="perk-check">&#10003;</div>Contenu exclusif</div>
+      <div class="perk-item"><div class="perk-check">&#10003;</div>Gratuit pour toujours</div>
+    </div>
+
+    <div id="reg-msg"></div>
+
+    <form class="register-form" onsubmit="soumettreInscription(event)">
+      <div>
+        <label class="reg-label">Nom complet *</label>
+        <input type="text" name="username" class="reg-input" placeholder="Jean Pierre" required/>
+      </div>
+      <div>
+        <label class="reg-label">Adresse email *</label>
+        <input type="email" name="email" class="reg-input" placeholder="jean@email.com" required/>
+      </div>
+      <div>
+        <label class="reg-label">Numéro de téléphone</label>
+        <input type="tel" name="phone" class="reg-input" placeholder="+509 3X XX XXXX"/>
+      </div>
+      <div>
+        <label class="reg-label">Mot de passe * (min. 6 caractères)</label>
+        <input type="password" name="password" class="reg-input" placeholder="Minimum 6 caractères" minlength="6" required/>
+      </div>
+      <button type="submit" class="register-btn">Créer mon compte &#8594;</button>
+    </form>
+
+    <div class="register-links">
+      Déjà membre? <a href="login.html">Se connecter</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = "https://radio-megastar-backend-production.up.railway.app";
+
+function showMsg(texte, ok) {
+  const m = document.getElementById('reg-msg');
+  m.style.display = 'block';
+  m.style.cssText = ok
+    ? 'display:block;padding:12px;border-radius:8px;background:rgba(0,200,81,.15);border:1px solid #00c851;color:#00c851;font-size:.85rem;margin-bottom:8px;text-align:center;'
+    : 'display:block;padding:12px;border-radius:8px;background:rgba(204,0,0,.15);border:1px solid #cc0000;color:#ff6666;font-size:.85rem;margin-bottom:8px;text-align:center;';
+  m.textContent = texte;
+}
+
+function soumettreInscription(e) {
+  e.preventDefault();
+  const f = e.target;
+  const username = f.querySelector('[name="username"]').value;
+  const email    = f.querySelector('[name="email"]').value;
+  const phone    = f.querySelector('[name="phone"]').value;
+  const password = f.querySelector('[name="password"]').value;
+  const btn = f.querySelector('button');
+  btn.textContent = 'Création...'; btn.disabled = true;
+
+  fetch(API + '/api/auth/inscription', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nom: username, email, telephone: phone, motDePasse: password })
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.textContent = 'Créer mon compte →'; btn.disabled = false;
+    if (data.success && data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      showMsg('Kont ou kreye ak siksè! Redireksyon...', true);
+      setTimeout(() => {
+        window.location.href = data.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+      }, 1000);
+    } else {
+      showMsg(data.message || 'Erè pandan enskripsyon an', false);
+    }
+  })
+  .catch(() => { btn.textContent = 'Créer mon compte →'; btn.disabled = false; showMsg('Erè serveur', false); });
+}
+
+// Si deja konekte, redirije
+const token = localStorage.getItem('token');
+const user  = localStorage.getItem('user');
+if (token && user) {
+  const u = JSON.parse(user);
+  window.location.href = u.role === 'admin' ? 'admin.html' : 'dashboard.html';
+}
+</script>
+</body>
+</html>

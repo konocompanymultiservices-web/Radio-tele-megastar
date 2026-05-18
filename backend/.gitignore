@@ -1,0 +1,14 @@
+# Depandans
+node_modules/
+
+# Anviwonnman — JAMAIS nan GitHub
+.env
+*.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

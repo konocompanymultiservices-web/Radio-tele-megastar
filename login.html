@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion &mdash; Radio Télé Mega Star</title>
+  <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body { background: #000; display: flex; min-height: 100vh; flex-direction: column; }
+    .login-page {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .login-card {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+    .login-logo {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      border: 3px solid var(--jaune);
+      margin: 0 auto 16px;
+    }
+    .login-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .login-sub { color: #666; font-size: .9rem; margin-bottom: 32px; }
+    .login-form { display: flex; flex-direction: column; gap: 14px; text-align: left; }
+    .login-label { font-size: .78rem; color: #888; font-weight: 500; display: block; margin-bottom: 5px; }
+    .login-input {
+      width: 100%;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 13px 16px;
+      color: #fff;
+      font-size: .9rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .login-input:focus { border-color: var(--jaune); }
+    .login-btn {
+      background: var(--jaune);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-weight: 700;
+      font-size: .95rem;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: all .2s;
+    }
+    .login-btn:hover { background: var(--jaune-2); transform: translateY(-1px); }
+    .login-links { margin-top: 20px; font-size: .85rem; color: #666; }
+    .login-links a { color: var(--jaune); font-weight: 700; }
+    .login-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+    .login-divider::before, .login-divider::after { content:''; flex:1; height:1px; background:#222; }
+    .login-divider span { color: #555; font-size: .75rem; }
+    #login-msg { display: none; padding: 12px; border-radius: 8px; font-size: .85rem; margin-bottom: 8px; text-align: center; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="logo-img"/>
+      <div class="logo-text">
+        <h1>Radio Télé Mega Star</h1>
+        <p>97.3 FM &middot; CH. 60 &middot; Cable 116</p>
+      </div>
+    </a>
+  </div>
+</header>
+
+<div class="login-page">
+  <div class="login-card">
+    <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="login-logo"/>
+    <h1 class="login-title">Bon retour!</h1>
+    <p class="login-sub">Konekte sou Radio Télé Mega Star</p>
+
+    <div id="login-msg"></div>
+
+    <form class="login-form" onsubmit="soumettreLogin(event)">
+      <div>
+        <label class="login-label">Adresse email</label>
+        <input type="email" name="email" class="login-input" placeholder="jean@email.com" required/>
+      </div>
+      <div>
+        <label class="login-label">Mot de passe</label>
+        <input type="password" name="password" class="login-input" placeholder="Votre mot de passe" required/>
+      </div>
+      <button type="submit" class="login-btn">Se connecter &#8594;</button>
+    </form>
+
+    <div class="login-divider"><span>ou</span></div>
+
+    <div class="login-links">
+      Pas encore membre? <a href="register.html">Créer un compte</a><br/>
+      <a href="#" onclick="demanderReset()" style="color:#666;font-size:12px;margin-top:8px;display:inline-block;">Mot de passe oublié?</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = "https://radio-megastar-backend-production.up.railway.app";
+
+function showMsg(texte, ok) {
+  const m = document.getElementById('login-msg');
+  m.style.display = 'block';
+  m.style.cssText = ok
+    ? 'display:block;padding:12px;border-radius:8px;background:rgba(0,200,81,.15);border:1px solid #00c851;color:#00c851;font-size:.85rem;margin-bottom:8px;text-align:center;'
+    : 'display:block;padding:12px;border-radius:8px;background:rgba(204,0,0,.15);border:1px solid #cc0000;color:#ff6666;font-size:.85rem;margin-bottom:8px;text-align:center;';
+  m.textContent = texte;
+}
+
+function soumettreLogin(e) {
+  e.preventDefault();
+  const f = e.target;
+  const email = f.querySelector('[name="email"]').value;
+  const password = f.querySelector('[name="password"]').value;
+  const btn = f.querySelector('button');
+  btn.textContent = 'Connexion...'; btn.disabled = true;
+
+  fetch(API + '/api/auth/connexion', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, motDePasse: password })
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.textContent = 'Se connecter →'; btn.disabled = false;
+    if (data.success && data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      showMsg('Koneksyon reyisi! Redireksyon...', true);
+      setTimeout(() => {
+        window.location.href = data.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+      }, 800);
+    } else {
+      showMsg(data.message || 'Email oswa modpas enkòrèk', false);
+    }
+  })
+  .catch(() => { btn.textContent = 'Se connecter →'; btn.disabled = false; showMsg('Erè serveur', false); });
+}
+
+function demanderReset() {
+  const email = prompt('Antre email ou pou resevwa lyen reset:');
+  if (!email) return;
+  fetch(API + '/api/auth/reset-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  })
+  .then(r => r.json())
+  .then(data => showMsg(data.success ? 'Email voye! Verifye bwat mail ou.' : data.message, data.success))
+  .catch(() => showMsg('Erè serveur', false));
+}
+
+// Si deja konekte, redirije
+const token = localStorage.getItem('token');
+const user = localStorage.getItem('user');
+if (token && user) {
+  const u = JSON.parse(user);
+  window.location.href = u.role === 'admin' ? 'admin.html' : 'dashboard.html';
+}
+</script>
+</body>
+</html>
