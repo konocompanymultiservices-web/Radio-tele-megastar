@@ -8,158 +8,212 @@
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--noir:#0a0a0a;--gri:#141414;--gri-cle:#1c1c1c;--bod:#282828;--blan:#f0f0f0;--rouge:#cc0000;--jaune:#FFD600;--gri-text:#888;--vert:#4CAF50;--bleu:#2196F3;--sp-xs:8px;--sp-sm:12px;--sp-md:16px;--sp-lg:24px;--sp-xl:32px}
-    body{background:var(--noir);color:var(--blan);font-family:'Lato',sans-serif}
+    :root{
+      --bg:#0a0a0a;--s1:#111;--s2:#171717;--s3:#1f1f1f;--s4:#2a2a2a;
+      --t1:#f0f0f0;--t2:#a0a0a0;--t3:#555;
+      --y:#FFD600;--y2:#E5C000;--r:#cc0000;--g:#22c55e;--b:#3b82f6;--o:#f59e0b;
+      --sp:8px;
+    }
+    body{background:var(--bg);color:var(--t1);font-family:'Lato',sans-serif}
     a{text-decoration:none;color:inherit}
 
-    /* LOGIN */
-    .login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#1a0000 0%,var(--noir) 70%)}
-    .login-box{background:var(--gri);border:1px solid var(--bod);border-top:3px solid var(--rouge);border-radius:16px;padding:40px;width:100%;max-width:380px;text-align:center}
-    .login-logo{width:72px;height:72px;border-radius:50%;border:3px solid var(--jaune);object-fit:cover;margin:0 auto 16px}
-    .login-title{font-family:'Oswald',sans-serif;font-size:22px;color:var(--blan);text-transform:uppercase;margin-bottom:4px}
-    .login-sub{font-size:12px;color:var(--rouge);letter-spacing:2px;text-transform:uppercase;margin-bottom:28px}
+    /* ===== LOGIN ===== */
+    .login-screen{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background:radial-gradient(ellipse at 30% 50%,#1a0000 0%,var(--bg) 65%);
+      padding:24px;
+    }
+    .login-box{
+      background:var(--s1);border:1px solid var(--s4);border-top:2px solid var(--r);
+      border-radius:16px;padding:48px 40px;width:100%;max-width:400px;text-align:center;
+    }
+    .login-logo{width:72px;height:72px;border-radius:50%;border:3px solid var(--y);object-fit:cover;margin:0 auto 20px}
+    .login-title{font-family:'Oswald',sans-serif;font-size:22px;color:var(--t1);text-transform:uppercase;margin-bottom:4px}
+    .login-sub{font-size:12px;color:var(--r);letter-spacing:2px;text-transform:uppercase;margin-bottom:32px}
     .login-field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;text-align:left}
-    .login-field label{font-size:11px;color:var(--jaune);letter-spacing:2px;text-transform:uppercase}
-    .login-field input{background:var(--gri-cle);border:1px solid var(--bod);border-radius:8px;padding:12px 16px;color:var(--blan);font-family:'Lato',sans-serif;font-size:14px;width:100%;transition:border-color .2s}
-    .login-field input:focus{outline:none;border-color:var(--rouge)}
-    .login-btn{width:100%;background:var(--rouge);color:var(--blan);border:none;padding:14px;border-radius:8px;font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-top:8px}
+    .login-field label{font-size:11px;color:var(--y);letter-spacing:2px;text-transform:uppercase;font-weight:700}
+    .login-field input{
+      background:var(--s2);border:1px solid var(--s4);border-radius:8px;
+      padding:12px 16px;color:var(--t1);font-family:'Lato',sans-serif;font-size:14px;width:100%;
+      outline:none;transition:border-color .2s;
+    }
+    .login-field input:focus{border-color:var(--r)}
+    .login-btn{
+      width:100%;background:var(--r);color:var(--t1);border:none;padding:14px;
+      border-radius:8px;font-family:'Oswald',sans-serif;font-size:15px;letter-spacing:2px;
+      text-transform:uppercase;cursor:pointer;transition:background .2s;margin-top:8px;
+    }
     .login-btn:hover{background:#aa0000}
     .login-btn:disabled{opacity:.6;cursor:wait}
-    .login-err{background:rgba(204,0,0,.15);border:1px solid var(--rouge);color:#ff6666;padding:10px;border-radius:6px;font-size:13px;margin-top:12px;display:none}
+    .login-err{
+      background:rgba(204,0,0,.1);border:1px solid rgba(204,0,0,.3);color:#ff8080;
+      padding:10px;border-radius:6px;font-size:13px;margin-top:12px;display:none;
+    }
 
-    /* ADMIN WRAP */
+    /* ===== ADMIN WRAP ===== */
     .admin-wrap{display:none}
     .admin-wrap.visible{display:flex;flex-direction:column;min-height:100vh}
 
-    /* TOPBAR */
-    .admin-topbar{background:var(--gri);border-bottom:2px solid var(--rouge);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-    .topbar-logo{display:flex;align-items:center;gap:10px}
-    .topbar-logo img{width:36px;height:36px;border-radius:50%;border:2px solid var(--jaune);object-fit:cover}
-    .topbar-logo span{font-family:'Oswald',sans-serif;font-size:14px;color:var(--blan);text-transform:uppercase}
-    .topbar-badge{background:var(--rouge);color:var(--blan);font-size:10px;padding:2px 8px;border-radius:4px;margin-left:8px;letter-spacing:1px}
-    .topbar-right{display:flex;align-items:center;gap:12px}
-    .admin-name{font-family:'Oswald',sans-serif;font-size:13px;color:var(--jaune)}
-    .btn-deconn{background:transparent;border:1px solid #444;color:var(--gri-text);padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s}
-    .btn-deconn:hover{border-color:var(--rouge);color:var(--rouge)}
-    .btn-site{background:var(--rouge);color:var(--blan);border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;transition:background .2s}
-    .btn-site:hover{background:#aa0000}
+    /* ===== TOPBAR ===== */
+    .admin-topbar{
+      background:var(--s1);border-bottom:1px solid var(--s4);
+      padding:0 24px;height:60px;display:flex;align-items:center;
+      justify-content:space-between;position:sticky;top:0;z-index:100;gap:12px;
+    }
+    .topbar-logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .topbar-logo img{width:34px;height:34px;border-radius:50%;border:2px solid var(--y);object-fit:cover}
+    .topbar-logo-text{font-family:'Oswald',sans-serif;font-size:14px;color:var(--t1);text-transform:uppercase;letter-spacing:.5px}
+    .topbar-badge{
+      background:var(--r);color:#fff;font-size:9px;padding:2px 8px;
+      border-radius:4px;letter-spacing:1px;font-weight:700;text-transform:uppercase;
+    }
+    .topbar-right{display:flex;align-items:center;gap:10px}
+    .admin-name{font-family:'Oswald',sans-serif;font-size:13px;color:var(--y)}
+    .btn-site{background:var(--s3);color:var(--t1);border:1px solid var(--s4);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s}
+    .btn-site:hover{border-color:var(--y);color:var(--y)}
+    .btn-deconn{background:transparent;border:1px solid var(--s4);color:var(--t2);padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s}
+    .btn-deconn:hover{border-color:var(--r);color:var(--r)}
+    .hamburger-admin{display:none;background:transparent;border:1px solid var(--s4);color:var(--t1);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:18px;line-height:1}
 
-    /* BODY */
+    /* ===== BODY ===== */
     .admin-body{display:flex;flex:1}
 
-    /* SIDEBAR */
-    .admin-sidebar{width:220px;background:var(--gri);border-right:1px solid var(--bod);padding:24px 16px;flex-shrink:0;overflow-y:auto}
-    .sidebar-section-label{font-size:10px;color:#666;letter-spacing:2px;text-transform:uppercase;padding:0 8px;margin:16px 0 6px}
-    .admin-nav-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;background:transparent;border:none;color:var(--gri-text);font-family:'Lato',sans-serif;font-size:13px;cursor:pointer;border-radius:8px;text-align:left;transition:all .2s}
-    .admin-nav-btn:hover{background:var(--gri-cle);color:var(--blan)}
-    .admin-nav-btn.active{background:rgba(204,0,0,.15);color:var(--blan);border-left:3px solid var(--rouge)}
-    .nav-ic{font-size:16px}
+    /* ===== SIDEBAR ===== */
+    .admin-sidebar{width:220px;background:var(--s1);border-right:1px solid var(--s4);padding:24px 12px;flex-shrink:0;overflow-y:auto}
+    .sidebar-group-label{font-size:10px;color:var(--t3);letter-spacing:2px;text-transform:uppercase;padding:0 10px;margin:20px 0 6px}
+    .sidebar-group-label:first-child{margin-top:0}
+    .admin-nav-btn{
+      display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;
+      background:transparent;border:none;color:var(--t2);font-family:'Lato',sans-serif;
+      font-size:13px;cursor:pointer;border-radius:8px;text-align:left;transition:all .2s;
+    }
+    .admin-nav-btn:hover{background:var(--s3);color:var(--t1)}
+    .admin-nav-btn.active{background:rgba(204,0,0,.12);color:var(--t1);border-left:2px solid var(--r);padding-left:10px}
+    .nav-ic{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 
-    /* MAIN */
-    .admin-main{flex:1;padding:32px;overflow-y:auto}
+    /* ===== MAIN ===== */
+    .admin-main{flex:1;padding:32px;overflow-y:auto;min-width:0}
     .admin-section{display:none}
     .admin-section.active{display:block}
-    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
-    .section-ttl{font-family:'Oswald',sans-serif;font-size:20px;color:var(--blan);border-left:3px solid var(--rouge);padding-left:12px;padding-bottom:8px}
 
-    .btn-primary{background:var(--rouge);color:var(--blan);border:none;padding:10px 20px;border-radius:6px;font-family:'Oswald',sans-serif;font-size:13px;cursor:pointer;transition:background .2s}
+    /* Section header */
+    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+    .section-ttl{font-family:'Oswald',sans-serif;font-size:22px;color:var(--t1)}
+
+    /* Buttons */
+    .btn-primary{background:var(--r);color:#fff;border:none;padding:10px 20px;border-radius:6px;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.5px;cursor:pointer;transition:background .2s}
     .btn-primary:hover{background:#aa0000}
-    .btn-secondary{background:transparent;border:1px solid var(--bod);color:var(--gri-text);padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;transition:all .2s}
-    .btn-secondary:hover{border-color:var(--jaune);color:var(--jaune)}
+    .btn-secondary{background:transparent;border:1px solid var(--s4);color:var(--t2);padding:9px 16px;border-radius:6px;font-size:13px;cursor:pointer;transition:all .2s}
+    .btn-secondary:hover{border-color:var(--t2);color:var(--t1)}
 
+    /* Stats */
     .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;margin-bottom:32px}
-    .stat-box{background:var(--gri-cle);border:1px solid var(--bod);border-radius:10px;padding:20px 16px}
-    .stat-box-icon{font-size:24px;margin-bottom:8px}
-    .stat-box-val{font-family:'Oswald',sans-serif;font-size:28px;color:var(--jaune)}
-    .stat-box-lbl{font-size:12px;color:var(--gri-text);margin-top:4px}
-    .stat-box.rouge{border-top:2px solid var(--rouge)}
-    .stat-box.vert{border-top:2px solid var(--vert)}
-    .stat-box.bleu{border-top:2px solid var(--bleu)}
-    .stat-box.jaune{border-top:2px solid var(--jaune)}
+    .stat-box{background:var(--s2);border:1px solid var(--s4);border-radius:12px;padding:20px 16px}
+    .stat-box-icon{font-size:22px;margin-bottom:10px}
+    .stat-box-val{font-family:'Oswald',sans-serif;font-size:30px;color:var(--y)}
+    .stat-box-lbl{font-size:12px;color:var(--t2);margin-top:4px}
+    .stat-box.rouge{border-top:2px solid var(--r)}
+    .stat-box.vert{border-top:2px solid var(--g)}
+    .stat-box.bleu{border-top:2px solid var(--b)}
+    .stat-box.jaune{border-top:2px solid var(--y)}
 
-    .admin-table-wrap{background:var(--gri-cle);border:1px solid var(--bod);border-radius:10px;overflow-x:auto;overflow-y:visible;margin-bottom:24px}
-    .admin-table{width:100%;border-collapse:collapse;min-width:500px}
-    .admin-table th{background:var(--gri);padding:12px 16px;text-align:left;font-family:'Oswald',sans-serif;font-size:11px;color:var(--gri-text);letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--bod)}
-    .admin-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--bod);color:var(--gri-text)}
-    .admin-table tr:last-child td{border-bottom:none}
-    .admin-table tr:hover td{background:rgba(255,255,255,.02);color:var(--blan)}
+    /* Card */
+    .admin-card{background:var(--s2);border:1px solid var(--s4);border-radius:12px;padding:24px;margin-bottom:24px}
+    .admin-card-title{font-family:'Oswald',sans-serif;font-size:14px;color:var(--t2);letter-spacing:.5px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--s4);text-transform:uppercase}
 
-    .badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px}
-    .badge-vert{background:rgba(76,175,80,.15);color:var(--vert);border:1px solid var(--vert)}
-    .badge-rouge{background:rgba(204,0,0,.15);color:#ff6666;border:1px solid #ff6666}
-    .badge-jaune{background:rgba(255,214,0,.15);color:var(--jaune);border:1px solid var(--jaune)}
-    .badge-bleu{background:rgba(33,150,243,.15);color:var(--bleu);border:1px solid var(--bleu)}
-
+    /* Alert */
     .admin-alert{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;display:none}
-    .admin-alert.success{background:rgba(76,175,80,.15);border:1px solid var(--vert);color:var(--vert)}
-    .admin-alert.error{background:rgba(204,0,0,.15);border:1px solid var(--rouge);color:#ff6666}
+    .admin-alert.success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--g)}
+    .admin-alert.error{background:rgba(204,0,0,.1);border:1px solid rgba(204,0,0,.3);color:#ff8080}
 
+    /* Table */
+    .admin-table-wrap{background:var(--s2);border:1px solid var(--s4);border-radius:12px;overflow-x:auto;margin-bottom:24px}
+    .admin-table{width:100%;border-collapse:collapse;min-width:480px}
+    .admin-table th{background:var(--s1);padding:12px 16px;text-align:left;font-family:'Oswald',sans-serif;font-size:10px;color:var(--t2);letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid var(--s4)}
+    .admin-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--s4);color:var(--t2)}
+    .admin-table tr:last-child td{border-bottom:none}
+    .admin-table tr:hover td{background:rgba(255,255,255,.02);color:var(--t1)}
+
+    /* Badge */
+    .badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.5px}
+    .badge-vert{background:rgba(34,197,94,.1);color:var(--g);border:1px solid rgba(34,197,94,.3)}
+    .badge-rouge{background:rgba(204,0,0,.1);color:#ff8080;border:1px solid rgba(204,0,0,.3)}
+    .badge-jaune{background:rgba(255,214,0,.1);color:var(--y);border:1px solid rgba(255,214,0,.3)}
+    .badge-bleu{background:rgba(59,130,246,.1);color:var(--b);border:1px solid rgba(59,130,246,.3)}
+
+    /* Forms */
     .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
     .form-full{grid-column:1/-1}
     .admin-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
-    .admin-field label{font-size:11px;color:var(--jaune);letter-spacing:2px;text-transform:uppercase}
-    .admin-field input,.admin-field textarea,.admin-field select{background:var(--gri);border:1px solid var(--bod);border-radius:8px;padding:12px 16px;color:var(--blan);font-family:'Lato',sans-serif;font-size:13px;transition:border-color .2s;width:100%}
-    .admin-field input:focus,.admin-field textarea:focus,.admin-field select:focus{outline:none;border-color:var(--rouge)}
+    .admin-field label{font-size:11px;color:var(--y);letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
+    .admin-field input,.admin-field textarea,.admin-field select{
+      background:var(--s1);border:1px solid var(--s4);border-radius:8px;
+      padding:12px 16px;color:var(--t1);font-family:'Lato',sans-serif;
+      font-size:13px;transition:border-color .2s;width:100%;
+    }
+    .admin-field input:focus,.admin-field textarea:focus,.admin-field select:focus{outline:none;border-color:var(--r)}
     .admin-field textarea{resize:vertical;min-height:100px}
-    .admin-field select option{background:var(--gri)}
+    .admin-field select option{background:var(--s1)}
 
-    .admin-card{background:var(--gri-cle);border:1px solid var(--bod);border-radius:10px;padding:24px;margin-bottom:24px}
-    .admin-card-title{font-family:'Oswald',sans-serif;font-size:15px;color:var(--blan);margin-bottom:16px;border-bottom:1px solid var(--bod);padding-bottom:10px}
+    /* Online */
+    .online-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:20px;padding:6px 14px}
+    .online-dot{width:8px;height:8px;background:var(--g);border-radius:50%;animation:pulse 1.2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .online-num{font-family:'Oswald',sans-serif;font-size:18px;color:var(--g)}
+    .online-lbl{font-size:12px;color:var(--t2)}
 
-    .online-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(76,175,80,.1);border:1px solid var(--vert);border-radius:20px;padding:6px 14px}
-    .online-dot{width:8px;height:8px;background:var(--vert);border-radius:50%;animation:blink 1s infinite}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-    .online-num{font-family:'Oswald',sans-serif;font-size:18px;color:var(--vert)}
-    .online-lbl{font-size:12px;color:var(--gri-text)}
+    /* Revenue */
+    .revenue-display{display:flex;align-items:baseline;gap:6px;margin:16px 0}
+    .revenue-amount{font-family:'Oswald',sans-serif;font-size:52px;color:var(--y)}
+    .revenue-currency{font-size:22px;color:var(--t2)}
+    .revenue-period{font-size:13px;color:var(--t2)}
+    .btn-retrait{background:var(--y);color:#000;border:none;padding:12px 28px;border-radius:6px;font-family:'Oswald',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+    .btn-retrait:hover{background:var(--y2)}
 
-    .revenue-display{display:flex;align-items:baseline;gap:8px;margin:16px 0}
-    .revenue-amount{font-family:'Oswald',sans-serif;font-size:48px;color:var(--jaune)}
-    .revenue-currency{font-size:20px;color:var(--gri-text)}
-    .revenue-period{font-size:13px;color:var(--gri-text)}
-    .btn-retrait{background:var(--jaune);color:var(--noir);border:none;padding:12px 28px;border-radius:6px;font-family:'Oswald',sans-serif;font-size:14px;cursor:pointer;transition:all .2s}
-    .btn-retrait:hover{background:#e6c200}
-
-    .photo-preview{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--jaune);display:none;margin-bottom:8px}
-
-    .annonce-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--gri);border:1px solid var(--bod);border-radius:8px;margin-bottom:8px}
+    /* Annonce / Anim items */
+    .annonce-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--s1);border:1px solid var(--s4);border-radius:8px;margin-bottom:8px}
     .annonce-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
-    .annonce-live{background:var(--rouge);animation:blink 1s infinite}
-    .annonce-pub{background:var(--bleu)}
-    .annonce-info h4{font-family:'Oswald',sans-serif;font-size:14px;color:var(--blan);margin-bottom:2px}
-    .annonce-info p{font-size:12px;color:var(--gri-text)}
-    .annonce-time{font-size:11px;color:var(--rouge);margin-top:4px}
-    .btn-del,.btn-edit{background:transparent;border:1px solid #444;color:#666;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;transition:all .2s}
-    .btn-del:hover{border-color:var(--rouge);color:var(--rouge)}
-    .btn-edit:hover{border-color:var(--jaune);color:var(--jaune)}
+    .annonce-live{background:var(--r);animation:pulse 1s infinite}
+    .annonce-pub{background:var(--b)}
+    .annonce-info h4{font-family:'Oswald',sans-serif;font-size:14px;color:var(--t1);margin-bottom:2px}
+    .annonce-info p{font-size:12px;color:var(--t2)}
+    .annonce-time{font-size:11px;color:var(--r);margin-top:4px}
+    .btn-del,.btn-edit{background:transparent;border:1px solid var(--s4);color:var(--t3);padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;transition:all .2s}
+    .btn-del:hover{border-color:var(--r);color:var(--r)}
+    .btn-edit:hover{border-color:var(--y);color:var(--y)}
 
+    /* Schedule */
     .schedule-grid{display:grid;gap:10px}
-    .schedule-item{display:grid;grid-template-columns:minmax(100px,130px) 1fr auto;align-items:center;gap:12px;padding:14px 16px;background:var(--gri);border:1px solid var(--bod);border-radius:8px}
-    .schedule-time{font-family:'Oswald',sans-serif;font-size:14px;color:var(--rouge)}
-    .schedule-name{font-size:13px;color:var(--blan)}
+    .schedule-item{display:grid;grid-template-columns:minmax(100px,130px) 1fr auto;align-items:center;gap:12px;padding:14px 16px;background:var(--s1);border:1px solid var(--s4);border-radius:8px}
+    .schedule-time{font-family:'Oswald',sans-serif;font-size:13px;color:var(--r)}
+    .schedule-name{font-size:13px;color:var(--t1)}
     .schedule-actions{display:flex;gap:6px}
 
-    .anim-card{display:flex;align-items:center;gap:14px;padding:14px;background:var(--gri);border:1px solid var(--bod);border-radius:10px;margin-bottom:8px}
-    .anim-photo{width:48px;height:48px;border-radius:50%;border:2px solid var(--jaune);background:var(--rouge);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:18px;flex-shrink:0;overflow:hidden}
+    /* Animateur card */
+    .anim-card{display:flex;align-items:center;gap:14px;padding:14px;background:var(--s1);border:1px solid var(--s4);border-radius:10px;margin-bottom:8px}
+    .anim-photo{width:46px;height:46px;border-radius:50%;border:2px solid var(--y);background:var(--r);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:18px;flex-shrink:0;overflow:hidden}
     .anim-photo img{width:100%;height:100%;object-fit:cover;display:none}
     .anim-info{flex:1}
-    .anim-info h4{font-family:'Oswald',sans-serif;font-size:14px;color:var(--blan)}
-    .anim-info p{font-size:12px;color:var(--gri-text);margin-top:2px}
+    .anim-info h4{font-family:'Oswald',sans-serif;font-size:14px;color:var(--t1)}
+    .anim-info p{font-size:12px;color:var(--t2);margin-top:2px}
 
-    /* HAMBURGER */
-    .hamburger-admin{display:none;background:transparent;border:1px solid #444;color:var(--blan);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:18px;line-height:1}
+    /* Photo preview */
+    .photo-preview{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--y);display:none;margin-bottom:12px}
 
-    /* ADMIN OVERLAY */
-    .admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:199}
+    /* Search input */
+    .search-inline{background:var(--s2);border:1px solid var(--s4);border-radius:6px;padding:9px 14px;color:var(--t1);font-size:13px;font-family:'Lato',sans-serif;outline:none;transition:border-color .2s;width:200px}
+    .search-inline:focus{border-color:var(--r)}
+    .search-inline::placeholder{color:var(--t3)}
+
+    /* Mobile overlay */
+    .admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:199}
     .admin-overlay.open{display:block}
 
     @media(max-width:768px){
       .admin-sidebar{
-        display:block;
-        position:fixed;top:60px;left:0;
-        height:calc(100vh - 60px);width:260px;
-        z-index:200;overflow-y:auto;
-        transform:translateX(-100%);
-        transition:transform .3s ease;
+        display:block;position:fixed;top:60px;left:0;
+        height:calc(100vh - 60px);width:260px;z-index:200;
+        overflow-y:auto;transform:translateX(-100%);transition:transform .3s ease;
       }
       .admin-sidebar.open{transform:translateX(0)}
       .hamburger-admin{display:block}
@@ -167,299 +221,324 @@
       .form-grid{grid-template-columns:1fr}
       .schedule-item{grid-template-columns:1fr}
       .stats-row{grid-template-columns:repeat(2,1fr)}
+      .admin-name{display:none}
     }
   </style>
 </head>
 <body>
 
-  <!-- LOGIN -->
-  <div class="login-screen" id="login-screen">
-    <div class="login-box">
-      <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="login-logo"/>
-      <h2 class="login-title">Administration</h2>
-      <p class="login-sub">Radio T&eacute;l&eacute; Mega Star</p>
-      <div class="login-field">
-        <label>Email administrateur</label>
-        <input type="email" id="admin-email" placeholder="admin@megastar.com" autocomplete="username"/>
-      </div>
-      <div class="login-field">
-        <label>Mot de passe</label>
-        <input type="password" id="admin-password" placeholder="Mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginAdmin()"/>
-      </div>
-      <button class="login-btn" id="login-btn" onclick="loginAdmin()">&#128274; Acc&egrave;der au panneau</button>
-      <div class="login-err" id="login-err"></div>
+<!-- ===== LOGIN ===== -->
+<div class="login-screen" id="login-screen">
+  <div class="login-box">
+    <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="login-logo"/>
+    <h2 class="login-title">Administration</h2>
+    <p class="login-sub">Radio T&eacute;l&eacute; Mega Star</p>
+    <div class="login-field">
+      <label>Email administrateur</label>
+      <input type="email" id="admin-email" placeholder="admin@megastar.com" autocomplete="username"/>
     </div>
+    <div class="login-field">
+      <label>Mot de passe</label>
+      <input type="password" id="admin-password" placeholder="Mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginAdmin()"/>
+    </div>
+    <button class="login-btn" id="login-btn" onclick="loginAdmin()">&#128274; Acc&eacute;der au panneau</button>
+    <div class="login-err" id="login-err"></div>
   </div>
+</div>
 
-  <!-- ADMIN PANEL -->
-  <div class="admin-wrap" id="admin-wrap">
-    <header class="admin-topbar">
-      <div class="topbar-logo">
-        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo"/>
-        <span>Radio T&eacute;l&eacute; Mega Star</span>
-        <span class="topbar-badge">ADMIN</span>
-      </div>
-      <div class="topbar-right">
-        <button class="hamburger-admin" onclick="toggleAdminSidebar()" aria-label="Menu">&#9776;</button>
-        <span class="admin-name" id="admin-display-name">Administrateur</span>
-        <button class="btn-site" onclick="window.open('index.html','_blank')">&#127968; Voir le site</button>
-        <button class="btn-deconn" onclick="logoutAdmin()">D&eacute;connexion</button>
-      </div>
-    </header>
+<!-- ===== ADMIN PANEL ===== -->
+<div class="admin-wrap" id="admin-wrap">
 
-    <div class="admin-overlay" id="admin-overlay" onclick="closeAdminSidebar()"></div>
-    <div class="admin-body">
-      <aside class="admin-sidebar">
-        <p class="sidebar-section-label">Tableau de bord</p>
-        <button class="admin-nav-btn active" onclick="adminNav('overview',this)"><span class="nav-ic">&#128202;</span> Vue d&apos;ensemble</button>
-        <button class="admin-nav-btn" onclick="adminNav('online',this)"><span class="nav-ic">&#128308;</span> Auditeurs en ligne</button>
-        <p class="sidebar-section-label">Contenu</p>
-        <button class="admin-nav-btn" onclick="adminNav('news',this)"><span class="nav-ic">&#128240;</span> Actualit&eacute;s</button>
-        <button class="admin-nav-btn" onclick="adminNav('annonces',this)"><span class="nav-ic">&#128227;</span> Annonces direct</button>
-        <button class="admin-nav-btn" onclick="adminNav('schedule',this)"><span class="nav-ic">&#128197;</span> Grille &eacute;missions</button>
-        <button class="admin-nav-btn" onclick="adminNav('animateurs',this)"><span class="nav-ic">&#127908;</span> Animateurs</button>
-        <button class="admin-nav-btn" onclick="adminNav('reportage',this)"><span class="nav-ic">&#9997;</span> R&eacute;portage direct</button>
-        <p class="sidebar-section-label">Membres</p>
-        <button class="admin-nav-btn" onclick="adminNav('membres',this)"><span class="nav-ic">&#128100;</span> Membres inscrits</button>
-        <button class="admin-nav-btn" onclick="adminNav('abonnements',this)"><span class="nav-ic">&#11088;</span> Abonnements</button>
-        <p class="sidebar-section-label">Finance</p>
-        <button class="admin-nav-btn" onclick="adminNav('revenus',this)"><span class="nav-ic">&#128176;</span> Revenus</button>
-        <p class="sidebar-section-label">Site</p>
-        <button class="admin-nav-btn" onclick="adminNav('site',this)"><span class="nav-ic">&#9881;</span> Param&egrave;tres</button>
-      </aside>
+  <header class="admin-topbar">
+    <div class="topbar-logo">
+      <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo"/>
+      <span class="topbar-logo-text">Radio T&eacute;l&eacute; Mega Star</span>
+      <span class="topbar-badge">Admin</span>
+    </div>
+    <div class="topbar-right">
+      <button class="hamburger-admin" onclick="toggleAdminSidebar()" aria-label="Menu">&#9776;</button>
+      <span class="admin-name" id="admin-display-name">Administrateur</span>
+      <button class="btn-site" onclick="window.open('index.html','_blank')">&#127968; Site</button>
+      <button class="btn-deconn" onclick="logoutAdmin()">D&eacute;connexion</button>
+    </div>
+  </header>
 
-      <main class="admin-main">
+  <div class="admin-overlay" id="admin-overlay" onclick="closeAdminSidebar()"></div>
 
-        <!-- OVERVIEW -->
-        <section class="admin-section active" id="section-overview">
-          <div class="section-header">
-            <h2 class="section-ttl">Vue d&apos;ensemble</h2>
-            <div class="online-badge"><span class="online-dot"></span><span class="online-num" id="overview-online">0</span><span class="online-lbl">auditeurs en ligne</span></div>
-          </div>
-          <div class="stats-row">
-            <div class="stat-box rouge"><div class="stat-box-icon">&#128100;</div><div class="stat-box-val" id="ov-membres">0</div><div class="stat-box-lbl">Membres inscrits</div></div>
-            <div class="stat-box vert"><div class="stat-box-icon">&#11088;</div><div class="stat-box-val" id="ov-abonnes">0</div><div class="stat-box-lbl">Abonn&eacute;s actifs</div></div>
-            <div class="stat-box bleu"><div class="stat-box-icon">&#127897;</div><div class="stat-box-val">7</div><div class="stat-box-lbl">&Eacute;missions / sem.</div></div>
-            <div class="stat-box jaune"><div class="stat-box-icon">&#128176;</div><div class="stat-box-val" id="ov-revenus">$0</div><div class="stat-box-lbl">Revenus du mois</div></div>
-          </div>
-          <div class="admin-card">
-            <p class="admin-card-title">&#128100; Derniers membres inscrits</p>
-            <div class="admin-table-wrap">
-              <table class="admin-table">
-                <thead><tr><th>Nom</th><th>Email</th><th>Plan</th><th>Date</th></tr></thead>
-                <tbody id="last-membres-body"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--gri-text);">Chargement...</td></tr></tbody>
-              </table>
-            </div>
-          </div>
-        </section>
+  <div class="admin-body">
+    <aside class="admin-sidebar">
+      <p class="sidebar-group-label">Tableau de bord</p>
+      <button class="admin-nav-btn active" onclick="adminNav('overview',this)"><span class="nav-ic">&#128202;</span> Vue d&apos;ensemble</button>
+      <button class="admin-nav-btn" onclick="adminNav('online',this)"><span class="nav-ic">&#128308;</span> Auditeurs en ligne</button>
 
-        <!-- ONLINE -->
-        <section class="admin-section" id="section-online">
-          <div class="section-header"><h2 class="section-ttl">Auditeurs en ligne</h2></div>
-          <div class="admin-card" style="text-align:center;padding:40px;">
-            <div class="online-badge" style="display:inline-flex;margin-bottom:16px;"><span class="online-dot"></span><span class="online-num" id="online-count">0</span><span class="online-lbl">auditeurs en ce moment</span></div>
-            <p style="color:var(--gri-text);font-size:13px;margin-top:8px;">Mise &agrave; jour toutes les 30 secondes</p>
-          </div>
-        </section>
+      <p class="sidebar-group-label">Contenu</p>
+      <button class="admin-nav-btn" onclick="adminNav('news',this)"><span class="nav-ic">&#128240;</span> Actualit&eacute;s</button>
+      <button class="admin-nav-btn" onclick="adminNav('annonces',this)"><span class="nav-ic">&#128227;</span> Annonces direct</button>
+      <button class="admin-nav-btn" onclick="adminNav('schedule',this)"><span class="nav-ic">&#128197;</span> Grille &eacute;missions</button>
+      <button class="admin-nav-btn" onclick="adminNav('animateurs',this)"><span class="nav-ic">&#127908;</span> Animateurs</button>
+      <button class="admin-nav-btn" onclick="adminNav('reportage',this)"><span class="nav-ic">&#9997;</span> R&eacute;portage</button>
 
-        <!-- NEWS -->
-        <section class="admin-section" id="section-news">
-          <div class="section-header"><h2 class="section-ttl">Actualit&eacute;s / Slides</h2><button class="btn-primary" onclick="toggleForm('news-form')">&#43; Nouvelle actualit&eacute;</button></div>
-          <div id="alert-news" class="admin-alert"></div>
-          <div class="admin-card" id="news-form" style="display:none;">
-            <p class="admin-card-title">&#43; Publier une actualit&eacute;</p>
-            <div class="form-grid">
-              <div class="admin-field form-full"><label>Titre</label><input type="text" id="news-titre" placeholder="Titre"/></div>
-              <div class="admin-field form-full"><label>Contenu</label><textarea id="news-contenu" placeholder="Contenu..."></textarea></div>
-              <div class="admin-field"><label>Type</label><select id="news-type"><option value="slide">Slide</option><option value="news">Actualit&eacute;</option><option value="breaking">Breaking</option></select></div>
-              <div class="admin-field"><label>Image URL</label><input type="url" id="news-img" placeholder="https://..."/></div>
-            </div>
-            <button class="btn-primary" onclick="publierNews()">&#128240; Publier</button>
-            <button class="btn-secondary" style="margin-left:8px;" onclick="toggleForm('news-form')">Annuler</button>
-          </div>
-          <div class="admin-card"><p class="admin-card-title">Publications r&eacute;centes</p><div id="news-list"></div></div>
-        </section>
+      <p class="sidebar-group-label">Membres</p>
+      <button class="admin-nav-btn" onclick="adminNav('membres',this)"><span class="nav-ic">&#128100;</span> Membres inscrits</button>
+      <button class="admin-nav-btn" onclick="adminNav('abonnements',this)"><span class="nav-ic">&#11088;</span> Abonnements</button>
 
-        <!-- ANNONCES -->
-        <section class="admin-section" id="section-annonces">
-          <div class="section-header"><h2 class="section-ttl">Annonces en direct</h2><button class="btn-primary" onclick="toggleForm('annonce-form')">&#43; Nouvelle annonce</button></div>
-          <div id="alert-annonces" class="admin-alert"></div>
-          <div class="admin-card" id="annonce-form" style="display:none;">
-            <p class="admin-card-title">&#43; Cr&eacute;er une annonce</p>
-            <div class="admin-field"><label>Titre</label><input type="text" id="ann-titre" placeholder="Titre..."/></div>
-            <div class="admin-field"><label>Description</label><textarea id="ann-desc"></textarea></div>
-            <div class="form-grid">
-              <div class="admin-field"><label>Heure</label><input type="time" id="ann-heure"/></div>
-              <div class="admin-field"><label>Type</label><select id="ann-type"><option value="live">En direct</option><option value="pub">Publicit&eacute;</option><option value="special">Sp&eacute;cial</option></select></div>
-            </div>
-            <button class="btn-primary" onclick="creerAnnonce()">&#128227; Publier</button>
-            <button class="btn-secondary" style="margin-left:8px;" onclick="toggleForm('annonce-form')">Annuler</button>
-          </div>
-          <div class="admin-card"><p class="admin-card-title">Annonces actives</p><div id="annonces-list"><div class="annonce-item"><div class="annonce-dot annonce-live"></div><div class="annonce-info" style="flex:1;"><h4>Radio en direct &mdash; 97.3 FM</h4><p>Diffusion 24h/24 7j/7</p><p class="annonce-time">En direct maintenant</p></div><span class="badge badge-rouge">LIVE</span></div></div></div>
-        </section>
+      <p class="sidebar-group-label">Finance</p>
+      <button class="admin-nav-btn" onclick="adminNav('revenus',this)"><span class="nav-ic">&#128176;</span> Revenus</button>
 
-        <!-- SCHEDULE -->
-        <section class="admin-section" id="section-schedule">
-          <div class="section-header"><h2 class="section-ttl">Grille des &eacute;missions</h2><button class="btn-primary" onclick="toggleForm('schedule-form')">&#43; Ajouter</button></div>
-          <div id="alert-schedule" class="admin-alert"></div>
-          <div class="admin-card" id="schedule-form" style="display:none;">
-            <p class="admin-card-title">&#43; Nouvelle &eacute;mission</p>
-            <div class="form-grid">
-              <div class="admin-field"><label>Nom</label><input type="text" id="sch-nom" placeholder="R&eacute;veil Matinal"/></div>
-              <div class="admin-field"><label>Ic&ocirc;ne</label><input type="text" id="sch-emoji" placeholder="&#127749;" maxlength="2"/></div>
-              <div class="admin-field"><label>D&eacute;but</label><input type="time" id="sch-debut"/></div>
-              <div class="admin-field"><label>Fin</label><input type="time" id="sch-fin"/></div>
-              <div class="admin-field form-full"><label>Description</label><input type="text" id="sch-desc" placeholder="Description"/></div>
-            </div>
-            <button class="btn-primary" onclick="ajouterEmission()">&#128190; Sauvegarder</button>
-            <button class="btn-secondary" style="margin-left:8px;" onclick="toggleForm('schedule-form')">Annuler</button>
-          </div>
-          <div class="admin-card"><p class="admin-card-title">Grille actuelle</p>
-            <div class="schedule-grid" id="schedule-list">
-              <div class="schedule-item"><span class="schedule-time">05h &mdash; 08h</span><span class="schedule-name">&#127749; R&eacute;veil Matinal</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
-              <div class="schedule-item"><span class="schedule-time">08h &mdash; 10h</span><span class="schedule-name">&#128240; Actualit&eacute;s Ha&iuml;ti</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
-              <div class="schedule-item"><span class="schedule-time">10h &mdash; 14h</span><span class="schedule-name">&#127925; Vibes Ha&iuml;tiennes</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
-              <div class="schedule-item"><span class="schedule-time">14h &mdash; 17h</span><span class="schedule-name">&#127908; D&eacute;bat Citoyen</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
-              <div class="schedule-item"><span class="schedule-time">17h &mdash; 19h</span><span class="schedule-name">&#128591; Heure Spirituelle</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
-              <div class="schedule-item"><span class="schedule-time">19h &mdash; 22h</span><span class="schedule-name">&#127769; Soir&eacute;e Mega Star</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
-              <div class="schedule-item"><span class="schedule-time">22h &mdash; 05h</span><span class="schedule-name">&#127762; Nuit Mega Star</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
-            </div>
-          </div>
-        </section>
+      <p class="sidebar-group-label">Site</p>
+      <button class="admin-nav-btn" onclick="adminNav('site',this)"><span class="nav-ic">&#9881;</span> Param&egrave;tres</button>
+    </aside>
 
-        <!-- ANIMATEURS -->
-        <section class="admin-section" id="section-animateurs">
-          <div class="section-header"><h2 class="section-ttl">Animateurs</h2><button class="btn-primary" onclick="toggleForm('anim-form')">&#43; Ajouter</button></div>
-          <div id="alert-anim" class="admin-alert"></div>
-          <div class="admin-card" id="anim-form" style="display:none;">
-            <p class="admin-card-title">&#43; Nouvel animateur</p>
-            <div class="form-grid">
-              <div class="admin-field"><label>Nom complet</label><input type="text" id="anim-nom" placeholder="Jean-Pierre Duval"/></div>
-              <div class="admin-field"><label>&Eacute;mission</label><input type="text" id="anim-emission" placeholder="R&eacute;veil Matinal"/></div>
-              <div class="admin-field"><label>Horaire</label><input type="text" id="anim-horaire" placeholder="05h &mdash; 08h"/></div>
-              <div class="admin-field"><label>Photo URL</label><input type="url" id="anim-photo" placeholder="https://..." oninput="previewAnimPhoto(this.value)"/></div>
-            </div>
-            <img id="anim-preview" class="photo-preview" alt="Preview"/>
-            <button class="btn-primary" onclick="ajouterAnimateur()">&#128190; Ajouter</button>
-            <button class="btn-secondary" style="margin-left:8px;" onclick="toggleForm('anim-form')">Annuler</button>
-          </div>
-          <div id="animateurs-list"><div class="anim-card"><div class="anim-photo">A</div><div class="anim-info"><h4>Animateur principal</h4><p>R&eacute;veil Matinal &bull; 05h &mdash; 08h</p></div><div style="display:flex;gap:6px;"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.anim-card').remove()">&#128465;</button></div></div></div>
-        </section>
+    <main class="admin-main">
 
-        <!-- REPORTAGE -->
-        <section class="admin-section" id="section-reportage">
-          <div class="section-header"><h2 class="section-ttl">R&eacute;portage en direct</h2></div>
-          <div id="alert-reportage" class="admin-alert"></div>
-          <div class="admin-card">
-            <p class="admin-card-title">&#9997; R&eacute;diger un r&eacute;portage</p>
-            <div class="admin-field"><label>Titre</label><input type="text" id="rep-titre" placeholder="Couverture sp&eacute;ciale..."/></div>
-            <div class="admin-field"><label>Contenu</label><textarea id="rep-contenu" style="min-height:200px;" placeholder="R&eacute;digez ici..."></textarea></div>
-            <div class="form-grid">
-              <div class="admin-field"><label>Lieu</label><input type="text" id="rep-lieu" placeholder="Port-au-Prince"/></div>
-              <div class="admin-field"><label>Statut</label><select id="rep-statut"><option value="draft">Brouillon</option><option value="live">En direct</option><option value="published">Publi&eacute;</option></select></div>
-            </div>
-            <button class="btn-primary" onclick="publierReportage()">&#128240; Publier</button>
-            <button class="btn-secondary" style="margin-left:8px;" onclick="sauvegarderBrouillon()">&#128190; Brouillon</button>
-          </div>
-          <div class="admin-card"><p class="admin-card-title">R&eacute;portages publi&eacute;s</p><div id="reportages-list"><p style="color:var(--gri-text);font-size:13px;text-align:center;padding:20px;">Aucun r&eacute;portage.</p></div></div>
-        </section>
-
-        <!-- MEMBRES -->
-        <section class="admin-section" id="section-membres">
-          <div class="section-header">
-            <h2 class="section-ttl">Membres inscrits</h2>
-            <input type="text" placeholder="&#128269; Rechercher..." oninput="filtrerMembres(this.value)" style="background:var(--gri-cle);border:1px solid var(--bod);border-radius:6px;padding:8px 14px;color:var(--blan);font-size:13px;"/>
-          </div>
+      <!-- OVERVIEW -->
+      <section class="admin-section active" id="section-overview">
+        <div class="section-header">
+          <h2 class="section-ttl">Vue d&apos;ensemble</h2>
+          <div class="online-badge"><span class="online-dot"></span><span class="online-num" id="overview-online">0</span><span class="online-lbl">&nbsp;en ligne</span></div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box rouge"><div class="stat-box-icon">&#128100;</div><div class="stat-box-val" id="ov-membres">0</div><div class="stat-box-lbl">Membres inscrits</div></div>
+          <div class="stat-box vert"><div class="stat-box-icon">&#11088;</div><div class="stat-box-val" id="ov-abonnes">0</div><div class="stat-box-lbl">Abonn&eacute;s actifs</div></div>
+          <div class="stat-box bleu"><div class="stat-box-icon">&#127897;</div><div class="stat-box-val">7</div><div class="stat-box-lbl">&Eacute;missions / sem.</div></div>
+          <div class="stat-box jaune"><div class="stat-box-icon">&#128176;</div><div class="stat-box-val" id="ov-revenus">$0</div><div class="stat-box-lbl">Revenus du mois</div></div>
+        </div>
+        <div class="admin-card">
+          <p class="admin-card-title">Derniers membres inscrits</p>
           <div class="admin-table-wrap">
             <table class="admin-table">
-              <thead><tr><th>Nom</th><th>Email</th><th>T&eacute;l&eacute;phone</th><th>Plan</th><th>Inscrit le</th><th>Statut</th></tr></thead>
-              <tbody id="membres-body"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gri-text);">Chargement...</td></tr></tbody>
+              <thead><tr><th>Nom</th><th>Email</th><th>Plan</th><th>Date</th></tr></thead>
+              <tbody id="last-membres-body"><tr><td colspan="4" style="text-align:center;padding:24px;color:var(--t3)">Chargement...</td></tr></tbody>
             </table>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <!-- ABONNEMENTS -->
-        <section class="admin-section" id="section-abonnements">
-          <div class="section-header"><h2 class="section-ttl">Abonnements</h2></div>
-          <div class="stats-row">
-            <div class="stat-box vert"><div class="stat-box-icon">&#11088;</div><div class="stat-box-val" id="nb-premium">0</div><div class="stat-box-lbl">Premium</div></div>
-            <div class="stat-box jaune"><div class="stat-box-icon">&#128081;</div><div class="stat-box-val" id="nb-vip">0</div><div class="stat-box-lbl">VIP</div></div>
-            <div class="stat-box rouge"><div class="stat-box-icon">&#128100;</div><div class="stat-box-val" id="nb-gratuit">0</div><div class="stat-box-lbl">Gratuit</div></div>
+      <!-- ONLINE -->
+      <section class="admin-section" id="section-online">
+        <div class="section-header"><h2 class="section-ttl">Auditeurs en ligne</h2></div>
+        <div class="admin-card" style="text-align:center;padding:48px">
+          <div class="online-badge" style="display:inline-flex;margin-bottom:16px">
+            <span class="online-dot"></span><span class="online-num" id="online-count">0</span><span class="online-lbl">&nbsp;auditeurs en ce moment</span>
           </div>
-          <div class="admin-table-wrap">
-            <table class="admin-table">
-              <thead><tr><th>Membre</th><th>Plan</th><th>Montant</th><th>M&eacute;thode</th><th>Date</th><th>Statut</th></tr></thead>
-              <tbody id="abonnements-body"><tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gri-text);">Chargement...</td></tr></tbody>
-            </table>
-          </div>
-        </section>
+          <p style="color:var(--t2);font-size:13px;margin-top:8px">Mise &agrave; jour toutes les 30 secondes</p>
+        </div>
+      </section>
 
-        <!-- REVENUS -->
-        <section class="admin-section" id="section-revenus">
-          <div class="section-header"><h2 class="section-ttl">Revenus</h2></div>
-          <div class="admin-card">
-            <p class="admin-card-title">&#128176; Solde disponible</p>
-            <div class="revenue-display"><span class="revenue-currency">$</span><span class="revenue-amount" id="solde-total">0.00</span><span class="revenue-period">USD</span></div>
-            <p style="color:var(--gri-text);font-size:13px;margin-bottom:16px;">Total abonnements ce mois</p>
-            <button class="btn-retrait" onclick="demanderRetrait()">&#128176; Demander un retrait</button>
+      <!-- NEWS -->
+      <section class="admin-section" id="section-news">
+        <div class="section-header"><h2 class="section-ttl">Actualit&eacute;s &amp; Slides</h2><button class="btn-primary" onclick="toggleForm('news-form')">&#43; Nouvelle actualit&eacute;</button></div>
+        <div id="alert-news" class="admin-alert"></div>
+        <div class="admin-card" id="news-form" style="display:none">
+          <p class="admin-card-title">Publier une actualit&eacute;</p>
+          <div class="form-grid">
+            <div class="admin-field form-full"><label>Titre</label><input type="text" id="news-titre" placeholder="Titre de l&apos;actualit&eacute;"/></div>
+            <div class="admin-field form-full"><label>Contenu</label><textarea id="news-contenu" placeholder="Contenu..."></textarea></div>
+            <div class="admin-field"><label>Type</label><select id="news-type"><option value="slide">Slide</option><option value="news">Actualit&eacute;</option><option value="breaking">Breaking</option></select></div>
+            <div class="admin-field"><label>Image URL</label><input type="url" id="news-img" placeholder="https://..."/></div>
           </div>
-          <div class="stats-row">
-            <div class="stat-box vert"><div class="stat-box-icon">&#128200;</div><div class="stat-box-val" id="rev-mois">$0</div><div class="stat-box-lbl">Ce mois</div></div>
-            <div class="stat-box bleu"><div class="stat-box-icon">&#128198;</div><div class="stat-box-val" id="rev-total">$0</div><div class="stat-box-lbl">Total</div></div>
-            <div class="stat-box jaune"><div class="stat-box-icon">&#11088;</div><div class="stat-box-val" id="rev-premium">$0</div><div class="stat-box-lbl">Premium</div></div>
-            <div class="stat-box rouge"><div class="stat-box-icon">&#128081;</div><div class="stat-box-val" id="rev-vip">$0</div><div class="stat-box-lbl">VIP</div></div>
-          </div>
-        </section>
+          <button class="btn-primary" onclick="publierNews()">&#128240; Publier</button>
+          <button class="btn-secondary" style="margin-left:8px" onclick="toggleForm('news-form')">Annuler</button>
+        </div>
+        <div class="admin-card"><p class="admin-card-title">Publications r&eacute;centes</p><div id="news-list"><p style="color:var(--t3);font-size:13px;text-align:center;padding:20px">Aucune publication.</p></div></div>
+      </section>
 
-        <!-- PARAMETRES -->
-        <section class="admin-section" id="section-site">
-          <div class="section-header"><h2 class="section-ttl">Param&egrave;tres du site</h2></div>
-          <div id="alert-site" class="admin-alert"></div>
-          <div class="admin-card">
-            <p class="admin-card-title">&#127925; Informations radio</p>
-            <div class="form-grid">
-              <div class="admin-field"><label>Nom</label><input type="text" id="site-nom" value="Radio T&eacute;l&eacute; Mega Star"/></div>
-              <div class="admin-field"><label>Fr&eacute;quence FM</label><input type="text" id="site-freq" value="97.3 FM"/></div>
-              <div class="admin-field"><label>URL stream</label><input type="url" id="site-stream" value="https://stream.zeno.fm/nlhqgiwj4obtv"/></div>
-              <div class="admin-field"><label>Email contact</label><input type="email" id="site-email" value="konocompanymultiservices@gmail.com"/></div>
-              <div class="admin-field form-full"><label>Slogan</label><input type="text" id="site-slogan" value="La voix qui unit, informe et inspire Ha&iuml;ti"/></div>
-            </div>
-            <button class="btn-primary" onclick="saveSiteParams()">&#128190; Sauvegarder</button>
+      <!-- ANNONCES -->
+      <section class="admin-section" id="section-annonces">
+        <div class="section-header"><h2 class="section-ttl">Annonces en direct</h2><button class="btn-primary" onclick="toggleForm('annonce-form')">&#43; Nouvelle annonce</button></div>
+        <div id="alert-annonces" class="admin-alert"></div>
+        <div class="admin-card" id="annonce-form" style="display:none">
+          <p class="admin-card-title">Cr&eacute;er une annonce</p>
+          <div class="admin-field"><label>Titre</label><input type="text" id="ann-titre" placeholder="Titre..."/></div>
+          <div class="admin-field"><label>Description</label><textarea id="ann-desc" style="min-height:80px"></textarea></div>
+          <div class="form-grid">
+            <div class="admin-field"><label>Heure</label><input type="time" id="ann-heure"/></div>
+            <div class="admin-field"><label>Type</label><select id="ann-type"><option value="live">En direct</option><option value="pub">Publicit&eacute;</option><option value="special">Sp&eacute;cial</option></select></div>
           </div>
-          <div class="admin-card">
-            <p class="admin-card-title">&#128274; Changer mot de passe admin</p>
-            <div class="form-grid">
-              <div class="admin-field"><label>Nouveau mot de passe</label><input type="password" id="new-admin-pass"/></div>
-              <div class="admin-field"><label>Confirmer</label><input type="password" id="confirm-admin-pass"/></div>
-            </div>
-            <button class="btn-primary" onclick="changerModpasAdmin()">&#128274; Changer</button>
+          <button class="btn-primary" onclick="creerAnnonce()">&#128227; Publier</button>
+          <button class="btn-secondary" style="margin-left:8px" onclick="toggleForm('annonce-form')">Annuler</button>
+        </div>
+        <div class="admin-card">
+          <p class="admin-card-title">Annonces actives</p>
+          <div id="annonces-list">
+            <div class="annonce-item"><div class="annonce-dot annonce-live"></div><div class="annonce-info" style="flex:1"><h4>Radio en direct &mdash; 97.3 FM</h4><p>Diffusion 24h/24 &bull; 7j/7</p><p class="annonce-time">En direct maintenant</p></div><span class="badge badge-rouge">LIVE</span></div>
           </div>
-        </section>
+        </div>
+      </section>
 
-      </main>
-    </div>
+      <!-- SCHEDULE -->
+      <section class="admin-section" id="section-schedule">
+        <div class="section-header"><h2 class="section-ttl">Grille des &eacute;missions</h2><button class="btn-primary" onclick="toggleForm('schedule-form')">&#43; Ajouter</button></div>
+        <div id="alert-schedule" class="admin-alert"></div>
+        <div class="admin-card" id="schedule-form" style="display:none">
+          <p class="admin-card-title">Nouvelle &eacute;mission</p>
+          <div class="form-grid">
+            <div class="admin-field"><label>Nom</label><input type="text" id="sch-nom" placeholder="R&eacute;veil Matinal"/></div>
+            <div class="admin-field"><label>Ic&ocirc;ne</label><input type="text" id="sch-emoji" placeholder="&#127749;" maxlength="2"/></div>
+            <div class="admin-field"><label>D&eacute;but</label><input type="time" id="sch-debut"/></div>
+            <div class="admin-field"><label>Fin</label><input type="time" id="sch-fin"/></div>
+            <div class="admin-field form-full"><label>Description</label><input type="text" id="sch-desc" placeholder="Description (optionnel)"/></div>
+          </div>
+          <button class="btn-primary" onclick="ajouterEmission()">&#128190; Sauvegarder</button>
+          <button class="btn-secondary" style="margin-left:8px" onclick="toggleForm('schedule-form')">Annuler</button>
+        </div>
+        <div class="admin-card">
+          <p class="admin-card-title">Grille actuelle</p>
+          <div class="schedule-grid" id="schedule-list">
+            <div class="schedule-item"><span class="schedule-time">05h &mdash; 08h</span><span class="schedule-name">&#127749; R&eacute;veil Matinal</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
+            <div class="schedule-item"><span class="schedule-time">08h &mdash; 10h</span><span class="schedule-name">&#128240; Actualit&eacute;s Ha&iuml;ti</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
+            <div class="schedule-item"><span class="schedule-time">10h &mdash; 14h</span><span class="schedule-name">&#127925; Vibes Ha&iuml;tiennes</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
+            <div class="schedule-item"><span class="schedule-time">14h &mdash; 17h</span><span class="schedule-name">&#127908; D&eacute;bat Citoyen</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
+            <div class="schedule-item"><span class="schedule-time">17h &mdash; 19h</span><span class="schedule-name">&#128591; Heure Spirituelle</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
+            <div class="schedule-item"><span class="schedule-time">19h &mdash; 22h</span><span class="schedule-name">&#127769; Soir&eacute;e Mega Star</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
+            <div class="schedule-item"><span class="schedule-time">22h &mdash; 05h</span><span class="schedule-name">&#127762; Nuit Mega Star</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANIMATEURS -->
+      <section class="admin-section" id="section-animateurs">
+        <div class="section-header"><h2 class="section-ttl">Animateurs</h2><button class="btn-primary" onclick="toggleForm('anim-form')">&#43; Ajouter</button></div>
+        <div id="alert-anim" class="admin-alert"></div>
+        <div class="admin-card" id="anim-form" style="display:none">
+          <p class="admin-card-title">Nouvel animateur</p>
+          <div class="form-grid">
+            <div class="admin-field"><label>Nom complet</label><input type="text" id="anim-nom" placeholder="Jean-Pierre Duval"/></div>
+            <div class="admin-field"><label>&Eacute;mission</label><input type="text" id="anim-emission" placeholder="R&eacute;veil Matinal"/></div>
+            <div class="admin-field"><label>Horaire</label><input type="text" id="anim-horaire" placeholder="05h &mdash; 08h"/></div>
+            <div class="admin-field"><label>Photo URL</label><input type="url" id="anim-photo" placeholder="https://..." oninput="previewAnimPhoto(this.value)"/></div>
+          </div>
+          <img id="anim-preview" class="photo-preview" alt="Aperçu"/>
+          <button class="btn-primary" onclick="ajouterAnimateur()">&#128190; Ajouter</button>
+          <button class="btn-secondary" style="margin-left:8px" onclick="toggleForm('anim-form')">Annuler</button>
+        </div>
+        <div id="animateurs-list">
+          <div class="anim-card"><div class="anim-photo">A</div><div class="anim-info"><h4>Animateur principal</h4><p>R&eacute;veil Matinal &bull; 05h &mdash; 08h</p></div><div style="display:flex;gap:6px"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.anim-card').remove()">&#128465;</button></div></div>
+        </div>
+      </section>
+
+      <!-- REPORTAGE -->
+      <section class="admin-section" id="section-reportage">
+        <div class="section-header"><h2 class="section-ttl">R&eacute;portage en direct</h2></div>
+        <div id="alert-reportage" class="admin-alert"></div>
+        <div class="admin-card">
+          <p class="admin-card-title">R&eacute;diger un r&eacute;portage</p>
+          <div class="admin-field"><label>Titre</label><input type="text" id="rep-titre" placeholder="Couverture sp&eacute;ciale..."/></div>
+          <div class="admin-field"><label>Contenu</label><textarea id="rep-contenu" style="min-height:200px" placeholder="R&eacute;digez ici..."></textarea></div>
+          <div class="form-grid">
+            <div class="admin-field"><label>Lieu</label><input type="text" id="rep-lieu" placeholder="Port-au-Prince"/></div>
+            <div class="admin-field"><label>Statut</label><select id="rep-statut"><option value="draft">Brouillon</option><option value="live">En direct</option><option value="published">Publi&eacute;</option></select></div>
+          </div>
+          <button class="btn-primary" onclick="publierReportage()">&#128240; Publier</button>
+          <button class="btn-secondary" style="margin-left:8px" onclick="sauvegarderBrouillon()">&#128190; Brouillon</button>
+        </div>
+        <div class="admin-card"><p class="admin-card-title">R&eacute;portages publi&eacute;s</p><div id="reportages-list"><p style="color:var(--t3);font-size:13px;text-align:center;padding:20px">Aucun r&eacute;portage.</p></div></div>
+      </section>
+
+      <!-- MEMBRES -->
+      <section class="admin-section" id="section-membres">
+        <div class="section-header">
+          <h2 class="section-ttl">Membres inscrits</h2>
+          <input type="text" class="search-inline" placeholder="&#128269; Rechercher..." oninput="filtrerMembres(this.value)"/>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Nom</th><th>Email</th><th>T&eacute;l&eacute;phone</th><th>Plan</th><th>Inscrit le</th><th>Statut</th></tr></thead>
+            <tbody id="membres-body"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3)">Chargement...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ABONNEMENTS -->
+      <section class="admin-section" id="section-abonnements">
+        <div class="section-header"><h2 class="section-ttl">Abonnements</h2></div>
+        <div class="stats-row">
+          <div class="stat-box vert"><div class="stat-box-icon">&#11088;</div><div class="stat-box-val" id="nb-premium">0</div><div class="stat-box-lbl">Premium</div></div>
+          <div class="stat-box jaune"><div class="stat-box-icon">&#128081;</div><div class="stat-box-val" id="nb-vip">0</div><div class="stat-box-lbl">VIP</div></div>
+          <div class="stat-box rouge"><div class="stat-box-icon">&#128100;</div><div class="stat-box-val" id="nb-gratuit">0</div><div class="stat-box-lbl">Gratuit</div></div>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>Membre</th><th>Plan</th><th>Montant</th><th>M&eacute;thode</th><th>Date</th><th>Statut</th></tr></thead>
+            <tbody id="abonnements-body"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3)">Chargement...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- REVENUS -->
+      <section class="admin-section" id="section-revenus">
+        <div class="section-header"><h2 class="section-ttl">Revenus</h2></div>
+        <div class="admin-card">
+          <p class="admin-card-title">Solde disponible</p>
+          <div class="revenue-display"><span class="revenue-currency">$</span><span class="revenue-amount" id="solde-total">0.00</span><span class="revenue-period">USD</span></div>
+          <p style="color:var(--t2);font-size:13px;margin-bottom:20px">Total abonnements ce mois</p>
+          <button class="btn-retrait" onclick="demanderRetrait()">&#128176; Demander un retrait</button>
+        </div>
+        <div class="stats-row">
+          <div class="stat-box vert"><div class="stat-box-icon">&#128200;</div><div class="stat-box-val" id="rev-mois">$0</div><div class="stat-box-lbl">Ce mois</div></div>
+          <div class="stat-box bleu"><div class="stat-box-icon">&#128198;</div><div class="stat-box-val" id="rev-total">$0</div><div class="stat-box-lbl">Total</div></div>
+          <div class="stat-box jaune"><div class="stat-box-icon">&#11088;</div><div class="stat-box-val" id="rev-premium">$0</div><div class="stat-box-lbl">Premium</div></div>
+          <div class="stat-box rouge"><div class="stat-box-icon">&#128081;</div><div class="stat-box-val" id="rev-vip">$0</div><div class="stat-box-lbl">VIP</div></div>
+        </div>
+      </section>
+
+      <!-- PARAMETRES -->
+      <section class="admin-section" id="section-site">
+        <div class="section-header"><h2 class="section-ttl">Param&egrave;tres du site</h2></div>
+        <div id="alert-site" class="admin-alert"></div>
+        <div class="admin-card">
+          <p class="admin-card-title">Informations radio</p>
+          <div class="form-grid">
+            <div class="admin-field"><label>Nom</label><input type="text" id="site-nom" value="Radio T&eacute;l&eacute; Mega Star"/></div>
+            <div class="admin-field"><label>Fr&eacute;quence FM</label><input type="text" id="site-freq" value="97.3 FM"/></div>
+            <div class="admin-field"><label>URL stream</label><input type="url" id="site-stream" value="https://stream.zeno.fm/nlhqgiwj4obtv"/></div>
+            <div class="admin-field"><label>Email contact</label><input type="email" id="site-email" value="konocompanymultiservices@gmail.com"/></div>
+            <div class="admin-field form-full"><label>Slogan</label><input type="text" id="site-slogan" value="La voix qui unit, informe et inspire Ha&iuml;ti"/></div>
+          </div>
+          <button class="btn-primary" onclick="saveSiteParams()">&#128190; Sauvegarder</button>
+        </div>
+        <div class="admin-card">
+          <p class="admin-card-title">Changer le mot de passe admin</p>
+          <div class="form-grid">
+            <div class="admin-field"><label>Nouveau mot de passe</label><input type="password" id="new-admin-pass" placeholder="Nouveau mot de passe"/></div>
+            <div class="admin-field"><label>Confirmer</label><input type="password" id="confirm-admin-pass" placeholder="Confirmer"/></div>
+          </div>
+          <button class="btn-primary" onclick="changerModpasAdmin()">&#128274; Changer</button>
+        </div>
+      </section>
+
+    </main>
   </div>
+</div>
 
-  <script>
-const API_URL = "http://localhost:5000";
-const socket = io("http://localhost:5000");
-    socket.on('onlineCount', (count) => {
-  document.getElementById('online-count').textContent = count;
-  document.getElementById('overview-online').textContent = count;
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+const API_URL = "https://radio-megastar-backend-production.up.railway.app";
+let adminToken = null;
+let refreshTimer = null;
+
+const ADMINS = [
+  { email: "admin@megastar.com",                 pass: "MegaStar2026!", nom: "Administrateur"   },
+  { email: "konocompanymultiservices@gmail.com", pass: "MegaStar2026!", nom: "Admin Principal"  }
+];
+
+/* ===== SOCKET.IO ===== */
+try {
+  const socket = io(API_URL);
+  socket.on('onlineCount', (count) => {
+    setText('online-count', count);
+    setText('overview-online', count);
+  });
+} catch(e) {}
+
+/* ===== INIT ===== */
+window.addEventListener('load', function() {
+  const t = sessionStorage.getItem('adminToken');
+  const n = sessionStorage.getItem('adminName');
+  if (t) { adminToken = t; showAdmin(n || 'Administrateur'); }
 });
 
-    // ===== CREDENTIALS LOKAUX — pa depann backend pou login =====
-    const ADMINS = [
-      { email: "admin@megastar.com",                      pass: "MegaStar2026!", nom: "Administrateur" },
-      { email: "konocompanymultiservices@gmail.com",      pass: "MegaStar2026!", nom: "Admin Principal" }
-    ];
-
-    window.addEventListener('load', function() {
-      const t = sessionStorage.getItem('adminToken');
-      const n = sessionStorage.getItem('adminName');
-      if (t) { adminToken = t; showAdmin(n || 'Administrateur'); }
-    });
-    
+/* ===== LOGIN ===== */
 function loginAdmin() {
   const email = (document.getElementById('admin-email').value || '').trim().toLowerCase();
   const pass  = document.getElementById('admin-password').value || '';
@@ -468,224 +547,282 @@ function loginAdmin() {
   err.style.display = 'none';
   btn.disabled = true;
 
-  // Envoye a backend pou verifye
-  fetch('http://localhost:5000/api/auth/login', {
+  // Verifye lokal an premye (rapid)
+  const local = ADMINS.find(a => a.email === email && a.pass === pass);
+  if (local) {
+    adminToken = 'admin-' + Date.now();
+    sessionStorage.setItem('adminToken', adminToken);
+    sessionStorage.setItem('adminName', local.nom);
+    showAdmin(local.nom);
+    btn.disabled = false;
+    return;
+  }
+
+  // Eseye backend
+  fetch(API_URL + '/api/auth/connexion', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, motDePasse: pass })
   })
   .then(r => r.json())
   .then(data => {
+    btn.disabled = false;
     if (data.success && data.user && data.user.role === 'admin') {
+      adminToken = data.token;
       sessionStorage.setItem('adminToken', data.token);
       sessionStorage.setItem('adminName', data.user.nom);
       showAdmin(data.user.nom);
     } else {
-      err.textContent = 'Admin credentials incorrect oswa pa admin account';
+      err.textContent = 'Email ou mot de passe incorrect';
       err.style.display = 'block';
-      document.getElementById('admin-password').focus();
     }
-    btn.disabled = false;
   })
-  .catch(e => {
-    err.textContent = 'Erreur serveur - verifye connection backend';
-    err.style.display = 'block';
+  .catch(() => {
     btn.disabled = false;
+    err.textContent = 'Email ou mot de passe incorrect';
+    err.style.display = 'block';
   });
 }
 
-      // Verifye credentials lokaux an premye — rapid, san network
-      const admin = ADMINS.find(a => a.email === email && a.pass === pass);
-      if (admin) {
-        adminToken = 'admin-' + Date.now();
-        sessionStorage.setItem('adminToken', adminToken);
-        sessionStorage.setItem('adminName', admin.nom);
-        showAdmin(admin.nom);
-        return;
-      }
+function showAdmin(name) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-wrap').classList.add('visible');
+  document.getElementById('admin-display-name').textContent = name;
+  loadMembres();
+  loadAbonnements();
+}
 
-      // Si pa jwenn — di erè dirèkteman
-      err.textContent = 'Email ou mot de passe incorrect';
-      err.style.display = 'block';
-      document.getElementById('admin-password').focus();
+function logoutAdmin() {
+  sessionStorage.removeItem('adminToken');
+  sessionStorage.removeItem('adminName');
+  if (refreshTimer) clearInterval(refreshTimer);
+  adminToken = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-wrap').classList.remove('visible');
+  document.getElementById('admin-email').value = '';
+  document.getElementById('admin-password').value = '';
+}
 
-    function showAdmin(name) {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('admin-wrap').classList.add('visible');
-      document.getElementById('admin-display-name').textContent = name;
-      loadMembres();
-      loadAbonnements();
-      simulateOnline();
-    }
+/* ===== NAVIGATION ===== */
+function adminNav(id, btn) {
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
 
-    function logoutAdmin() {
-      sessionStorage.removeItem('adminToken');
-      sessionStorage.removeItem('adminName');
-      if (refreshTimer) clearInterval(refreshTimer);
-      adminToken = null;
-      document.getElementById('login-screen').style.display = 'flex';
-      document.getElementById('admin-wrap').classList.remove('visible');
-      document.getElementById('admin-email').value = '';
-      document.getElementById('admin-password').value = '';
-    }
+function toggleForm(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
 
-    function adminNav(id, btn) {
-      document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('section-' + id).classList.add('active');
-      if (btn) btn.classList.add('active');
-    }
+/* ===== MEMBRES ===== */
+function loadMembres() {
+  fetch(API_URL + '/api/admin/membres', { headers: { 'Authorization': 'Bearer ' + adminToken } })
+  .then(r => r.json()).then(data => {
+    if (!data.success) return;
+    const m = data.membres || [];
+    setText('ov-membres', m.length);
+    const planBadge = p => p === 'VIP' ? 'badge-jaune' : p === 'Premium' ? 'badge-vert' : 'badge-bleu';
+    const row6 = x => `<tr>
+      <td style="color:var(--t1)">${x.nom||'&mdash;'}</td>
+      <td>${x.email||'&mdash;'}</td>
+      <td>${x.telephone||'&mdash;'}</td>
+      <td><span class="badge ${planBadge(x.plan)}">${x.plan||'Gratuit'}</span></td>
+      <td>${x.createdAt ? new Date(x.createdAt).toLocaleDateString('fr-FR') : '&mdash;'}</td>
+      <td><span class="badge badge-vert">Actif</span></td>
+    </tr>`;
+    const row4 = x => `<tr>
+      <td style="color:var(--t1)">${x.nom||'&mdash;'}</td>
+      <td>${x.email||'&mdash;'}</td>
+      <td><span class="badge ${x.plan==='Premium'||x.plan==='VIP' ? 'badge-vert' : 'badge-bleu'}">${x.plan||'Gratuit'}</span></td>
+      <td>${x.createdAt ? new Date(x.createdAt).toLocaleDateString('fr-FR') : '&mdash;'}</td>
+    </tr>`;
+    const tb = document.getElementById('membres-body');
+    const lb = document.getElementById('last-membres-body');
+    tb.innerHTML = m.length ? m.map(row6).join('') : '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3)">Aucun membre</td></tr>';
+    if (lb) lb.innerHTML = m.slice(0, 5).map(row4).join('') || '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--t3)">Aucun membre</td></tr>';
+  }).catch(() => {});
+}
 
-    function toggleForm(id) {
-      const el = document.getElementById(id);
-      if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
-    }
+function filtrerMembres(q) {
+  document.querySelectorAll('#membres-body tr').forEach(r => {
+    r.style.display = !q || r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
 
-    
+/* ===== ABONNEMENTS ===== */
+function loadAbonnements() {
+  fetch(API_URL + '/api/admin/abonnements', { headers: { 'Authorization': 'Bearer ' + adminToken } })
+  .then(r => r.json()).then(data => {
+    if (!data.success) return;
+    const a = data.abonnements || [];
+    let p = 0, v = 0, g = 0, t = 0;
+    a.forEach(x => { if (x.plan==='Premium'){p++;t+=5;} else if (x.plan==='VIP'){v++;t+=15;} else g++; });
+    setText('nb-premium', p); setText('nb-vip', v); setText('nb-gratuit', g);
+    setText('solde-total', t.toFixed(2));
+    setText('rev-mois', '$' + t.toFixed(2)); setText('rev-total', '$' + t.toFixed(2));
+    setText('rev-premium', '$' + (p*5).toFixed(2)); setText('rev-vip', '$' + (v*15).toFixed(2));
+    setText('ov-abonnes', p + v); setText('ov-revenus', '$' + t.toFixed(2));
+    const tb = document.getElementById('abonnements-body');
+    tb.innerHTML = a.length ? a.map(x => `<tr>
+      <td style="color:var(--t1)">${x.nom||'&mdash;'}</td>
+      <td><span class="badge ${x.plan==='VIP'?'badge-jaune':x.plan==='Premium'?'badge-vert':'badge-bleu'}">${x.plan}</span></td>
+      <td style="color:var(--y)">${x.plan==='VIP'?'$15':x.plan==='Premium'?'$5':'$0'}</td>
+      <td>${x.methodePaiement||'&mdash;'}</td>
+      <td>${x.createdAt ? new Date(x.createdAt).toLocaleDateString('fr-FR') : '&mdash;'}</td>
+      <td><span class="badge badge-vert">Actif</span></td>
+    </tr>`).join('') : '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--t3)">Aucun abonnement</td></tr>';
+  }).catch(() => {});
+}
 
-    function loadMembres() {
-      fetch(API_URL + '/api/admin/membres', { headers: { 'Authorization': 'Bearer ' + adminToken } })
-      .then(r => r.json()).then(data => {
-        if (!data.success) return;
-        const m = data.membres || [];
-        setText('ov-membres', m.length);
-        const tb = document.getElementById('membres-body');
-        const lb = document.getElementById('last-membres-body');
-        tb.innerHTML = m.length ? m.map(x => `<tr><td style="color:var(--blan)">${x.nom||'&mdash;'}</td><td>${x.email||'&mdash;'}</td><td>${x.telephone||'&mdash;'}</td><td><span class="badge ${x.plan==='VIP'?'badge-jaune':x.plan==='Premium'?'badge-vert':'badge-bleu'}">${x.plan||'Gratuit'}</span></td><td>${x.createdAt?new Date(x.createdAt).toLocaleDateString('fr-FR'):'&mdash;'}</td><td><span class="badge badge-vert">Actif</span></td></tr>`).join('')
-          : '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gri-text);">Aucun membre</td></tr>';
-        if (lb) lb.innerHTML = m.slice(0,5).map(x => `<tr><td style="color:var(--blan)">${x.nom||'&mdash;'}</td><td>${x.email||'&mdash;'}</td><td><span class="badge ${x.plan==='Premium'||x.plan==='VIP'?'badge-vert':'badge-bleu'}">${x.plan||'Gratuit'}</span></td><td>${x.createdAt?new Date(x.createdAt).toLocaleDateString('fr-FR'):'&mdash;'}</td></tr>`).join('');
-      }).catch(() => {});
-    }
+/* ===== NEWS ===== */
+function publierNews() {
+  const t = document.getElementById('news-titre').value.trim();
+  if (!t) { showAlert('alert-news', 'Titre requis', 'error'); return; }
+  const c    = document.getElementById('news-contenu').value.trim();
+  const type = document.getElementById('news-type').value;
+  const item = makeItem(t, c, type, 'pub');
+  const list = document.getElementById('news-list');
+  if (list.querySelector('p')) list.innerHTML = '';
+  list.insertBefore(item, list.firstChild);
+  showAlert('alert-news', 'Actualité publiée ✓', 'success');
+  document.getElementById('news-titre').value = '';
+  document.getElementById('news-contenu').value = '';
+  toggleForm('news-form');
+}
 
-    function filtrerMembres(q) {
-      document.querySelectorAll('#membres-body tr').forEach(r => {
-        r.style.display = !q || r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
-      });
-    }
+/* ===== ANNONCES ===== */
+function creerAnnonce() {
+  const t = document.getElementById('ann-titre').value.trim();
+  if (!t) { showAlert('alert-annonces', 'Titre requis', 'error'); return; }
+  const d    = document.getElementById('ann-desc').value.trim();
+  const type = document.getElementById('ann-type').value;
+  const item = makeItem(t, d, type, type === 'live' ? 'live' : 'pub');
+  document.getElementById('annonces-list').insertBefore(item, document.getElementById('annonces-list').firstChild);
+  showAlert('alert-annonces', 'Annonce créée ✓', 'success');
+  document.getElementById('ann-titre').value = '';
+  document.getElementById('ann-desc').value = '';
+  toggleForm('annonce-form');
+}
 
-    function loadAbonnements() {
-      fetch(API_URL + '/api/admin/abonnements', { headers: { 'Authorization': 'Bearer ' + adminToken } })
-      .then(r => r.json()).then(data => {
-        if (!data.success) return;
-        const a = data.abonnements || [];
-        let p=0, v=0, g=0, t=0;
-        a.forEach(x => { if(x.plan==='Premium'){p++;t+=5;} else if(x.plan==='VIP'){v++;t+=15;} else g++; });
-        setText('nb-premium',p); setText('nb-vip',v); setText('nb-gratuit',g);
-        setText('solde-total',t.toFixed(2)); setText('rev-mois','$'+t.toFixed(2)); setText('rev-total','$'+t.toFixed(2));
-        setText('ov-abonnes',p+v); setText('ov-revenus','$'+t.toFixed(2));
-        const tb = document.getElementById('abonnements-body');
-        tb.innerHTML = a.length ? a.map(x => `<tr><td style="color:var(--blan)">${x.nom||'&mdash;'}</td><td><span class="badge ${x.plan==='VIP'?'badge-jaune':x.plan==='Premium'?'badge-vert':'badge-bleu'}">${x.plan}</span></td><td style="color:var(--jaune)">${x.plan==='VIP'?'$15':x.plan==='Premium'?'$5':'$0'}</td><td>${x.methodePaiement||'&mdash;'}</td><td>${x.createdAt?new Date(x.createdAt).toLocaleDateString('fr-FR'):'&mdash;'}</td><td><span class="badge badge-vert">Actif</span></td></tr>`).join('')
-          : '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--gri-text);">Aucun abonnement</td></tr>';
-      }).catch(() => {});
-    }
+function makeItem(titre, desc, typeLabel, dot) {
+  const d = document.createElement('div');
+  d.className = 'annonce-item';
+  d.innerHTML = `<div class="annonce-dot annonce-${dot}"></div>
+    <div class="annonce-info" style="flex:1">
+      <h4>${titre}</h4><p>${desc || '&mdash;'}</p>
+      <p class="annonce-time">${typeLabel} &bull; ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</p>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="btn-edit">&#9998;</button>
+      <button class="btn-del" onclick="this.closest('.annonce-item').remove()">&#128465;</button>
+    </div>`;
+  return d;
+}
 
-    function publierNews() {
-      const t = document.getElementById('news-titre').value.trim();
-      if (!t) { showAlert('alert-news','Titre requis','error'); return; }
-      const c = document.getElementById('news-contenu').value.trim();
-      const type = document.getElementById('news-type').value;
-      const item = makeItem(t,c,type,'pub');
-      const list = document.getElementById('news-list');
-      list.insertBefore(item, list.firstChild);
-      showAlert('alert-news','Actualit\u00e9 publi\u00e9e \u2713','success');
-      document.getElementById('news-titre').value=''; document.getElementById('news-contenu').value='';
-      toggleForm('news-form');
-    }
+/* ===== SCHEDULE ===== */
+function ajouterEmission() {
+  const nom   = document.getElementById('sch-nom').value.trim();
+  const debut = document.getElementById('sch-debut').value;
+  const fin   = document.getElementById('sch-fin').value;
+  const emoji = document.getElementById('sch-emoji').value || '🎙️';
+  if (!nom || !debut || !fin) { showAlert('alert-schedule', 'Nom et horaires requis', 'error'); return; }
+  const item = document.createElement('div');
+  item.className = 'schedule-item';
+  item.innerHTML = `<span class="schedule-time">${debut} &mdash; ${fin}</span>
+    <span class="schedule-name">${emoji} ${nom}</span>
+    <div class="schedule-actions">
+      <button class="btn-edit">&#9998;</button>
+      <button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button>
+    </div>`;
+  document.getElementById('schedule-list').appendChild(item);
+  showAlert('alert-schedule', 'Émission ajoutée ✓', 'success');
+  toggleForm('schedule-form');
+}
 
-    function creerAnnonce() {
-      const t = document.getElementById('ann-titre').value.trim();
-      if (!t) { showAlert('alert-annonces','Titre requis','error'); return; }
-      const d = document.getElementById('ann-desc').value.trim();
-      const type = document.getElementById('ann-type').value;
-      const item = makeItem(t,d,type,type==='live'?'live':'pub');
-      document.getElementById('annonces-list').insertBefore(item, document.getElementById('annonces-list').firstChild);
-      showAlert('alert-annonces','Annonce cr\u00e9\u00e9e \u2713','success');
-      document.getElementById('ann-titre').value=''; document.getElementById('ann-desc').value='';
-      toggleForm('annonce-form');
-    }
+/* ===== ANIMATEURS ===== */
+function ajouterAnimateur() {
+  const nom = document.getElementById('anim-nom').value.trim();
+  if (!nom) { showAlert('alert-anim', 'Nom requis', 'error'); return; }
+  const em  = document.getElementById('anim-emission').value.trim();
+  const hor = document.getElementById('anim-horaire').value.trim();
+  const ph  = document.getElementById('anim-photo').value.trim();
+  const card = document.createElement('div');
+  card.className = 'anim-card';
+  card.innerHTML = `<div class="anim-photo">${ph ? `<img src="${ph}" style="display:block"/>` : nom.charAt(0).toUpperCase()}</div>
+    <div class="anim-info"><h4>${nom}</h4><p>${em || '&mdash;'}${hor ? ' &bull; ' + hor : ''}</p></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn-edit">&#9998;</button>
+      <button class="btn-del" onclick="this.closest('.anim-card').remove()">&#128465;</button>
+    </div>`;
+  document.getElementById('animateurs-list').insertBefore(card, document.getElementById('animateurs-list').firstChild);
+  showAlert('alert-anim', 'Animateur ajouté ✓', 'success');
+  toggleForm('anim-form');
+}
 
-    function makeItem(titre,desc,typeLabel,dot) {
-      const d = document.createElement('div'); d.className='annonce-item';
-      d.innerHTML=`<div class="annonce-dot annonce-${dot}"></div><div class="annonce-info" style="flex:1;"><h4>${titre}</h4><p>${desc||'&mdash;'}</p><p class="annonce-time">${typeLabel} &bull; ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</p></div><div style="display:flex;gap:6px;"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.annonce-item').remove()">&#128465;</button></div>`;
-      return d;
-    }
+function previewAnimPhoto(url) {
+  const img = document.getElementById('anim-preview');
+  if (url) { img.src = url; img.style.display = 'block'; } else { img.style.display = 'none'; }
+}
 
-    function ajouterEmission() {
-      const nom=document.getElementById('sch-nom').value.trim();
-      const debut=document.getElementById('sch-debut').value;
-      const fin=document.getElementById('sch-fin').value;
-      const emoji=document.getElementById('sch-emoji').value||'&#127897;';
-      if(!nom||!debut||!fin){showAlert('alert-schedule','Nom et horaires requis','error');return;}
-      const item=document.createElement('div'); item.className='schedule-item';
-      item.innerHTML=`<span class="schedule-time">${debut} &mdash; ${fin}</span><span class="schedule-name">${emoji} ${nom}</span><div class="schedule-actions"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.schedule-item').remove()">&#128465;</button></div>`;
-      document.getElementById('schedule-list').appendChild(item);
-      showAlert('alert-schedule','\u00c9mission ajout\u00e9e \u2713','success');
-      toggleForm('schedule-form');
-    }
+/* ===== REPORTAGE ===== */
+function publierReportage() {
+  const t = document.getElementById('rep-titre').value.trim();
+  const c = document.getElementById('rep-contenu').value.trim();
+  if (!t || !c) { showAlert('alert-reportage', 'Titre et contenu requis', 'error'); return; }
+  const l = document.getElementById('rep-lieu').value.trim();
+  const s = document.getElementById('rep-statut').value;
+  const item = document.createElement('div');
+  item.className = 'annonce-item';
+  item.innerHTML = `<div class="annonce-dot ${s==='live'?'annonce-live':'annonce-pub'}"></div>
+    <div class="annonce-info" style="flex:1">
+      <h4>${t}</h4><p>${c.substring(0,100)}${c.length>100?'...':''}</p>
+      <p class="annonce-time">${l ? l + ' &bull; ' : ''}${new Date().toLocaleDateString('fr-FR')}</p>
+    </div>
+    <span class="badge ${s==='live'?'badge-rouge':'badge-vert'}">${s.toUpperCase()}</span>`;
+  const list = document.getElementById('reportages-list');
+  if (list.querySelector('p')) list.innerHTML = '';
+  list.insertBefore(item, list.firstChild);
+  showAlert('alert-reportage', 'Réportage publié ✓', 'success');
+}
 
-    function ajouterAnimateur() {
-      const nom=document.getElementById('anim-nom').value.trim();
-      if(!nom){showAlert('alert-anim','Nom requis','error');return;}
-      const em=document.getElementById('anim-emission').value.trim();
-      const hor=document.getElementById('anim-horaire').value.trim();
-      const ph=document.getElementById('anim-photo').value.trim();
-      const card=document.createElement('div'); card.className='anim-card';
-      card.innerHTML=`<div class="anim-photo">${ph?`<img src="${ph}" style="display:block">`:nom.charAt(0).toUpperCase()}</div><div class="anim-info"><h4>${nom}</h4><p>${em||'&mdash;'} ${hor?'&bull; '+hor:''}</p></div><div style="display:flex;gap:6px;"><button class="btn-edit">&#9998;</button><button class="btn-del" onclick="this.closest('.anim-card').remove()">&#128465;</button></div>`;
-      document.getElementById('animateurs-list').insertBefore(card,document.getElementById('animateurs-list').firstChild);
-      showAlert('alert-anim','Animateur ajout\u00e9 \u2713','success');
-      toggleForm('anim-form');
-    }
+function sauvegarderBrouillon() { showAlert('alert-reportage', 'Brouillon sauvegardé ✓', 'success'); }
+function saveSiteParams()       { showAlert('alert-site', 'Paramètres sauvegardés ✓', 'success'); }
+function demanderRetrait()      { alert('Demande de retrait envoyée ! Confirmation par email.'); }
 
-    function previewAnimPhoto(url) {
-      const img=document.getElementById('anim-preview');
-      if(url){img.src=url;img.style.display='block';}else{img.style.display='none';}
-    }
+function changerModpasAdmin() {
+  const p1 = document.getElementById('new-admin-pass').value;
+  const p2 = document.getElementById('confirm-admin-pass').value;
+  if (!p1) { showAlert('alert-site', 'Entrez un mot de passe', 'error'); return; }
+  if (p1 !== p2) { showAlert('alert-site', 'Mots de passe différents', 'error'); return; }
+  showAlert('alert-site', 'Mot de passe changé ✓', 'success');
+}
 
-    function publierReportage() {
-      const t=document.getElementById('rep-titre').value.trim();
-      const c=document.getElementById('rep-contenu').value.trim();
-      if(!t||!c){showAlert('alert-reportage','Titre et contenu requis','error');return;}
-      const l=document.getElementById('rep-lieu').value.trim();
-      const s=document.getElementById('rep-statut').value;
-      const item=document.createElement('div'); item.className='annonce-item';
-      item.innerHTML=`<div class="annonce-dot ${s==='live'?'annonce-live':'annonce-pub'}"></div><div class="annonce-info" style="flex:1;"><h4>${t}</h4><p>${c.substring(0,100)}${c.length>100?'...':''}</p><p class="annonce-time">${l?l+' &bull; ':''}${new Date().toLocaleDateString('fr-FR')}</p></div><span class="badge ${s==='live'?'badge-rouge':'badge-vert'}">${s.toUpperCase()}</span>`;
-      const list=document.getElementById('reportages-list');
-      if(list.querySelector('p'))list.innerHTML='';
-      list.insertBefore(item,list.firstChild);
-      showAlert('alert-reportage','R\u00e9portage publi\u00e9 \u2713','success');
-    }
+/* ===== UTILS ===== */
+function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; }
 
-    function sauvegarderBrouillon(){showAlert('alert-reportage','Brouillon sauvegard\u00e9 \u2713','success');}
-    function saveSiteParams(){showAlert('alert-site','Param\u00e8tres sauvegard\u00e9s \u2713','success');}
-    function changerModpasAdmin(){
-      const p1=document.getElementById('new-admin-pass').value;
-      const p2=document.getElementById('confirm-admin-pass').value;
-      if(!p1){showAlert('alert-site','Entrez un mot de passe','error');return;}
-      if(p1!==p2){showAlert('alert-site','Mots de passe diff\u00e9rents','error');return;}
-      showAlert('alert-site','Mot de passe chang\u00e9 \u2713','success');
-    }
-    function demanderRetrait(){alert('Demande de retrait envoy\u00e9e ! Confirmation par email.');}
-    function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
-    function showAlert(id,msg,type){
-      const el=document.getElementById(id);if(!el)return;
-      el.textContent=msg;el.className='admin-alert '+type;el.style.display='block';
-      setTimeout(()=>{el.style.display='none';},4000);
-    }
+function showAlert(id, msg, type) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'admin-alert ' + type;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
 
-    /* HAMBURGER SIDEBAR */
-    function toggleAdminSidebar() {
-      document.querySelector('.admin-sidebar').classList.toggle('open');
-      document.getElementById('admin-overlay').classList.toggle('open');
-    }
-    function closeAdminSidebar() {
-      document.querySelector('.admin-sidebar').classList.remove('open');
-      document.getElementById('admin-overlay').classList.remove('open');
-    }
-    document.querySelectorAll('.admin-nav-btn').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        if (window.innerWidth <= 768) closeAdminSidebar();
-      });
-    });
-  </script>
+/* ===== HAMBURGER ===== */
+function toggleAdminSidebar() {
+  document.querySelector('.admin-sidebar').classList.toggle('open');
+  document.getElementById('admin-overlay').classList.toggle('open');
+}
+function closeAdminSidebar() {
+  document.querySelector('.admin-sidebar').classList.remove('open');
+  document.getElementById('admin-overlay').classList.remove('open');
+}
+document.querySelectorAll('.admin-nav-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() { if (window.innerWidth <= 768) closeAdminSidebar(); });
+});
+</script>
 </body>
 </html>
