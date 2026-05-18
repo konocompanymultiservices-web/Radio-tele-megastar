@@ -228,21 +228,21 @@
 <body>
 
 <!-- ===== LOGIN ===== -->
-<div class="login-screen" id="login-screen">
+<div class="login-screen" id="login-screen" role="main" aria-label="Connexion administrateur">
   <div class="login-box">
-    <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="login-logo"/>
-    <h2 class="login-title">Administration</h2>
+    <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo Radio Télé Mega Star" class="login-logo"/>
+    <h1 class="login-title">Administration</h1>
     <p class="login-sub">Radio T&eacute;l&eacute; Mega Star</p>
     <div class="login-field">
-      <label>Email administrateur</label>
-      <input type="email" id="admin-email" placeholder="admin@megastar.com" autocomplete="username"/>
+      <label for="admin-email">Email administrateur</label>
+      <input type="email" id="admin-email" placeholder="admin@megastar.com" autocomplete="username" aria-required="true"/>
     </div>
     <div class="login-field">
-      <label>Mot de passe</label>
-      <input type="password" id="admin-password" placeholder="Mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')loginAdmin()"/>
+      <label for="admin-password">Mot de passe</label>
+      <input type="password" id="admin-password" placeholder="Mot de passe" autocomplete="current-password" aria-required="true" onkeydown="if(event.key==='Enter')loginAdmin()"/>
     </div>
-    <button class="login-btn" id="login-btn" onclick="loginAdmin()">&#128274; Acc&eacute;der au panneau</button>
-    <div class="login-err" id="login-err"></div>
+    <button class="login-btn" id="login-btn" onclick="loginAdmin()" aria-label="Accéder au panneau d'administration">&#128274; Acc&eacute;der au panneau</button>
+    <div class="login-err" id="login-err" role="alert" aria-live="polite" aria-atomic="true"></div>
   </div>
 </div>
 
@@ -266,27 +266,27 @@
   <div class="admin-overlay" id="admin-overlay" onclick="closeAdminSidebar()"></div>
 
   <div class="admin-body">
-    <aside class="admin-sidebar">
+    <aside class="admin-sidebar" id="admin-sidebar" role="navigation" aria-label="Menu principal d'administration">
       <p class="sidebar-group-label">Tableau de bord</p>
-      <button class="admin-nav-btn active" onclick="adminNav('overview',this)"><span class="nav-ic">&#128202;</span> Vue d&apos;ensemble</button>
-      <button class="admin-nav-btn" onclick="adminNav('online',this)"><span class="nav-ic">&#128308;</span> Auditeurs en ligne</button>
+      <button class="admin-nav-btn active" onclick="adminNav('overview',this)" aria-label="Vue d'ensemble"><span class="nav-ic" aria-hidden="true">&#128202;</span> Vue d&apos;ensemble</button>
+      <button class="admin-nav-btn" onclick="adminNav('online',this)" aria-label="Auditeurs en ligne"><span class="nav-ic" aria-hidden="true">&#128308;</span> Auditeurs en ligne</button>
 
       <p class="sidebar-group-label">Contenu</p>
-      <button class="admin-nav-btn" onclick="adminNav('news',this)"><span class="nav-ic">&#128240;</span> Actualit&eacute;s</button>
-      <button class="admin-nav-btn" onclick="adminNav('annonces',this)"><span class="nav-ic">&#128227;</span> Annonces direct</button>
-      <button class="admin-nav-btn" onclick="adminNav('schedule',this)"><span class="nav-ic">&#128197;</span> Grille &eacute;missions</button>
-      <button class="admin-nav-btn" onclick="adminNav('animateurs',this)"><span class="nav-ic">&#127908;</span> Animateurs</button>
-      <button class="admin-nav-btn" onclick="adminNav('reportage',this)"><span class="nav-ic">&#9997;</span> R&eacute;portage</button>
+      <button class="admin-nav-btn" onclick="adminNav('news',this)" aria-label="Gérer les actualités"><span class="nav-ic" aria-hidden="true">&#128240;</span> Actualit&eacute;s</button>
+      <button class="admin-nav-btn" onclick="adminNav('annonces',this)" aria-label="Annonces en direct"><span class="nav-ic" aria-hidden="true">&#128227;</span> Annonces direct</button>
+      <button class="admin-nav-btn" onclick="adminNav('schedule',this)" aria-label="Grille des émissions"><span class="nav-ic" aria-hidden="true">&#128197;</span> Grille &eacute;missions</button>
+      <button class="admin-nav-btn" onclick="adminNav('animateurs',this)" aria-label="Gérer les animateurs"><span class="nav-ic" aria-hidden="true">&#127908;</span> Animateurs</button>
+      <button class="admin-nav-btn" onclick="adminNav('reportage',this)" aria-label="Publier un reportage"><span class="nav-ic" aria-hidden="true">&#9997;</span> R&eacute;portage</button>
 
       <p class="sidebar-group-label">Membres</p>
-      <button class="admin-nav-btn" onclick="adminNav('membres',this)"><span class="nav-ic">&#128100;</span> Membres inscrits</button>
-      <button class="admin-nav-btn" onclick="adminNav('abonnements',this)"><span class="nav-ic">&#11088;</span> Abonnements</button>
+      <button class="admin-nav-btn" onclick="adminNav('membres',this)" aria-label="Membres inscrits"><span class="nav-ic" aria-hidden="true">&#128100;</span> Membres inscrits</button>
+      <button class="admin-nav-btn" onclick="adminNav('abonnements',this)" aria-label="Gérer les abonnements"><span class="nav-ic" aria-hidden="true">&#11088;</span> Abonnements</button>
 
       <p class="sidebar-group-label">Finance</p>
-      <button class="admin-nav-btn" onclick="adminNav('revenus',this)"><span class="nav-ic">&#128176;</span> Revenus</button>
+      <button class="admin-nav-btn" onclick="adminNav('revenus',this)" aria-label="Consulter les revenus"><span class="nav-ic" aria-hidden="true">&#128176;</span> Revenus</button>
 
       <p class="sidebar-group-label">Site</p>
-      <button class="admin-nav-btn" onclick="adminNav('site',this)"><span class="nav-ic">&#9881;</span> Param&egrave;tres</button>
+      <button class="admin-nav-btn" onclick="adminNav('site',this)" aria-label="Paramètres du site"><span class="nav-ic" aria-hidden="true">&#9881;</span> Param&egrave;tres</button>
     </aside>
 
     <main class="admin-main">

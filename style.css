@@ -1088,3 +1088,29 @@ button:focus-visible, a:focus-visible {
   .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
   .modal { padding: 32px 24px; }
 }
+
+@media (max-width: 480px) {
+  .chat-widget { width: calc(100vw - 16px); right: 8px; border-radius: 12px 12px 0 0; }
+  .chat-messages { max-height: calc(100vh - 200px); }
+}
+
+/* ===== TOAST NOTIFICATIONS ===== */
+@keyframes slideUp {
+  from { opacity:0; transform:translateX(-50%) translateY(16px); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0); }
+}
+
+/* ===== SKIP TO CONTENT ===== */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--jaune);
+  color: var(--nwa);
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 1000;
+  font-weight: 700;
+  font-size: 14px;
+}
+.skip-link:focus { top: 0; }

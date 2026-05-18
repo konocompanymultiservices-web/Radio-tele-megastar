@@ -1,20 +1,59 @@
-﻿// ============================================
-// RADIO TÉLÉ MEGA STAR — SCRIPT.JS v2.0
+// ============================================
+// RADIO TÉLÉ MEGA STAR — SCRIPT.JS v3.0
 // ============================================
 
 const API_URL = "https://radio-megastar-backend-production.up.railway.app";
 var audio = null;
 
+// ===== UTILITÈ =====
+
+function validerEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+function validerMotDePasse(mdp) { return mdp && mdp.length >= 6; }
+function validerNom(nom) { return nom && nom.trim().length >= 2; }
+
+function afficherToast(message, type, duree) {
+  type = type || 'info';
+  duree = duree || 3000;
+  var toast = document.createElement('div');
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+  var bg = type === 'success' ? '#22c55e' : type === 'error' ? '#cc0000' : type === 'warning' ? '#f59e0b' : '#333';
+  toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:' + bg + ';color:#fff;padding:13px 24px;border-radius:8px;z-index:3000;font-weight:500;box-shadow:0 4px 16px rgba(0,0,0,.35);max-width:90%;font-family:Lato,sans-serif;font-size:14px;animation:slideUp .3s ease';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, duree + 300);
+}
+
+async function fetchAPI(endpoint, options) {
+  options = options || {};
+  var timeout = options.timeout || 10000;
+  var controller = new AbortController();
+  var tid = setTimeout(function() { controller.abort(); }, timeout);
+  try {
+    var opts = Object.assign({}, options, { signal: controller.signal });
+    delete opts.timeout;
+    var r = await fetch(API_URL + endpoint, opts);
+    clearTimeout(tid);
+    if (!r.ok) throw new Error('Erreur HTTP ' + r.status);
+    return await r.json();
+  } catch(err) {
+    clearTimeout(tid);
+    if (err.name === 'AbortError') throw new Error('Koneksyon twò long — eseye ankò');
+    throw err;
+  }
+}
+
 // ===== INIT =====
 window.addEventListener('load', function() {
-  // Jwenn audio element — esansyèl pou bouton play
   audio = document.getElementById('audio-player');
   checkUser();
   initPlay();
   initPubSlider();
 });
 
-// ===== BOUTON PLAY — KORIJE =====
+// ===== PLAYER =====
 function initPlay() {
   if (!audio) return;
   var etat = localStorage.getItem('radioJwe');
@@ -28,133 +67,110 @@ function initPlay() {
   audio.addEventListener('play',  meteEtatPlay);
   audio.addEventListener('pause', meteEtatPause);
   audio.addEventListener('error', function() { meteEtatPause(); });
-  // Senkronize ant paj yo
   window.addEventListener('storage', function(e) {
     if (e.key !== 'radioJwe') return;
-    if (e.newValue === 'wi') { audio.play().catch(() => {}); }
+    if (e.newValue === 'wi') { audio.play().catch(function(){}); }
     else { audio.pause(); }
   });
 }
 
 function togglePlay() {
-  audio = document.getElementById('audio-player'); // 🔥 garanti li toujou jwenn li
-
-  if (!audio) {
-    console.log("Audio pa jwenn ❌");
-    return;
-  }
-
+  audio = document.getElementById('audio-player');
+  if (!audio) return;
   if (audio.paused) {
     audio.play()
-      .then(() => {
-        console.log("Audio ap jwe ✅");
-        localStorage.setItem('radioJwe', 'wi');
-        meteEtatPlay();
-      })
-      .catch(err => {
-        console.log("Erè play:", err);
-        montreNotifikasyon();
-      });
+      .then(function() { localStorage.setItem('radioJwe','wi'); meteEtatPlay(); })
+      .catch(function() { montreNotifikasyon(); });
   } else {
     audio.pause();
-    console.log("Audio an pause ⏸️");
-    localStorage.setItem('radioJwe', 'non');
+    localStorage.setItem('radioJwe','non');
     meteEtatPause();
   }
 }
 
 function meteEtatPlay() {
-  var fi = document.getElementById('float-icon'); if (fi) fi.textContent = '\u23F8';
+  var fi = document.getElementById('float-icon'); if (fi) fi.textContent = '⏸';
   var ss = document.getElementById('stream-status'); if (ss) { ss.textContent = 'En direct'; ss.style.color = '#cc0000'; }
-  var pi = document.getElementById('play-icon'); if (pi) pi.textContent = '\u23F8';
+  var pi = document.getElementById('play-icon'); if (pi) pi.textContent = '⏸';
   var pt = document.getElementById('play-text'); if (pt) pt.textContent = 'Pause';
   var fp = document.getElementById('float-play'); if (fp) fp.style.background = 'rgba(0,150,0,0.85)';
 }
-
 function meteEtatPause() {
-  var fi = document.getElementById('float-icon'); if (fi) fi.textContent = '\u25B6';
-  var ss = document.getElementById('stream-status'); if (ss) { ss.textContent = 'Cliquez \u25BA pour \u00e9couter'; ss.style.color = '#aaa'; }
-  var pi = document.getElementById('play-icon'); if (pi) pi.textContent = '\u25B6';
-  var pt = document.getElementById('play-text'); if (pt) pt.textContent = '\u00c9couter maintenant';
+  var fi = document.getElementById('float-icon'); if (fi) fi.textContent = '▶';
+  var ss = document.getElementById('stream-status'); if (ss) { ss.textContent = 'Cliquez ► pour écouter'; ss.style.color = '#aaa'; }
+  var pi = document.getElementById('play-icon'); if (pi) pi.textContent = '▶';
+  var pt = document.getElementById('play-text'); if (pt) pt.textContent = 'Écouter maintenant';
   var fp = document.getElementById('float-play'); if (fp) fp.style.background = 'rgba(204,0,0,0.85)';
 }
-
 function changeVolume(val) { if (audio) audio.volume = parseFloat(val); }
+function montreNotifikasyon() { var n = document.getElementById('notif-play'); if (n) n.style.display = 'flex'; }
+function kontinuePlay() { if (audio) { audio.play().then(function(){localStorage.setItem('radioJwe','wi');meteEtatPlay();}).catch(function(){}); } fermerNotif(); }
+function fermerNotif() { var n = document.getElementById('notif-play'); if (n) n.style.display = 'none'; }
 
-function montreNotifikasyon() {
-  var n = document.getElementById('notif-play'); if (n) n.style.display = 'flex';
-}
-function kontinuePlay() {
-  if (audio) { audio.play().then(function(){localStorage.setItem('radioJwe','wi');meteEtatPlay();}).catch(()=>{}); }
-  fermerNotif();
-}
-function fermerNotif() {
-  var n = document.getElementById('notif-play'); if (n) n.style.display = 'none';
-}
-
-// ===== CAROUSEL — AUTO SLIDE + SWIPE =====
+// ===== CAROUSEL =====
 var _carIdx = 0, _carTotal = 6, _carTimer = null, _dragging = false, _startX = 0, _curX = 0;
+var _cardWidthCache = null;
+
+function getCardWidth() {
+  if (_cardWidthCache) return _cardWidthCache;
+  var track = document.getElementById('carousel-track');
+  var card  = track && track.querySelector('.emission-card');
+  if (!card) return 196;
+  _cardWidthCache = card.offsetWidth + 16;
+  return _cardWidthCache;
+}
 
 function initCarousel() {
   var track = document.getElementById('carousel-track');
   if (!track || !track.children.length) return;
-
   _carTotal = Math.ceil(track.children.length / 2) || 6;
-
-  function cardW() {
-    var c = track.querySelector('.emission-card');
-    if (!c) return 120;
-    var st = window.getComputedStyle(c);
-    return c.offsetWidth + parseFloat(st.marginRight||0) + parseFloat(st.marginLeft||0) + 16;
-  }
 
   function goTo(idx) {
     _carIdx = ((idx % _carTotal) + _carTotal) % _carTotal;
     track.style.transition = 'transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94)';
-    track.style.transform = 'translateX(-' + (_carIdx * cardW()) + 'px)';
+    track.style.transform = 'translateX(-' + (_carIdx * getCardWidth()) + 'px)';
     document.querySelectorAll('.carousel-dot').forEach(function(d,i){ d.classList.toggle('active', i===_carIdx); });
   }
 
-  function next() { goTo(_carIdx + 1); }
-  function startAuto() { stopAuto(); _carTimer = setInterval(next, 3000); }
-  function stopAuto() { if (_carTimer) { clearInterval(_carTimer); _carTimer = null; } }
+  function startAuto() { stopAuto(); _carTimer = setInterval(function(){ goTo(_carIdx + 1); }, 3000); }
+  function stopAuto()  { if (_carTimer) { clearInterval(_carTimer); _carTimer = null; } }
 
-  // Touch swipe
   track.addEventListener('touchstart', function(e) { stopAuto(); _startX = e.touches[0].clientX; _dragging = true; }, {passive:true});
-  track.addEventListener('touchmove', function(e) { if (_dragging) _curX = e.touches[0].clientX; }, {passive:true});
-  track.addEventListener('touchend', function() {
+  track.addEventListener('touchmove',  function(e) { if (_dragging) _curX = e.touches[0].clientX; }, {passive:true});
+  track.addEventListener('touchend',   function() {
     if (!_dragging) return; _dragging = false;
-    var d = _startX - _curX;
-    if (Math.abs(d) > 40) goTo(d > 0 ? _carIdx+1 : _carIdx-1);
+    if (Math.abs(_startX - _curX) > 40) goTo(_startX - _curX > 0 ? _carIdx+1 : _carIdx-1);
     startAuto();
   });
-
-  // Mouse drag
   track.addEventListener('mousedown', function(e) { stopAuto(); _startX = e.clientX; _dragging = true; track.style.cursor='grabbing'; });
   document.addEventListener('mousemove', function(e) { if (_dragging) _curX = e.clientX; });
-  document.addEventListener('mouseup', function() {
+  document.addEventListener('mouseup',   function() {
     if (!_dragging) return; _dragging = false; track.style.cursor='grab';
-    var d = _startX - _curX;
-    if (Math.abs(d) > 40) goTo(d > 0 ? _carIdx+1 : _carIdx-1);
+    if (Math.abs(_startX - _curX) > 40) goTo(_startX - _curX > 0 ? _carIdx+1 : _carIdx-1);
     startAuto();
   });
-
   track.addEventListener('mouseenter', stopAuto);
   track.addEventListener('mouseleave', startAuto);
-  window.addEventListener('resize', function() { goTo(_carIdx); });
+  window.addEventListener('resize', function() { _cardWidthCache = null; goTo(_carIdx); }, {passive:true});
   window.allerSlide = goTo;
   startAuto();
 }
 
-// ===== RECHÈCH =====
+// ===== RECHÈCH (debounce 300ms) =====
+var _rechercheTimer = null;
 function rechercherEmission(q) {
-  document.querySelectorAll('.emission-card').forEach(function(c) {
-    var n = c.querySelector('.emission-name');
-    if (!n) return;
-    var match = !q || n.textContent.toLowerCase().includes(q.toLowerCase());
-    c.style.opacity = match ? '1' : '0.2';
-    c.style.transform = match ? '' : 'scale(0.9)';
-  });
+  clearTimeout(_rechercheTimer);
+  _rechercheTimer = setTimeout(function() {
+    var query = (q || '').toLowerCase().trim();
+    document.querySelectorAll('.emission-card').forEach(function(c) {
+      var n = c.querySelector('.emission-name');
+      if (!n) return;
+      var match = !query || n.textContent.toLowerCase().includes(query);
+      c.style.opacity   = match ? '1' : '0.2';
+      c.style.transform = match ? '' : 'scale(0.9)';
+      c.style.transition = 'all .2s ease';
+    });
+  }, 300);
 }
 
 // ===== MENU =====
@@ -166,72 +182,96 @@ function fermerMenuOverlay(e) { if(e.target===document.getElementById('menu-over
 function ouvrirModal() { fermerMenu();fermerModalLogin();setTimeout(function(){var m=document.getElementById('modal-overlay');if(m){m.classList.add('open');document.body.style.overflow='hidden';}},200); }
 function fermerModal() { var m=document.getElementById('modal-overlay');if(m){m.classList.remove('open');document.body.style.overflow='';} }
 function fermerModalOverlay(e) { if(e.target===document.getElementById('modal-overlay'))fermerModal(); }
-
 function ouvrirModalLogin() { fermerMenu();fermerModal();setTimeout(function(){var m=document.getElementById('modal-login-overlay');if(m){m.classList.add('open');document.body.style.overflow='hidden';}},200); }
 function fermerModalLogin() { var m=document.getElementById('modal-login-overlay');if(m){m.classList.remove('open');document.body.style.overflow='';} }
 function fermerModalLoginOverlay(e) { if(e.target===document.getElementById('modal-login-overlay'))fermerModalLogin(); }
 
-// ===== ENSKRIPSYON =====
-function soumettreFormulaire(e) {
+// ===== ENSKRIPSYON (modal sou index.html) =====
+async function soumettreFormulaire(e) {
   e.preventDefault();
-  var f = e.target;
-  var nom = (f.querySelector('[name="username"]')||f.querySelector('[name="nom"]')||{}).value || '';
-  var email = (f.querySelector('[name="email"]')||{}).value || '';
-  var tel   = (f.querySelector('[name="phone"]')||{}).value || '';
-  var mdp   = (f.querySelector('[name="password"]')||f.querySelector('[name="motDePasse"]')||{}).value || '';
-  if (!nom||!email||!mdp) { alert('Tanpri ranpli tout champ obligatwa yo.'); return; }
+  var f   = e.target;
+  var nom   = (f.querySelector('[name="username"]') || {}).value || '';
+  var email = (f.querySelector('[name="email"]') || {}).value || '';
+  var tel   = (f.querySelector('[name="phone"]') || {}).value || '';
+  var mdp   = (f.querySelector('[name="password"]') || {}).value || '';
+
+  if (!validerNom(nom))         { afficherToast('Nom dwe gen omwen 2 karaktè', 'error'); return; }
+  if (!validerEmail(email))     { afficherToast('Adresse email pa valid', 'error'); return; }
+  if (!validerMotDePasse(mdp))  { afficherToast('Modpas dwe gen omwen 6 karaktè', 'error'); return; }
+
   var btn = f.querySelector('button[type="submit"]');
-  if (btn) { btn.textContent='Chargement...'; btn.disabled=true; }
-  fetch(API_URL+'/api/auth/inscription',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nom,email,telephone:tel,motDePasse:mdp})})
-  .then(function(r){return r.json();})
-  .then(function(data){
-    if(btn){btn.textContent='Cr\u00e9er mon compte \u2192';btn.disabled=false;}
-    if(data.success){
-      localStorage.setItem('token',data.token);
-      localStorage.setItem('user',JSON.stringify(data.user));
+  if (btn) { btn.textContent = 'Chargement...'; btn.disabled = true; }
+
+  try {
+    var data = await fetchAPI('/api/auth/inscription', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ nom, email, telephone:tel, motDePasse:mdp })
+    });
+    if (data.success && data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      afficherToast('Kont kreye ak siksè!', 'success');
       fermerModal(); checkUser(); f.reset();
-      setTimeout(function(){
-        if(confirm('Kont ou cr\u00e9\u00e9 avec succ\u00e8s! Vle ale nan dashboard ou?'))
-          window.location.href = data.user.role==='admin' ? 'admin.html' : 'dashboard.html';
-      },300);
-    } else { alert(data.message||'Er\u00e8'); }
-  }).catch(function(){if(btn){btn.textContent='Cr\u00e9er mon compte \u2192';btn.disabled=false;}alert('Er\u00e8 serveur');});
+      setTimeout(function() {
+        window.location.href = data.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+      }, 1000);
+    } else {
+      afficherToast(data.message || 'Erè pandan enskripsyon an', 'error');
+    }
+  } catch(err) {
+    afficherToast(err.message || 'Erè rezò', 'error');
+  } finally {
+    if (btn) { btn.textContent = 'Créer mon compte →'; btn.disabled = false; }
+  }
 }
 
-// ===== KONEKSYON =====
-function soumettreLogin(e) {
+// ===== KONEKSYON (modal sou index.html) =====
+async function soumettreLogin(e) {
   e.preventDefault();
-  var f = e.target;
-  var email = (f.querySelector('[name="email"]')||{}).value || '';
-  var mdp   = (f.querySelector('[name="password"]')||f.querySelector('[name="motDePasse"]')||{}).value || '';
+  var f     = e.target;
+  var email = (f.querySelector('[name="email"]') || {}).value || '';
+  var mdp   = (f.querySelector('[name="password"]') || {}).value || '';
+
+  if (!validerEmail(email)) { afficherToast('Adresse email pa valid', 'error'); return; }
+
   var btn = f.querySelector('button[type="submit"]');
-  if (btn) { btn.textContent='Connexion...'; btn.disabled=true; }
-  fetch(API_URL+'/api/auth/connexion',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,motDePasse:mdp})})
-  .then(function(r){return r.json();})
-  .then(function(data){
-    if(btn){btn.textContent='Se connecter \u2192';btn.disabled=false;}
-    if(data.success&&data.token){
-      localStorage.setItem('token',data.token);
-      localStorage.setItem('user',JSON.stringify(data.user));
+  if (btn) { btn.textContent = 'Connexion...'; btn.disabled = true; }
+
+  try {
+    var data = await fetchAPI('/api/auth/connexion', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email, motDePasse:mdp })
+    });
+    if (data.success && data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      afficherToast('Koneksyon reyisi!', 'success');
       fermerModalLogin(); checkUser(); f.reset();
-      setTimeout(function(){
-        window.location.href = data.user.role==='admin' ? 'admin.html' : 'dashboard.html';
-      },300);
-    } else { alert(data.message||'Email oswa modpas enkòrèk'); }
-  }).catch(function(){if(btn){btn.textContent='Se connecter \u2192';btn.disabled=false;}alert('Er\u00e8 serveur');});
+      setTimeout(function() {
+        window.location.href = data.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
+      }, 800);
+    } else {
+      afficherToast(data.message || 'Email oswa modpas enkòrèk', 'error');
+    }
+  } catch(err) {
+    afficherToast(err.message || 'Erè rezò', 'error');
+  } finally {
+    if (btn) { btn.textContent = 'Se connecter →'; btn.disabled = false; }
+  }
 }
 
-// ===== CHECK USER — mete menu ajou =====
+// ===== CHECK USER =====
 function checkUser() {
   var token = localStorage.getItem('token');
   var uStr  = localStorage.getItem('user');
   if (token && uStr) {
-    var user = JSON.parse(uStr);
-    // Mete ajou bouton menu
-    var btnSignup = document.querySelector('.menu-signup');
-    var btnLogin  = document.querySelector('.menu-login');
-    if (btnSignup) { btnSignup.textContent='Mon Dashboard'; btnSignup.onclick=function(){window.location.href=user.role==='admin'?'admin.html':'dashboard.html';}; }
-    if (btnLogin)  { btnLogin.textContent='D\u00e9connexion'; btnLogin.onclick=logout; }
+    try {
+      var user = JSON.parse(uStr);
+      var btnSignup = document.querySelector('.menu-signup');
+      var btnLogin  = document.querySelector('.menu-login');
+      if (btnSignup) { btnSignup.textContent='Mon Dashboard'; btnSignup.onclick=function(){window.location.href=user.role==='admin'?'admin.html':'dashboard.html';}; }
+      if (btnLogin)  { btnLogin.textContent='Déconnexion'; btnLogin.onclick=logout; }
+    } catch(e) {}
   }
 }
 
@@ -241,6 +281,38 @@ function logout() {
   localStorage.removeItem('user');
   localStorage.removeItem('radioJwe');
   window.location.reload();
+}
+
+// ===== MOT DE PASSE OUBLIÉ =====
+function ouvrirModalOublie() {
+  fermerMenu(); fermerModal(); fermerModalLogin();
+  setTimeout(function(){
+    var m = document.getElementById('modal-oublie-overlay');
+    if (m) { m.classList.add('open'); document.body.style.overflow = 'hidden'; }
+  }, 200);
+}
+function fermerModalOublie() {
+  var m = document.getElementById('modal-oublie-overlay');
+  if (m) { m.classList.remove('open'); document.body.style.overflow = ''; }
+}
+async function soumettreOublie(e) {
+  e.preventDefault();
+  var email = ((e.target.querySelector('[name="email"]') || {}).value || '').trim();
+  if (!validerEmail(email)) { afficherToast('Adresse email pa valid', 'error'); return; }
+  var btn = e.target.querySelector('button[type="submit"]');
+  if (btn) { btn.textContent = 'Envoi...'; btn.disabled = true; }
+  try {
+    var data = await fetchAPI('/api/auth/reset-password', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email })
+    });
+    if (btn) { btn.textContent = '✉️ Lyen voye!'; btn.disabled = false; }
+    if (data.success) { afficherToast('Tchèk email ou!', 'success'); setTimeout(fermerModalOublie, 2000); }
+    else              { afficherToast(data.message || 'Erè', 'error'); }
+  } catch(err) {
+    if (btn) { btn.textContent = 'Envoyer le lien'; btn.disabled = false; }
+    afficherToast(err.message || 'Erè rezò', 'error');
+  }
 }
 
 // ===== SMOOTH SCROLL =====
@@ -253,113 +325,27 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
     if(t)t.scrollIntoView({behavior:'smooth'});
   });
 });
+
+// ===== PUB SLIDER =====
 function initPubSlider() {
   var slides = document.querySelectorAll('.pub-slide');
   if (!slides.length) return;
-
-  var index = 0;
-
-  setInterval(function () {
-    slides[index].classList.remove('active');
-    index = (index + 1) % slides.length;
-    slides[index].classList.add('active');
+  var idx = 0;
+  setInterval(function() {
+    slides[idx].classList.remove('active');
+    idx = (idx + 1) % slides.length;
+    slides[idx].classList.add('active');
   }, 3000);
 }
 
-// ===== MODAL OUBLIE MOT DE PASSE =====
-function ouvrirModalOublie() {
-  fermerMenu(); fermerModal(); fermerModalLogin();
-  setTimeout(function(){
-    var m = document.getElementById('modal-oublie-overlay');
-    if (m) { m.classList.add('open'); document.body.style.overflow = 'hidden'; }
-  }, 200);
-}
-
-function fermerModalOublie() {
-  var m = document.getElementById('modal-oublie-overlay');
-  if (m) { m.classList.remove('open'); document.body.style.overflow = ''; }
-}
-
-function soumettreOublie(e) {
-  e.preventDefault();
-  var f = e.target;
-  var email = (f.querySelector('[name="email"]') || {}).value || '';
-  var btn = f.querySelector('button[type="submit"]');
-  if (btn) { btn.textContent = 'Envoye...'; btn.disabled = true; }
-  
-  fetch(API_URL + '/api/auth/reset-password', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
-  })
-  .then(r => r.json())
-  .then(data => {
-    if (btn) { btn.textContent = '✉️ Lyen voye!'; btn.disabled = false; }
-    var msg = document.getElementById('oublie-msg');
-    if (msg) {
-      msg.style.display = 'block';
-      msg.style.background = data.success ? '#0a4a0a' : '#4a0a0a';
-      msg.style.color = data.success ? '#00ff00' : '#ff6b6b';
-      msg.textContent = data.message || (data.success ? 'Tchèk email ou!' : 'Erè');
-    }
-    if (data.success) setTimeout(() => fermerModalOublie(), 2000);
-  })
-  .catch(() => {
-    if (btn) { btn.textContent = '⚠️ Erè'; btn.disabled = false; }
-    alert('Erè sèvè');
-  });
-}
-
-// ===== INSCRIPTION SEPARATE (register.html) =====
-function soumettreInscription(e) {
-  e.preventDefault();
-  var f = e.target;
-  var nom = (f.querySelector('[name="username"]') || {}).value || '';
-  var email = (f.querySelector('[name="email"]') || {}).value || '';
-  var tel = (f.querySelector('[name="phone"]') || {}).value || '';
-  var mdp = (f.querySelector('[name="password"]') || {}).value || '';
-  
-  if (!nom || !email || !mdp) {
-    alert('Tanpri ranpli tout champ obligatwa yo');
-    return;
-  }
-  
-  var btn = f.querySelector('button[type="submit"]');
-  if (btn) { btn.textContent = 'Chargement...'; btn.disabled = true; }
-  
-  fetch(API_URL + '/api/auth/inscription', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nom, email, telephone: tel, motDePasse: mdp })
-  })
-  .then(r => r.json())
-  .then(data => {
-    if (btn) { btn.textContent = 'Kre mo kont'; btn.disabled = false; }
-    if (data.success) {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      alert('Kont kreye ak siksè!');
-      window.location.href = data.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
-    } else {
-      alert(data.message || 'Erè');
-    }
-  })
-  .catch(() => {
-    if (btn) { btn.textContent = 'Kre mo kont'; btn.disabled = false; }
-    alert('Erè sèvè');
-  });
-}
-
-// ===== LIVE CHAT =====
+// ===== CHAT TOGGLE (fallback — index.html overrides this) =====
 function toggleChat() {
   var w = document.getElementById('chat-widget');
-  if (w) {
-    var isOpen = w.style.display === 'flex' || (window.getComputedStyle(w).display === 'flex');
-    w.style.display = isOpen ? 'none' : 'flex';
-  }
+  if (!w) return;
+  w.classList.toggle('open');
 }
 
 // ===== PUB CLICK =====
 function clicPub() {
-  console.log('🎙️ Piblisite klike — tadi pou redieksyon');
+  window.location.href = 'mailto:konocompanymultiservices@gmail.com?subject=Publicité Radio Télé Mega Star';
 }

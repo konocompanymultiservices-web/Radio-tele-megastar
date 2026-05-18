@@ -40,14 +40,14 @@
       <input type="text" placeholder="Rechercher une émission..." class="search-input" oninput="rechercherEmission(this.value)"/>
     </div>
 
-    <button class="menu-btn" onclick="ouvrirMenu()">
-      <span class="menu-btn-icon">&#9776;</span> Menu
+    <button class="menu-btn" onclick="ouvrirMenu()" aria-label="Ouvrir le menu de navigation" aria-expanded="false" aria-controls="menu-overlay">
+      <span class="menu-btn-icon" aria-hidden="true">&#9776;</span> Menu
     </button>
   </div>
 </header>
 
 <!-- ===================== MENU OVERLAY ===================== -->
-<div class="menu-overlay" id="menu-overlay" onclick="fermerMenuOverlay(event)">
+<div class="menu-overlay" id="menu-overlay" role="dialog" aria-label="Menu de navigation" onclick="fermerMenuOverlay(event)">
   <div class="menu-panel">
     <button class="menu-close" onclick="fermerMenu()">&#10005;</button>
     <div class="menu-logo">

@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" status)",
+      "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" diff --stat HEAD)",
+      "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" add admin.html login.html register.html CLAUDE.md)",
+      "Bash(git -C 'c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main' commit -m ' *)",
+      "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" push origin main)",
+      "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" diff --stat HEAD style.css index.html)",
+      "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" diff HEAD style.css)",
+      "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" diff HEAD admin.html)",
+      "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" diff HEAD backend/routes/admin.js)",
+      "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" diff HEAD backend/server.js)",
+      "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" fetch origin)"
+    ]
+  }
+}
