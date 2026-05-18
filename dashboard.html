@@ -12,6 +12,7 @@
       --noir: #0d0d0d; --gri: #161616; --gri-cle: #1e1e1e;
       --bod: #2a2a2a; --blan: #f0f0f0; --rouge: #cc0000;
       --jaune: #FFD600; --gri-text: #888;
+      --sp-xs:8px; --sp-sm:12px; --sp-md:16px; --sp-lg:24px; --sp-xl:32px;
     }
     body { background: var(--noir); color: var(--blan); font-family: 'Lato', sans-serif; min-height: 100vh; }
     a { text-decoration: none; color: inherit; }
@@ -68,11 +69,11 @@
     .dash-main { padding: 32px; overflow-y: auto; }
     .dash-section { display: none; }
     .dash-section.active { display: block; }
-    .section-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: var(--blan); margin-bottom: 1.5rem; padding-bottom: 8px; border-bottom: 2px solid var(--rouge); display: inline-block; }
+    .section-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: var(--blan); margin-bottom: 24px; padding-bottom: 8px; border-bottom: 2px solid var(--rouge); display: block; }
 
     /* STATS */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-    .stat-card { background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 12px; padding: 1.5rem; text-align: center; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 12px; padding: 20px 16px; text-align: center; border-top: 2px solid var(--rouge); }
     .stat-icon { font-size: 28px; margin-bottom: 8px; }
     .stat-value { font-family: 'Oswald', sans-serif; font-size: 26px; color: var(--jaune); }
     .stat-label { font-size: 12px; color: var(--gri-text); margin-top: 4px; }
@@ -114,8 +115,8 @@
 
     /* PROFIL */
     .profil-form { max-width: 500px; }
-    .form-group { margin-bottom: 1.2rem; }
-    .form-group label { display: block; font-size: 12px; color: var(--gri-text); margin-bottom: 6px; font-family: 'Oswald', sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 12px; color: var(--gri-text); margin-bottom: 8px; font-family: 'Oswald', sans-serif; letter-spacing: .06em; text-transform: uppercase; }
     .form-group input { width: 100%; background: var(--gri-cle); border: 1px solid var(--bod); border-radius: 6px; padding: 12px 16px; color: var(--blan); font-family: 'Lato', sans-serif; font-size: 14px; transition: border-color .2s; }
     .form-group input:focus { outline: none; border-color: var(--rouge); }
     .form-group input:disabled { opacity: .4; cursor: not-allowed; }
@@ -124,7 +125,7 @@
     .btn-save:disabled { opacity: .6; cursor: wait; }
 
     /* PHOTO */
-    .photo-upload-area { display: flex; align-items: center; gap: 2rem; margin-bottom: 2rem; padding: 1.5rem; background: var(--gri-cle); border-radius: 12px; border: 1px solid var(--bod); }
+    .photo-upload-area { display: flex; align-items: center; flex-wrap: wrap; gap: 24px; margin-bottom: 32px; padding: 24px; background: var(--gri-cle); border-radius: 12px; border: 1px solid var(--bod); }
     .photo-avatar-big { width: 90px; height: 90px; border-radius: 50%; background: var(--rouge); display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; font-size: 32px; color: var(--blan); border: 3px solid var(--jaune); overflow: hidden; flex-shrink: 0; position: relative; }
     .photo-avatar-big img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; display: none; }
     .btn-photo { background: transparent; border: 1px solid var(--jaune); color: var(--jaune); padding: 8px 20px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 13px; cursor: pointer; transition: all .2s; display: block; margin-bottom: 8px; }
@@ -161,7 +162,31 @@
     .contact-link:hover { border-color: var(--rouge); }
     .contact-link-icon { font-size: 20px; width: 28px; text-align: center; }
 
-    @media(max-width:768px) { .dash-layout { grid-template-columns: 1fr; } .dash-sidebar { display: none; } }
+    /* UTILITY CLASSES */
+    .notif-browser-box { margin-bottom: 24px; padding: 16px 20px; background: var(--gri-cle); border-radius: 10px; border: 1px solid var(--bod); }
+    .subsection-label { font-family: 'Oswald', sans-serif; color: var(--gri-text); font-size: 13px; margin-bottom: 16px; letter-spacing: .06em; text-transform: uppercase; }
+
+    /* HAMBURGER */
+    .hamburger { display: none; background: transparent; border: 1px solid #444; color: var(--blan); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 18px; line-height: 1; }
+
+    /* SIDEBAR OVERLAY */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 199; }
+    .sidebar-overlay.open { display: block; }
+
+    @media(max-width:768px) {
+      .dash-layout { grid-template-columns: 1fr; }
+      .dash-sidebar {
+        display: block;
+        position: fixed; top: 64px; left: 0;
+        height: calc(100vh - 64px); width: 260px;
+        z-index: 200; overflow-y: auto;
+        transform: translateX(-100%);
+        transition: transform .3s ease;
+      }
+      .dash-sidebar.open { transform: translateX(0); }
+      .hamburger { display: block; }
+      .dash-main { padding: 20px 16px; }
+    }
   </style>
 </head>
 <body>
@@ -175,11 +200,13 @@
       </div>
     </a>
     <div class="dash-header-right">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
       <span class="dash-user-name" id="header-username">...</span>
       <button class="btn-logout" onclick="dekonekte()">D&eacute;connexion</button>
     </div>
   </header>
 
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
   <div class="dash-layout">
     <aside class="dash-sidebar">
       <div class="sidebar-avatar">
@@ -214,7 +241,7 @@
           <div class="stat-card"><div class="stat-icon">&#128197;</div><div class="stat-value" id="stat-jours">0</div><div class="stat-label">Jours membre</div></div>
           <div class="stat-card"><div class="stat-icon">&#11088;</div><div class="stat-value" id="stat-plan" style="font-size:16px;">Gratuit</div><div class="stat-label">Plan actuel</div></div>
         </div>
-        <p style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:13px;margin-bottom:1rem;letter-spacing:.06em;">DERNI&Egrave;RE ACTIVIT&Eacute;</p>
+        <p class="subsection-label">DERNI&Egrave;RE ACTIVIT&Eacute;</p>
         <div class="emission-item">
           <div class="emission-emoji">&#128251;</div>
           <div class="emission-info"><h4>Radio T&eacute;l&eacute; Mega Star &mdash; En direct</h4><p id="derniere-ecoute">Aucune &eacute;coute enregistr&eacute;e</p></div>
@@ -228,7 +255,7 @@
           <div class="stat-card"><div class="stat-icon">&#9201;</div><div class="stat-value" id="ecoute-temps">0h</div><div class="stat-label">Temps total</div></div>
           <div class="stat-card"><div class="stat-icon">&#127897;</div><div class="stat-value" id="ecoute-nb">0</div><div class="stat-label">&Eacute;missions</div></div>
         </div>
-        <p style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:13px;margin-bottom:1rem;letter-spacing:.06em;">&Eacute;MISSIONS DISPONIBLES</p>
+        <p class="subsection-label">&Eacute;MISSIONS DISPONIBLES</p>
         <ul class="emission-list">
           <li class="emission-item"><div class="emission-emoji">&#127749;</div><div class="emission-info"><h4>R&eacute;veil Matinal</h4><p>05h &mdash; 08h</p></div><span class="emission-badge">Populaire</span></li>
           <li class="emission-item"><div class="emission-emoji">&#128240;</div><div class="emission-info"><h4>Actualit&eacute;s</h4><p>08h &mdash; 10h</p></div></li>
@@ -312,12 +339,12 @@
       <section class="dash-section" id="section-notif">
         <h2 class="section-title">Notifications</h2>
         <div id="alert-notif" class="alert"></div>
-        <div style="margin-bottom:1.5rem;padding:1rem 1.2rem;background:var(--gri-cle);border-radius:10px;border:1px solid var(--bod);">
+        <div class="notif-browser-box">
           <p style="font-size:13px;color:var(--gri-text);margin-bottom:12px;">Activez les notifications pour recevoir des alertes en temps r&eacute;el.</p>
           <button class="btn-save" id="btn-notif-browser" onclick="activerNotifBrowser()" style="font-size:13px;padding:10px 20px;">&#128276; Activer les notifications browser</button>
           <span id="notif-browser-status" style="margin-left:12px;font-size:12px;color:var(--gri-text);"></span>
         </div>
-        <p style="font-family:'Oswald',sans-serif;color:var(--gri-text);font-size:13px;margin-bottom:1rem;letter-spacing:.06em;">&Eacute;MISSIONS &mdash; ALERTES EMAIL</p>
+        <p class="subsection-label">&Eacute;MISSIONS &mdash; ALERTES EMAIL</p>
         <div class="notif-grid">
           <div class="notif-item"><div class="notif-info"><h4>R&eacute;veil Matinal</h4><p>Alerte 15 min avant (05h00)</p></div><label class="toggle-switch"><input type="checkbox" id="notif-reveil" onchange="saveNotif()"/><span class="toggle-slider"></span></label></div>
           <div class="notif-item"><div class="notif-info"><h4>Actualit&eacute;s</h4><p>Alerte 15 min avant (08h00)</p></div><label class="toggle-switch"><input type="checkbox" id="notif-actu" onchange="saveNotif()"/><span class="toggle-slider"></span></label></div>
@@ -649,6 +676,21 @@
       localStorage.removeItem('user');
       window.location.href = 'index.html';
     }
+
+    /* HAMBURGER SIDEBAR */
+    function toggleSidebar() {
+      document.querySelector('.dash-sidebar').classList.toggle('open');
+      document.getElementById('sidebar-overlay').classList.toggle('open');
+    }
+    function closeSidebar() {
+      document.querySelector('.dash-sidebar').classList.remove('open');
+      document.getElementById('sidebar-overlay').classList.remove('open');
+    }
+    document.querySelectorAll('.sidebar-nav-item').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        if (window.innerWidth <= 768) closeSidebar();
+      });
+    });
   </script>
 </body>
 </html>
