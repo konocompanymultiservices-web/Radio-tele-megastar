@@ -132,7 +132,7 @@ header {
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--blan);
-  line-height: 1.1;
+  line-height: 1.2;
   letter-spacing: .5px;
 }
 
@@ -527,7 +527,7 @@ header {
   font-size: clamp(2.3rem, 5.8vw, 4.2rem);
   font-weight: 700;
   color: var(--blan);
-  line-height: 1.03;
+  line-height: 1.2;
   letter-spacing: -.5px;
   text-shadow: 0 2px 20px rgba(0,0,0,.5);
   animation: fadeInUp .55s .1s ease both;
@@ -809,7 +809,7 @@ header {
   font-size: clamp(2rem, 3.5vw, 2.8rem);
   font-weight: 700;
   color: var(--blan);
-  line-height: 1.1;
+  line-height: 1.2;
   margin-bottom: 18px;
   letter-spacing: -.3px;
 }
