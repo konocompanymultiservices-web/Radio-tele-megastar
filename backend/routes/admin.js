@@ -153,6 +153,9 @@ router.post('/news', adminAuth, async (req, res) => {
     const type = ALLOWED_TYPES.includes(req.body.type) ? req.body.type : 'news';
 
     if (!titre) return res.status(400).json({ success: false, message: 'Titre requis' });
+    if (titre.length > 300) return res.status(400).json({ success: false, message: 'Titre twò long (max 300)' });
+    if (contenu.length > 10000) return res.status(400).json({ success: false, message: 'Contenu twò long (max 10000)' });
+    if (imageUrl.length > 500) return res.status(400).json({ success: false, message: 'URL imaj twò long (max 500)' });
     const news = await News.create({ titre, contenu, type, imageUrl });
     req.io.emit('news:created', { success: true, news, message: 'Nouvo nouvèl!' });
     res.json({ success: true, news });
@@ -230,6 +233,9 @@ router.post('/emissions', adminAuth, async (req, res) => {
     const couleur     = stripTags(req.body.couleur || 'linear-gradient(135deg,#cc0000,#ff6666)');
 
     if (!nom || !heureDebut || !heureFin) return res.status(400).json({ success: false, message: 'Champ manke' });
+    if (nom.length > 200) return res.status(400).json({ success: false, message: 'Nom twò long (max 200)' });
+    if (description.length > 2000) return res.status(400).json({ success: false, message: 'Deskripsyon twò long (max 2000)' });
+    if (couleur.length > 200) return res.status(400).json({ success: false, message: 'Couleur twò long (max 200)' });
 
     // Validate time format HH:MM
     const timeRe = /^\d{2}:\d{2}$/;
@@ -304,6 +310,7 @@ router.post('/publicites', adminAuth, async (req, res) => {
     const position = ALLOWED_POSITIONS.includes(req.body.position) ? req.body.position : 'top';
 
     if (!texte) return res.status(400).json({ success: false, message: 'Texte requis' });
+    if (texte.length > 1000) return res.status(400).json({ success: false, message: 'Texte twò long (max 1000)' });
 
     // Basic URL validation for lien if provided
     if (lien && !/^https?:\/\//i.test(lien)) {
@@ -349,6 +356,7 @@ router.post('/animateurs', adminAuth, async (req, res) => {
     const photoUrl = stripTags(req.body.photoUrl || '');
 
     if (!nom) return res.status(400).json({ success: false, message: 'Nom requis' });
+    if (nom.length > 200) return res.status(400).json({ success: false, message: 'Nom twò long (max 200)' });
 
     // Basic URL validation for photo if provided
     if (photoUrl && !/^https?:\/\//i.test(photoUrl)) {
@@ -393,6 +401,9 @@ router.post('/reportages', adminAuth, async (req, res) => {
     const statut  = ALLOWED_STATUTS.includes(req.body.statut) ? req.body.statut : 'draft';
 
     if (!titre || !contenu) return res.status(400).json({ success: false, message: 'Titre et contenu requis' });
+    if (titre.length > 300) return res.status(400).json({ success: false, message: 'Titre twò long (max 300)' });
+    if (contenu.length > 20000) return res.status(400).json({ success: false, message: 'Contenu twò long (max 20000)' });
+    if (lieu.length > 200) return res.status(400).json({ success: false, message: 'Lieu twò long (max 200)' });
     const rep = await Reportage.create({ titre, contenu, lieu, statut });
     res.json({ success: true, reportage: rep });
   } catch (err) {

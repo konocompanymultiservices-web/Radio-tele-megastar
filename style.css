@@ -1,9 +1,10 @@
 /* ============================================================
-   RADIO TÉLÉ MEGA STAR — STYLE.CSS v4.0
-   Design Minimaliste — Noir / Blanc / Jòn
+   RADIO TÉLÉ MEGA STAR — STYLE.CSS v5.0
+   Design System — UX/UI Principles Applied
+   Sources: Refactoring UI · Don't Make Me Think · DOET · Atomic Design
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Oswald:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap');
 
 :root {
   /* Core palette */
@@ -24,28 +25,49 @@
   --rouge:    #cc0000;
   --vèt:      #22c55e;
 
-  /* Text hierarchy */
-  --text-primary:   #f0f0f0;
-  --text-secondary: #a0a0a0;
-  --text-muted:     #606060;
+  /* Text hierarchy — Refactoring UI: use rgba white on dark, not grey
+     Semi-transparent white reads as the same hue as the surface (feels native to dark theme)
+     whereas pure grey reads as a separate color divorced from the background */
+  --text-primary:   rgba(255,255,255,.92);
+  --text-secondary: rgba(255,255,255,.55);
+  --text-muted:     rgba(255,255,255,.30);
 
-  /* Shadows */
-  --shadow-sm: 0 1px 4px rgba(0,0,0,.06);
-  --shadow-md: 0 4px 20px rgba(0,0,0,.10);
-  --shadow-lg: 0 8px 40px rgba(0,0,0,.16);
+  /* Shadows — richer for dark UI (Refactoring UI: dark UIs need stronger shadows) */
+  --shadow-sm:    0 1px 3px rgba(0,0,0,.30), 0 1px 2px rgba(0,0,0,.22);
+  --shadow-md:    0 4px 16px rgba(0,0,0,.40), 0 2px 6px rgba(0,0,0,.28);
+  --shadow-lg:    0 10px 40px rgba(0,0,0,.55), 0 4px 14px rgba(0,0,0,.35);
+  --shadow-jaune: 0 4px 24px rgba(255,214,0,.22);
 
-  /* Shape & motion */
+  /* Shape & motion — Microinteractions: ease-out for entrances, ease-in for exits */
   --radius:    8px;
   --radius-lg: 14px;
   --radius-xl: 20px;
-  --trans:     all .2s ease;
+  --trans:        all .18s ease;
+  --trans-slow:   all .32s cubic-bezier(.25,.46,.45,.94);
+  --trans-bounce: all .22s cubic-bezier(.34,1.56,.64,1);
 
-  /* Spacing scale */
-  --space-xs:  8px;
-  --space-sm:  16px;
-  --space-md:  32px;
-  --space-lg:  56px;
-  --space-xl:  88px;
+  /* Spacing scale — Refactoring UI: use a geometric scale (each step ~2× the previous)
+     This creates clear visual grouping: related items close, unrelated items far apart */
+  --space-xs:  6px;
+  --space-sm:  14px;
+  --space-md:  28px;
+  --space-lg:  52px;
+  --space-xl:  84px;
+
+  /* Type scale — consistent vertical rhythm (Don't Make Me Think: hierarchy must be obvious) */
+  --text-xs:   .68rem;
+  --text-sm:   .82rem;
+  --text-base: .95rem;
+  --text-lg:   1.1rem;
+  --text-xl:   1.3rem;
+  --text-2xl:  1.6rem;
+  --text-3xl:  2rem;
+
+  /* Line-height tokens */
+  --lh-tight:  1.2;
+  --lh-snug:   1.45;
+  --lh-base:   1.65;
+  --lh-loose:  1.85;
 }
 
 /* ===== RESET ===== */
@@ -65,13 +87,18 @@ img { max-width: 100%; display: block; }
 button { cursor: pointer; font-family: inherit; border: none; }
 input, textarea { font-family: inherit; }
 
-/* ===== HEADER ===== */
+/* ===== HEADER =====
+   Refactoring UI: sticky headers need elevation to feel "above" content
+   DOET: The header player is the primary affordance — must draw the eye first
+   Don't Make Me Think: logo + nav must be immediately recognisable */
 header {
   position: sticky;
   top: 0;
   z-index: 900;
   background: var(--nwa);
   border-bottom: 2px solid var(--jaune);
+  /* Elevation via shadow — makes the header feel lifted above page content */
+  box-shadow: 0 2px 20px rgba(0,0,0,.6), 0 1px 4px rgba(255,214,0,.08);
 }
 
 .header-inner {
@@ -116,7 +143,10 @@ header {
   font-weight: 500;
 }
 
-/* Header player (live player entegre) */
+/* Header player (live player entegre)
+   Refactoring UI: accent color in small doses guides the eye to the primary action
+   DOET: Strong affordance — round pill shape signals "press me"
+   Microinteraction: border glow on hover signals interactivity */
 .header-player {
   display: flex;
   align-items: center;
@@ -127,24 +157,36 @@ header {
   padding: 7px 18px 7px 7px;
   flex-shrink: 0;
   transition: var(--trans);
+  cursor: pointer;
 }
-.header-player:hover { border-color: var(--jaune); }
+.header-player:hover {
+  border-color: var(--jaune);
+  box-shadow: 0 0 0 3px rgba(255,214,0,.12);
+  background: var(--nwa-4);
+}
 
 .header-play-btn {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--jaune);
   color: var(--nwa);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: .9rem;
-  transition: var(--trans);
+  font-size: .95rem;
+  transition: var(--trans-bounce);
   border: none;
   flex-shrink: 0;
+  /* Microinteraction: subtle glow matches the float-play button */
+  box-shadow: 0 2px 8px rgba(255,214,0,.35);
 }
-.header-play-btn:hover { background: var(--jaune-2); transform: scale(1.06); }
+.header-play-btn:hover {
+  background: var(--jaune-2);
+  transform: scale(1.10);
+  box-shadow: 0 3px 14px rgba(255,214,0,.50);
+}
+.header-play-btn:active { transform: scale(.96); }
 
 .header-player-info { line-height: 1.25; }
 .header-player-title {
@@ -250,19 +292,33 @@ header {
 .menu-logo img { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--jaune); }
 .menu-logo p { font-family: 'Oswald', sans-serif; color: var(--blan); font-size: .95rem; }
 
-.menu-nav { display: flex; flex-direction: column; gap: 2px; margin-bottom: 24px; }
+/* Don't Make Me Think: nav links must have unmissable active states
+   Refactoring UI: use a left-border accent + background lift for active items */
+.menu-nav { display: flex; flex-direction: column; gap: 3px; margin-bottom: 24px; }
 .menu-nav-link {
-  color: var(--gri-4);
+  color: var(--text-secondary);
   font-size: .95rem;
   padding: 12px 14px;
   border-radius: var(--radius);
+  border-left: 3px solid transparent;
   transition: var(--trans);
   display: flex;
   align-items: center;
   gap: 10px;
+  /* Minimum 44px touch target height (mobile-first best practice) */
+  min-height: 44px;
 }
-.menu-nav-link:hover, .menu-nav-active { background: var(--nwa-4); color: var(--blan); }
-.menu-nav-active { color: var(--jaune) !important; }
+.menu-nav-link:hover {
+  background: var(--nwa-4);
+  color: var(--text-primary);
+  border-left-color: rgba(255,214,0,.4);
+}
+.menu-nav-active {
+  background: rgba(255,214,0,.08) !important;
+  color: var(--jaune) !important;
+  border-left-color: var(--jaune) !important;
+  font-weight: 600;
+}
 
 .menu-divider { height: 1px; background: var(--nwa-4); margin: 8px 0 20px; }
 
@@ -393,77 +449,112 @@ header {
 .modal-login-link { color: var(--jaune); font-weight: 700; transition: var(--trans); }
 .modal-login-link:hover { color: var(--jaune-2); }
 
-/* ===== HERO BANNER ===== */
+/* ===== HERO BANNER =====
+   Refactoring UI: the hero is where the accent color earns its place — use it boldly
+   DOET: The "EN DIRECT" badge is the primary feedback that the radio is live
+   Don't Make Me Think: title hierarchy must be instantly readable at a glance */
 .hero { position: relative; overflow: hidden; }
 .hero-banner { position: relative; }
 .hero-banner-img {
   width: 100%;
-  height: 440px;
+  height: 460px;
   object-fit: cover;
   display: block;
-  filter: brightness(.55) saturate(.9);
+  /* Slightly more contrast than v4 — text legibility over image (WCAG AA) */
+  filter: brightness(.48) saturate(.85);
 }
 .hero-overlay {
   position: absolute;
   inset: 0;
+  /* Refactoring UI: gradient should be stronger at bottom so text is always legible */
   background: linear-gradient(
     to bottom,
-    rgba(0,0,0,.15) 0%,
-    rgba(0,0,0,.5) 55%,
-    rgba(0,0,0,.88) 100%
+    rgba(0,0,0,.08) 0%,
+    rgba(0,0,0,.40) 45%,
+    rgba(0,0,0,.82) 75%,
+    rgba(0,0,0,.96) 100%
   );
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding: 56px 24px;
+  padding: 56px 24px 48px;
   text-align: center;
   gap: 14px;
 }
 
+/* DOET: The "live" badge is primary feedback — reinforce it visually */
 .hero-badge {
-  background: rgba(204,0,0,.12);
-  border: 1px solid rgba(204,0,0,.4);
-  color: #ff8080;
+  background: rgba(204,0,0,.18);
+  border: 1px solid rgba(204,0,0,.55);
+  color: #ff9090;
   font-size: .68rem;
   letter-spacing: 2.5px;
   font-weight: 700;
-  padding: 6px 16px;
+  padding: 7px 18px;
   border-radius: 20px;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   text-transform: uppercase;
+  /* Microinteraction: gentle entrance animation */
+  animation: fadeInDown .5s ease both;
 }
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Pulsing live dot — radio station signature microinteraction */
 .live-dot {
-  width: 7px; height: 7px;
+  width: 8px; height: 8px;
   background: var(--rouge);
   border-radius: 50%;
-  animation: blink 1.2s ease-in-out infinite;
+  animation: livePulse 1.4s ease-in-out infinite;
   flex-shrink: 0;
+  box-shadow: 0 0 0 0 rgba(204,0,0,.7);
 }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.15} }
+@keyframes livePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(204,0,0,.7); opacity: 1; }
+  70%  { box-shadow: 0 0 0 7px rgba(204,0,0,0); opacity: .7; }
+  100% { box-shadow: 0 0 0 0 rgba(204,0,0,0); opacity: 1; }
+}
 
+/* Refactoring UI: hero title should use high contrast + strong weight
+   The yellow span creates a clear focal point (accent in small doses) */
 .hero-title {
   font-family: 'Oswald', sans-serif;
-  font-size: clamp(2.2rem, 5.5vw, 4rem);
+  font-size: clamp(2.3rem, 5.8vw, 4.2rem);
   font-weight: 700;
   color: var(--blan);
-  line-height: 1.05;
+  line-height: 1.03;
   letter-spacing: -.5px;
+  text-shadow: 0 2px 20px rgba(0,0,0,.5);
+  animation: fadeInUp .55s .1s ease both;
 }
 .hero-title span { color: var(--jaune); }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .hero-sub {
-  color: rgba(255,255,255,.72);
+  color: rgba(255,255,255,.75);
   font-size: 1rem;
   font-weight: 300;
   letter-spacing: .2px;
   max-width: 520px;
+  line-height: var(--lh-snug);
+  animation: fadeInUp .55s .2s ease both;
 }
+
+/* Online count — social proof (Don't Make Me Think: reinforce "live" context) */
 #online-count {
-  font-size: .8rem;
-  color: rgba(255,255,255,.45);
-  letter-spacing: .3px;
+  font-size: .78rem;
+  color: rgba(255,255,255,.40);
+  letter-spacing: .4px;
+  animation: fadeInUp .55s .3s ease both;
 }
 
 /* ===== AD ZONE ===== */
@@ -500,9 +591,12 @@ header {
 .pub-slide { width: 100%; max-height: 160px; object-fit: cover; display: none; }
 .pub-slide.active { display: block; }
 
-/* ===== EMISSIONS CAROUSEL ===== */
+/* ===== EMISSIONS CAROUSEL =====
+   Atomic Design: each card is an organism with consistent atoms (circle, name, time)
+   Refactoring UI: light-background sections need high contrast section headings
+   Microinteractions: cards lift on hover with shadow + slight scale (not just translate) */
 .emissions-section {
-  padding: var(--space-lg) 28px 48px;
+  padding: var(--space-lg) 28px 52px;
   background: var(--blan);
 }
 
@@ -513,15 +607,22 @@ header {
   max-width: 1280px;
   margin: 0 auto 32px;
 }
+
+/* Refactoring UI: section headings should use a visual hierarchy anchor
+   Weight contrast (bold heading vs light "voir tout") guides the eye left-to-right */
 .section-heading {
   font-family: 'Oswald', sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--nwa);
   letter-spacing: .2px;
+  /* Subtle left accent bar — signals section start (Atomic Design: consistent pattern) */
+  padding-left: 14px;
+  border-left: 3px solid var(--jaune);
 }
+
 .voir-tout {
-  font-size: .78rem;
+  font-size: .76rem;
   font-weight: 700;
   color: var(--gri-5);
   letter-spacing: 1px;
@@ -529,14 +630,22 @@ header {
   border-bottom: 2px solid var(--jaune);
   padding-bottom: 2px;
   transition: var(--trans);
+  /* Microinteraction: shift the underline on hover */
 }
-.voir-tout:hover { color: var(--nwa); }
+.voir-tout:hover {
+  color: var(--nwa);
+  padding-bottom: 4px;
+  border-bottom-width: 3px;
+}
 
 .carousel-outer {
   max-width: 1280px;
   margin: 0 auto;
   overflow: hidden;
   cursor: grab;
+  /* Fade edges signal that content is scrollable (DOET: affordance for swipeable content) */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 3%, black 97%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black 3%, black 97%, transparent 100%);
 }
 .carousel-outer:active { cursor: grabbing; }
 .carousel-track {
@@ -546,8 +655,10 @@ header {
   will-change: transform;
 }
 
+/* Refactoring UI: cards on light backgrounds need subtle but present shadows
+   Card border + shadow together signal "this is a clickable object" */
 .emission-card {
-  flex: 0 0 172px;
+  flex: 0 0 175px;
   background: var(--gri-1);
   border: 1px solid var(--gri-2);
   border-radius: var(--radius-lg);
@@ -558,41 +669,51 @@ header {
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  transition: box-shadow .2s, transform .2s, border-color .2s;
+  transition: box-shadow .22s ease, transform .22s ease, border-color .22s ease;
+  /* DOET: cards must look like cards — slight default shadow shows they are objects */
+  box-shadow: var(--shadow-sm);
 }
 .emission-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--nwa-4);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(0,0,0,.14), 0 3px 8px rgba(0,0,0,.08);
+  border-color: var(--gri-3);
 }
+.emission-card:active { transform: translateY(-2px) scale(1.00); }
+
 .emission-circle {
-  width: 68px; height: 68px;
+  width: 70px; height: 70px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.9rem;
-  box-shadow: 0 3px 12px rgba(0,0,0,.18);
+  box-shadow: 0 4px 14px rgba(0,0,0,.22);
   flex-shrink: 0;
+  /* Subtle scale on card hover — Microinteraction: the icon "breathes" */
+  transition: transform .22s ease;
 }
+.emission-card:hover .emission-circle { transform: scale(1.08); }
+
 .emission-name {
   font-family: 'Oswald', sans-serif;
-  font-size: .92rem;
+  font-size: .93rem;
   font-weight: 600;
   color: var(--nwa);
-  line-height: 1.3;
+  line-height: var(--lh-snug);
 }
 .emission-time {
   font-size: .72rem;
   color: var(--gri-4);
-  letter-spacing: .3px;
+  letter-spacing: .4px;
+  font-variant-numeric: tabular-nums;
 }
 
+/* Carousel dots — pill indicator signals current position */
 .carousel-dots {
   display: flex;
   justify-content: center;
   gap: 7px;
-  margin-top: 24px;
+  margin-top: 26px;
 }
 .carousel-dot {
   width: 7px; height: 7px;
@@ -600,11 +721,13 @@ header {
   background: var(--gri-2);
   cursor: pointer;
   transition: var(--trans);
+  border: 1px solid var(--gri-3);
 }
 .carousel-dot.active {
   background: var(--nwa);
-  width: 22px;
+  width: 24px;
   border-radius: 4px;
+  border-color: var(--nwa);
 }
 
 /* ===== NEWS SECTION ===== */
@@ -937,7 +1060,6 @@ header {
   font-weight: 700;
   width: 18px; height: 18px;
   border-radius: 50%;
-  display: flex;
   align-items: center;
   justify-content: center;
   display: none;

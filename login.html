@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8"/>
@@ -129,7 +129,7 @@
 </div>
 
 <script>
-const API = "https://radio-tele-megastar.onrender.com";
+const API = "https://radio-megastar-backend-production.up.railway.app";
 
 function showMsg(texte, ok) {
   const m = document.getElementById('login-msg');
@@ -153,7 +153,7 @@ function soumettreLogin(e) {
   })
   .then(r => r.json())
   .then(data => {
-    btn.textContent = 'Se connecter →'; btn.disabled = false;
+    btn.textContent = 'Se connecter â†’'; btn.disabled = false;
     if (data.success && data.token) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -162,10 +162,10 @@ function soumettreLogin(e) {
         window.location.href = data.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
       }, 800);
     } else {
-      showMsg(data.message || 'Email oswa modpas enkòrèk', false);
+      showMsg(data.message || 'Email oswa modpas enkÃ²rÃ¨k', false);
     }
   })
-  .catch(() => { btn.textContent = 'Se connecter →'; btn.disabled = false; showMsg('Erè serveur', false); });
+  .catch(() => { btn.textContent = 'Se connecter â†’'; btn.disabled = false; showMsg('ErÃ¨ serveur', false); });
 }
 
 function demanderReset() {
@@ -178,7 +178,7 @@ function demanderReset() {
   })
   .then(r => r.json())
   .then(data => showMsg(data.success ? 'Email voye! Verifye bwat mail ou.' : data.message, data.success))
-  .catch(() => showMsg('Erè serveur', false));
+  .catch(() => showMsg('ErÃ¨ serveur', false));
 }
 
 const token = localStorage.getItem('token');

@@ -50,6 +50,11 @@ router.post(["/signup", "/inscription"], async (req, res) => {
     const emailNorm = typeof email === 'string' ? email.toLowerCase().trim() : '';
     const telFinal  = stripTags(telephone || phone || '');
 
+    // Guard: all top-level fields must be strings, not objects (NoSQL injection via $operators)
+    if (typeof (nom || username) !== 'string' || typeof email !== 'string' || typeof (motDePasse || password) !== 'string') {
+      return res.status(400).json({ success: false, message: 'Champ enkòrèk' });
+    }
+
     // Required field checks
     if (!nomFinal || !emailNorm || !mdpFinal) {
       return res.status(400).json({ success: false, message: 'Champ manke' });
@@ -64,10 +69,17 @@ router.post(["/signup", "/inscription"], async (req, res) => {
     if (!isValidEmail(emailNorm)) {
       return res.status(400).json({ success: false, message: 'Format email enkòrèk' });
     }
+    if (emailNorm.length > 254) {
+      return res.status(400).json({ success: false, message: 'Email twò long' });
+    }
 
-    // Password strength: minimum 8 chars
+    // Password strength: minimum 8, maximum 128 chars
+    // Upper limit prevents bcrypt DoS (bcrypt processes full input; very long passwords are expensive)
     if (mdpFinal.length < 8) {
       return res.status(400).json({ success: false, message: 'Modpas dwe gen omwen 8 karaktè' });
+    }
+    if (mdpFinal.length > 128) {
+      return res.status(400).json({ success: false, message: 'Modpas twò long (max 128 karaktè)' });
     }
 
     // Phone validation
@@ -130,11 +142,22 @@ router.post(["/signup", "/inscription"], async (req, res) => {
 router.post(["/login", "/connexion"], async (req, res) => {
   try {
     const { email, motDePasse, password } = req.body;
+
+    // Guard: must be strings, not objects (NoSQL injection via $operators)
+    if (typeof email !== 'string' || typeof (motDePasse || password || '') !== 'string') {
+      return res.status(400).json({ success: false, message: 'Champ enkòrèk' });
+    }
+
     const mdpFinal   = motDePasse || password || '';
-    const emailNorm  = typeof email === 'string' ? email.toLowerCase().trim() : '';
+    const emailNorm  = email.toLowerCase().trim();
 
     if (!emailNorm || !mdpFinal) {
       return res.status(400).json({ success: false, message: 'Champ manke' });
+    }
+
+    // Clamp to prevent timing attacks on excessively long inputs
+    if (emailNorm.length > 254 || mdpFinal.length > 128) {
+      return res.status(401).json({ success: false, message: 'Email oswa modpas enkòrèk' });
     }
 
     if (!isValidEmail(emailNorm)) {
@@ -180,7 +203,13 @@ router.post("/reset-password", async (req, res) => {
     const rawEmail = req.body.email;
     if (!rawEmail) return res.status(400).json({ success: false, message: 'Email requis' });
 
-    const emailNorm = typeof rawEmail === 'string' ? rawEmail.toLowerCase().trim() : '';
+    // Guard: must be a string (NoSQL injection)
+    if (typeof rawEmail !== 'string') {
+      // Always return success — don't reveal anything
+      return res.json({ success: true, message: 'Email voye! Verifye bwat mail ou.' });
+    }
+
+    const emailNorm = rawEmail.toLowerCase().trim();
     if (!isValidEmail(emailNorm)) {
       // Always return the same success message — never confirm whether the email exists
       return res.json({ success: true, message: 'Email voye! Verifye bwat mail ou.' });

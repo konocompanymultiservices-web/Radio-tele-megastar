@@ -14,8 +14,8 @@ const UserSchema = new mongoose.Schema({
       message: 'Nimewo telefòn enkòrèk'
     }
   },
-  motDePasse: { type: String, required: true, minlength: 6 },
-  fotoPwofil: { type: String, default: '' },
+  motDePasse: { type: String, required: true, minlength: 8 },
+  fotoPwofil: { type: String, default: '', maxlength: 500 },
   statistiques: {
     tempsEcoute: { type: Number, default: 0 },
     dernierEcoute: { type: Date, default: null },

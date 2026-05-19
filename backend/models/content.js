@@ -2,50 +2,50 @@ const mongoose = require('mongoose');
 
 // ===== ATIK / NEWS =====
 const NewsSchema = new mongoose.Schema({
-  titre: { type: String, required: true },
-  contenu: { type: String, default: '' },
+  titre: { type: String, required: true, maxlength: 300 },
+  contenu: { type: String, default: '', maxlength: 10000 },
   type: { type: String, enum: ['slide', 'news', 'breaking'], default: 'news' },
-  imageUrl: { type: String, default: '' },
+  imageUrl: { type: String, default: '', maxlength: 500 },
   actif: { type: Boolean, default: true },
-  auteur: { type: String, default: 'Administrateur' }
+  auteur: { type: String, default: 'Administrateur', maxlength: 200 }
 }, { timestamps: true });
 
 // ===== EMISYON / SCHEDULE =====
 const EmissionSchema = new mongoose.Schema({
-  nom: { type: String, required: true },
-  emoji: { type: String, default: '🎙️' },
-  heureDebut: { type: String, required: true },
-  heureFin: { type: String, required: true },
-  description: { type: String, default: '' },
-  couleur: { type: String, default: 'linear-gradient(135deg,#cc0000,#ff6666)' },
+  nom: { type: String, required: true, maxlength: 200 },
+  emoji: { type: String, default: '🎙️', maxlength: 8 },
+  heureDebut: { type: String, required: true, maxlength: 5 },
+  heureFin: { type: String, required: true, maxlength: 5 },
+  description: { type: String, default: '', maxlength: 2000 },
+  couleur: { type: String, default: 'linear-gradient(135deg,#cc0000,#ff6666)', maxlength: 200 },
   ordre: { type: Number, default: 0 },
   actif: { type: Boolean, default: true }
 }, { timestamps: true });
 
 // ===== PIBLISITE =====
 const PubliciteSchema = new mongoose.Schema({
-  texte: { type: String, required: true },
-  lien: { type: String, default: '' },
+  texte: { type: String, required: true, maxlength: 1000 },
+  lien: { type: String, default: '', maxlength: 500 },
   position: { type: String, enum: ['top', 'middle', 'bottom'], default: 'top' },
   actif: { type: Boolean, default: true }
 }, { timestamps: true });
 
 // ===== ANIMATEUR =====
 const AnimateurSchema = new mongoose.Schema({
-  nom: { type: String, required: true },
-  emission: { type: String, default: '' },
-  horaire: { type: String, default: '' },
-  photoUrl: { type: String, default: '' },
+  nom: { type: String, required: true, maxlength: 200 },
+  emission: { type: String, default: '', maxlength: 200 },
+  horaire: { type: String, default: '', maxlength: 100 },
+  photoUrl: { type: String, default: '', maxlength: 500 },
   actif: { type: Boolean, default: true }
 }, { timestamps: true });
 
 // ===== REPORTAGE =====
 const ReportageSchema = new mongoose.Schema({
-  titre: { type: String, required: true },
-  contenu: { type: String, required: true },
-  lieu: { type: String, default: '' },
+  titre: { type: String, required: true, maxlength: 300 },
+  contenu: { type: String, required: true, maxlength: 20000 },
+  lieu: { type: String, default: '', maxlength: 200 },
   statut: { type: String, enum: ['draft', 'live', 'published'], default: 'draft' },
-  auteur: { type: String, default: 'Administrateur' }
+  auteur: { type: String, default: 'Administrateur', maxlength: 200 }
 }, { timestamps: true });
 
 // ===== ONLINE TRACKER =====

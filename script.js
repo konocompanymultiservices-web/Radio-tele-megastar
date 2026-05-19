@@ -1,16 +1,16 @@
-// ============================================
-// RADIO TÉLÉ MEGA STAR — SCRIPT.JS v3.0
+﻿// ============================================
+// RADIO TÃ‰LÃ‰ MEGA STAR â€” SCRIPT.JS v3.0
 // ============================================
 
-const API_URL = "https://radio-tele-megastar.onrender.com";
+const API_URL = "https://radio-megastar-backend-production.up.railway.app";
 var audio = null;
 
-// ===== UTILITÈ =====
+// ===== UTILITÃˆ =====
 
 function validerEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
-function validerMotDePasse(mdp) { return mdp && mdp.length >= 6; }
+function validerMotDePasse(mdp) { return mdp && mdp.length >= 8; }
 function validerNom(nom) { return nom && nom.trim().length >= 2; }
 
 function afficherToast(message, type, duree) {
@@ -40,7 +40,7 @@ async function fetchAPI(endpoint, options) {
     return await r.json();
   } catch(err) {
     clearTimeout(tid);
-    if (err.name === 'AbortError') throw new Error('Koneksyon twò long — eseye ankò');
+    if (err.name === 'AbortError') throw new Error('Koneksyon twÃ² long â€” eseye ankÃ²');
     throw err;
   }
 }
@@ -89,17 +89,17 @@ function togglePlay() {
 }
 
 function meteEtatPlay() {
-  var fi = document.getElementById('float-icon'); if (fi) fi.textContent = '⏸';
+  var fi = document.getElementById('float-icon'); if (fi) fi.textContent = 'â¸';
   var ss = document.getElementById('stream-status'); if (ss) { ss.textContent = 'En direct'; ss.style.color = '#cc0000'; }
-  var pi = document.getElementById('play-icon'); if (pi) pi.textContent = '⏸';
+  var pi = document.getElementById('play-icon'); if (pi) pi.textContent = 'â¸';
   var pt = document.getElementById('play-text'); if (pt) pt.textContent = 'Pause';
   var fp = document.getElementById('float-play'); if (fp) fp.style.background = 'rgba(0,150,0,0.85)';
 }
 function meteEtatPause() {
-  var fi = document.getElementById('float-icon'); if (fi) fi.textContent = '▶';
-  var ss = document.getElementById('stream-status'); if (ss) { ss.textContent = 'Cliquez ► pour écouter'; ss.style.color = '#aaa'; }
-  var pi = document.getElementById('play-icon'); if (pi) pi.textContent = '▶';
-  var pt = document.getElementById('play-text'); if (pt) pt.textContent = 'Écouter maintenant';
+  var fi = document.getElementById('float-icon'); if (fi) fi.textContent = 'â–¶';
+  var ss = document.getElementById('stream-status'); if (ss) { ss.textContent = 'Cliquez â–º pour Ã©couter'; ss.style.color = '#aaa'; }
+  var pi = document.getElementById('play-icon'); if (pi) pi.textContent = 'â–¶';
+  var pt = document.getElementById('play-text'); if (pt) pt.textContent = 'Ã‰couter maintenant';
   var fp = document.getElementById('float-play'); if (fp) fp.style.background = 'rgba(204,0,0,0.85)';
 }
 function changeVolume(val) { if (audio) audio.volume = parseFloat(val); }
@@ -156,7 +156,7 @@ function initCarousel() {
   startAuto();
 }
 
-// ===== RECHÈCH (debounce 300ms) =====
+// ===== RECHÃˆCH (debounce 300ms) =====
 var _rechercheTimer = null;
 function rechercherEmission(q) {
   clearTimeout(_rechercheTimer);
@@ -195,9 +195,9 @@ async function soumettreFormulaire(e) {
   var tel   = (f.querySelector('[name="phone"]') || {}).value || '';
   var mdp   = (f.querySelector('[name="password"]') || {}).value || '';
 
-  if (!validerNom(nom))         { afficherToast('Nom dwe gen omwen 2 karaktè', 'error'); return; }
+  if (!validerNom(nom))         { afficherToast('Nom dwe gen omwen 2 karaktÃ¨', 'error'); return; }
   if (!validerEmail(email))     { afficherToast('Adresse email pa valid', 'error'); return; }
-  if (!validerMotDePasse(mdp))  { afficherToast('Modpas dwe gen omwen 6 karaktè', 'error'); return; }
+  if (!validerMotDePasse(mdp))  { afficherToast('Modpas dwe gen omwen 6 karaktÃ¨', 'error'); return; }
 
   var btn = f.querySelector('button[type="submit"]');
   if (btn) { btn.textContent = 'Chargement...'; btn.disabled = true; }
@@ -210,18 +210,18 @@ async function soumettreFormulaire(e) {
     if (data.success && data.token) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      afficherToast('Kont kreye ak siksè!', 'success');
+      afficherToast('Kont kreye ak siksÃ¨!', 'success');
       fermerModal(); checkUser(); f.reset();
       setTimeout(function() {
         window.location.href = data.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
       }, 1000);
     } else {
-      afficherToast(data.message || 'Erè pandan enskripsyon an', 'error');
+      afficherToast(data.message || 'ErÃ¨ pandan enskripsyon an', 'error');
     }
   } catch(err) {
-    afficherToast(err.message || 'Erè rezò', 'error');
+    afficherToast(err.message || 'ErÃ¨ rezÃ²', 'error');
   } finally {
-    if (btn) { btn.textContent = 'Créer mon compte →'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'CrÃ©er mon compte â†’'; btn.disabled = false; }
   }
 }
 
@@ -251,12 +251,12 @@ async function soumettreLogin(e) {
         window.location.href = data.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
       }, 800);
     } else {
-      afficherToast(data.message || 'Email oswa modpas enkòrèk', 'error');
+      afficherToast(data.message || 'Email oswa modpas enkÃ²rÃ¨k', 'error');
     }
   } catch(err) {
-    afficherToast(err.message || 'Erè rezò', 'error');
+    afficherToast(err.message || 'ErÃ¨ rezÃ²', 'error');
   } finally {
-    if (btn) { btn.textContent = 'Se connecter →'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Se connecter â†’'; btn.disabled = false; }
   }
 }
 
@@ -270,7 +270,7 @@ function checkUser() {
       var btnSignup = document.querySelector('.menu-signup');
       var btnLogin  = document.querySelector('.menu-login');
       if (btnSignup) { btnSignup.textContent='Mon Dashboard'; btnSignup.onclick=function(){window.location.href=user.role==='admin'?'admin.html':'dashboard.html';}; }
-      if (btnLogin)  { btnLogin.textContent='Déconnexion'; btnLogin.onclick=logout; }
+      if (btnLogin)  { btnLogin.textContent='DÃ©connexion'; btnLogin.onclick=logout; }
     } catch(e) {}
   }
 }
@@ -283,7 +283,7 @@ function logout() {
   window.location.reload();
 }
 
-// ===== MOT DE PASSE OUBLIÉ =====
+// ===== MOT DE PASSE OUBLIÃ‰ =====
 function ouvrirModalOublie() {
   fermerMenu(); fermerModal(); fermerModalLogin();
   setTimeout(function(){
@@ -306,12 +306,12 @@ async function soumettreOublie(e) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ email })
     });
-    if (btn) { btn.textContent = '✉️ Lyen voye!'; btn.disabled = false; }
-    if (data.success) { afficherToast('Tchèk email ou!', 'success'); setTimeout(fermerModalOublie, 2000); }
-    else              { afficherToast(data.message || 'Erè', 'error'); }
+    if (btn) { btn.textContent = 'âœ‰ï¸ Lyen voye!'; btn.disabled = false; }
+    if (data.success) { afficherToast('TchÃ¨k email ou!', 'success'); setTimeout(fermerModalOublie, 2000); }
+    else              { afficherToast(data.message || 'ErÃ¨', 'error'); }
   } catch(err) {
     if (btn) { btn.textContent = 'Envoyer le lien'; btn.disabled = false; }
-    afficherToast(err.message || 'Erè rezò', 'error');
+    afficherToast(err.message || 'ErÃ¨ rezÃ²', 'error');
   }
 }
 
@@ -338,7 +338,7 @@ function initPubSlider() {
   }, 3000);
 }
 
-// ===== CHAT TOGGLE (fallback — index.html overrides this) =====
+// ===== CHAT TOGGLE (fallback â€” index.html overrides this) =====
 function toggleChat() {
   var w = document.getElementById('chat-widget');
   if (!w) return;
@@ -347,5 +347,5 @@ function toggleChat() {
 
 // ===== PUB CLICK =====
 function clicPub() {
-  window.location.href = 'mailto:konocompanymultiservices@gmail.com?subject=Publicité Radio Télé Mega Star';
+  window.location.href = 'mailto:konocompanymultiservices@gmail.com?subject=PublicitÃ© Radio TÃ©lÃ© Mega Star';
 }

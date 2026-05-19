@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8"/>
@@ -96,7 +96,7 @@
     .plan-price span { font-size: 13px; color: var(--gri-text); }
     .plan-features { list-style: none; margin: 1rem 0 1.5rem; text-align: left; }
     .plan-features li { font-size: 13px; color: var(--gri-text); padding: 6px 0; border-bottom: 1px solid var(--bod); }
-    .plan-features li::before { content: "&#10003; "; color: var(--jaune); font-weight: 700; }
+    .plan-features li::before { content: "\2713\00a0"; color: var(--jaune); font-weight: 700; }
     .btn-plan { width: 100%; padding: 10px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 14px; cursor: pointer; border: none; transition: all .2s; }
     .btn-plan-current { background: var(--jaune); color: var(--noir); cursor: default; }
     .btn-plan-upgrade { background: var(--rouge); color: var(--blan); }
@@ -427,7 +427,7 @@
   </div>
 
   <script>
-    const API_URL = "https://radio-tele-megastar.onrender.com";
+    const API_URL = "https://radio-megastar-backend-production.up.railway.app";
     let currentUser = null, authToken = null;
 
     window.addEventListener('load', function() {
@@ -506,7 +506,7 @@
     function changerPhoto(input) {
       const file = input.files[0];
       if (!file) return;
-      if (file.size > 2097152) { showAlert('alert-profil', 'Foto a twò gwo — max 2MB', 'error'); return; }
+      if (file.size > 2097152) { showAlert('alert-profil', 'Foto a twÃ² gwo â€” max 2MB', 'error'); return; }
       const reader = new FileReader();
       reader.onload = function(e) {
         const url = e.target.result;
@@ -525,13 +525,13 @@
           if (data.success) {
             if (data.user) { currentUser = {...currentUser, ...data.user}; }
             localStorage.setItem('user', JSON.stringify(currentUser));
-            showAlert('alert-profil', 'Photo mise à jour ! ✓', 'success');
+            showAlert('alert-profil', 'Photo mise Ã  jour ! âœ“', 'success');
           } else {
             // Menm si backend echwe, foto a deja save lokalman
-            showAlert('alert-profil', 'Photo sauvegardée localement ✓', 'success');
+            showAlert('alert-profil', 'Photo sauvegardÃ©e localement âœ“', 'success');
           }
         }).catch(() => {
-          showAlert('alert-profil', 'Photo sauvegardée localement ✓', 'success');
+          showAlert('alert-profil', 'Photo sauvegardÃ©e localement âœ“', 'success');
         });
       };
       reader.readAsDataURL(file);
@@ -549,7 +549,7 @@
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
         body: JSON.stringify({ fotoPwofil: '' })
       }).catch(() => {});
-      showAlert('alert-profil', 'Photo supprimée ✓', 'success');
+      showAlert('alert-profil', 'Photo supprimÃ©e âœ“', 'success');
     }
 
     function saveProfil(e) {
@@ -572,7 +572,7 @@
           setText('sidebar-name', nom);
           setText('header-username', nom);
           setText('avatar-initials', nom.charAt(0).toUpperCase());
-          showAlert('alert-profil', 'Profil mis à jour ! ✓', 'success');
+          showAlert('alert-profil', 'Profil mis Ã  jour ! âœ“', 'success');
         } else {
           showAlert('alert-profil', data.message || 'Erreur', 'error');
         }
@@ -588,7 +588,7 @@
       const nouveau = document.getElementById('nouveau-modpas').value;
       const conf = document.getElementById('confirm-modpas').value;
       if (nouveau !== conf) { showAlert('alert-modpas', 'Les mots de passe ne correspondent pas !', 'error'); return; }
-      if (nouveau.length < 6) { showAlert('alert-modpas', 'Minimum 6 caractères', 'error'); return; }
+      if (nouveau.length < 6) { showAlert('alert-modpas', 'Minimum 6 caractÃ¨res', 'error'); return; }
       const btn = e.target.querySelector('button[type="submit"]');
       btn.textContent = 'Changement...'; btn.disabled = true;
       fetch(API_URL + '/api/user/changer-modpas', {
@@ -598,13 +598,13 @@
       })
       .then(r => r.json()).then(data => {
         btn.textContent = 'Changer le mot de passe'; btn.disabled = false;
-        if (data.success) { showAlert('alert-modpas', 'Mot de passe changé ! ✓', 'success'); e.target.reset(); }
+        if (data.success) { showAlert('alert-modpas', 'Mot de passe changÃ© ! âœ“', 'success'); e.target.reset(); }
         else { showAlert('alert-modpas', data.message || 'Erreur', 'error'); }
       }).catch(() => { btn.textContent = 'Changer le mot de passe'; btn.disabled = false; });
     }
 
     function choisirPlan(nom, prix) {
-      document.getElementById('plan-choisi').textContent = nom + ' — ' + prix;
+      document.getElementById('plan-choisi').textContent = nom + ' â€” ' + prix;
       document.getElementById('peman-section').style.display = 'block';
       document.getElementById('peman-confirm').style.display = 'none';
       document.querySelectorAll('.peman-card').forEach(c => c.classList.remove('selected'));
@@ -618,18 +618,18 @@
     }
 
     function confirmerPeman() {
-      showAlert('alert-plan', 'Mèsi ! Nou pral kontakte ou pa email pou finalize peman an. ✓', 'success');
+      showAlert('alert-plan', 'MÃ¨si ! Nou pral kontakte ou pa email pou finalize peman an. âœ“', 'success');
       document.getElementById('peman-section').style.display = 'none';
     }
 
     function checkNotifBrowser() {
-      if (!('Notification' in window)) { document.getElementById('notif-browser-status').textContent = 'Non supporté'; return; }
+      if (!('Notification' in window)) { document.getElementById('notif-browser-status').textContent = 'Non supportÃ©'; return; }
       if (Notification.permission === 'granted') {
         const btn = document.getElementById('btn-notif-browser');
-        btn.textContent = '✓ Notifications activées'; btn.style.background = '#4CAF50';
-        document.getElementById('notif-browser-status').textContent = 'Activées';
+        btn.textContent = 'âœ“ Notifications activÃ©es'; btn.style.background = '#4CAF50';
+        document.getElementById('notif-browser-status').textContent = 'ActivÃ©es';
       } else if (Notification.permission === 'denied') {
-        document.getElementById('notif-browser-status').textContent = 'Bloquées par navigateur';
+        document.getElementById('notif-browser-status').textContent = 'BloquÃ©es par navigateur';
       }
     }
 
@@ -637,10 +637,10 @@
       if (!('Notification' in window)) return;
       Notification.requestPermission().then(p => {
         if (p === 'granted') {
-          new Notification('Radio Télé Mega Star', { body: 'Notifikasyon aktive !', icon: 'images/radio_tele_mega_star_logo.jpg' });
+          new Notification('Radio TÃ©lÃ© Mega Star', { body: 'Notifikasyon aktive !', icon: 'images/radio_tele_mega_star_logo.jpg' });
           checkNotifBrowser();
-          showAlert('alert-notif', 'Notifications browser activées ! ✓', 'success');
-        } else { showAlert('alert-notif', 'Notifications refusées.', 'error'); }
+          showAlert('alert-notif', 'Notifications browser activÃ©es ! âœ“', 'success');
+        } else { showAlert('alert-notif', 'Notifications refusÃ©es.', 'error'); }
       });
     }
 
@@ -650,7 +650,7 @@
         debat: g('notif-debat'), spirit: g('notif-spirit'), soiree: g('notif-soiree')
       };
       localStorage.setItem('notifs_' + currentUser.id, JSON.stringify(n));
-      showAlert('alert-notif', 'Préférences sauvegardées ✓', 'success');
+      showAlert('alert-notif', 'PrÃ©fÃ©rences sauvegardÃ©es âœ“', 'success');
     }
 
     function loadNotifs() {

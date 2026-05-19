@@ -6,6 +6,18 @@ const http = require('http');
 const { Server } = require('socket.io');
 dotenv.config();
 
+const { Online } = require('./models/content');
+
+// ===== STARTUP GUARDS — fail fast on missing critical env vars =====
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
+  console.error('FATAL: JWT_SECRET is missing or too short (min 32 chars). Set it in .env and restart.');
+  process.exit(1);
+}
+if (!process.env.MONGODB_URI) {
+  console.error('FATAL: MONGODB_URI is missing. Set it in .env and restart.');
+  process.exit(1);
+}
+
 const app = express();
 const server = http.createServer(app);
 
@@ -101,6 +113,16 @@ app.use(createRateLimiter(requestCounts, 60 * 1000, 100));
 // Stricter auth limiter: 10 req/15 min — applied to /api/auth routes below
 const authRateLimiter = createRateLimiter(authCounts, 15 * 60 * 1000, 10);
 
+// Mistral limiter: 20 req/min per IP — prevents API quota exhaustion / billing abuse
+const mistralCounts = new Map();
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, data] of mistralCounts.entries()) {
+    if (now > data.resetTime) mistralCounts.delete(ip);
+  }
+}, 5 * 60 * 1000);
+const mistralRateLimiter = createRateLimiter(mistralCounts, 60 * 1000, 20);
+
 // ===== SOCKET.IO =====
 const io = new Server(server, {
   cors: { origin: allowedOrigins, methods: ['GET', 'POST'] }
@@ -113,16 +135,29 @@ app.use((req, res, next) => {
 });
 
 let onlineUsers = 0;
+let _onlinePersistTimer = null;
+
+function persistOnlineCount() {
+  if (_onlinePersistTimer) return;
+  _onlinePersistTimer = setTimeout(async () => {
+    _onlinePersistTimer = null;
+    try {
+      await Online.findOneAndUpdate({}, { count: onlineUsers, updatedAt: new Date() }, { upsert: true });
+    } catch (e) { /* non-critical */ }
+  }, 5000);
+}
 
 io.on('connection', (socket) => {
   console.log('User conecte');
   onlineUsers++;
   io.emit('onlineCount', onlineUsers);
+  persistOnlineCount();
 
   socket.on('disconnect', () => {
     console.log('User dekonekte');
-    onlineUsers--;
+    if (onlineUsers > 0) onlineUsers--;
     io.emit('onlineCount', onlineUsers);
+    persistOnlineCount();
   });
 });
 
@@ -140,7 +175,7 @@ const mistralRoutes = require('./routes/mistral');
 app.use('/api/auth',    authRateLimiter, authRoutes);
 app.use('/api/user',    userRoutes);
 app.use('/api/admin',   adminRoutes);
-app.use('/api/mistral', mistralRoutes);
+app.use('/api/mistral', mistralRateLimiter, mistralRoutes);
 
 // ===== ROUTE DEFO =====
 app.get('/', (req, res) => {

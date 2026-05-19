@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Créer un compte &mdash; Radio Télé Mega Star</title>
+  <title>CrÃ©er un compte &mdash; Radio TÃ©lÃ© Mega Star</title>
   <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
   <style>
@@ -170,7 +170,7 @@
       <div class="success-overlay" id="success-overlay">
         <div class="success-icon">&#10003;</div>
         <h3>Kont ou kreye!</h3>
-        <p>Koneksyon ap fèt otomatikman...</p>
+        <p>Koneksyon ap fÃ¨t otomatikman...</p>
         <div class="success-bar"><div class="success-bar-fill"></div></div>
       </div>
 
@@ -247,7 +247,7 @@
 </div>
 
 <script>
-const API = "https://radio-tele-megastar.onrender.com";
+const API = "https://radio-megastar-backend-production.up.railway.app";
 
 /* ===== FIELD ERRORS ===== */
 function setFieldError(id, msg) {
@@ -279,18 +279,18 @@ function checkStrength(val) {
   if (!fill || !label) return;
 
   let score = 0;
-  if (val.length >= 6)  score++;
-  if (val.length >= 10) score++;
+  if (val.length >= 8)  score++;
+  if (val.length >= 12) score++;
   if (/[A-Z]/.test(val)) score++;
   if (/[0-9]/.test(val)) score++;
   if (/[^A-Za-z0-9]/.test(val)) score++;
 
   const levels = [
-    { pct:'20%', color:'#cc0000', text:'Très faible' },
+    { pct:'20%', color:'#cc0000', text:'TrÃ¨s faible' },
     { pct:'40%', color:'#ff6600', text:'Faible' },
     { pct:'60%', color:'#FFD600', text:'Moyen' },
     { pct:'80%', color:'#66cc00', text:'Fort' },
-    { pct:'100%',color:'#22c55e', text:'Très fort' },
+    { pct:'100%',color:'#22c55e', text:'TrÃ¨s fort' },
   ];
   const lv = levels[Math.max(0, score - 1)] || levels[0];
   fill.style.width    = val.length ? lv.pct : '0';
@@ -311,11 +311,11 @@ function setLoading(on) {
   const btn    = document.getElementById('reg-btn');
   const inputs = document.querySelectorAll('#reg-form input');
   if (on) {
-    btn.innerHTML = '<span class="spinner"></span> Création...';
+    btn.innerHTML = '<span class="spinner"></span> CrÃ©ation...';
     btn.disabled  = true;
     inputs.forEach(i => i.disabled = true);
   } else {
-    btn.innerHTML = 'Créer mon compte &#8594;';
+    btn.innerHTML = 'CrÃ©er mon compte &#8594;';
     btn.disabled  = false;
     inputs.forEach(i => i.disabled = false);
   }
@@ -327,7 +327,7 @@ function validate(username, email, phone, password, confirm) {
   clearErrors();
 
   if (!username.trim() || username.trim().length < 2) {
-    setFieldError('err-name', 'Nom dwe gen omwen 2 karaktè');
+    setFieldError('err-name', 'Nom dwe gen omwen 2 karaktÃ¨');
     ok = false;
   }
 
@@ -340,13 +340,13 @@ function validate(username, email, phone, password, confirm) {
   if (phone) {
     const phoneRe = /^\+?[0-9\s\-]{7,15}$/;
     if (!phoneRe.test(phone)) {
-      setFieldError('err-phone', 'Nimewo telefòn pa valid (egz: +509 3X XX XXXX)');
+      setFieldError('err-phone', 'Nimewo telefÃ²n pa valid (egz: +509 3X XX XXXX)');
       ok = false;
     }
   }
 
   if (password.length < 6) {
-    setFieldError('err-pwd', 'Modpas dwe gen omwen 6 karaktè');
+    setFieldError('err-pwd', 'Modpas dwe gen omwen 6 karaktÃ¨');
     ok = false;
   }
 
@@ -391,16 +391,16 @@ function soumettreInscription(e) {
       localStorage.setItem('user', JSON.stringify(data.user));
       showSuccess(data.user);
     } else {
-      showMsg(data.message || 'Erè pandan enskripsyon an', false);
+      showMsg(data.message || 'ErÃ¨ pandan enskripsyon an', false);
     }
   })
   .catch(err => {
     clearTimeout(timeout);
     setLoading(false);
     if (err.name === 'AbortError') {
-      showMsg('Koneksyon an twò long. Eseye ankò.', false);
+      showMsg('Koneksyon an twÃ² long. Eseye ankÃ².', false);
     } else {
-      showMsg('Erè rezò. Verifye koneksyon ou epi eseye ankò.', false);
+      showMsg('ErÃ¨ rezÃ². Verifye koneksyon ou epi eseye ankÃ².', false);
     }
   });
 }
