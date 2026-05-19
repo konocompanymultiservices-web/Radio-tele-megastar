@@ -126,7 +126,7 @@ The `io` instance is attached to every request as `req.io` via middleware in `se
 - **Frontend** → Netlify, auto-deploys on push to `main` (no build command, publishes root)
 - **Backend** → Railway, auto-deploys on push to `main`, runs `npm start`
 - Frontend URL: `https://radio-tele-megastar.pages.dev/`
-- Backend URL: `https://radio-megastar-backend-production.up.railway.app`
+- Backend URL: `https://radio-tele-megastar.onrender.com`
 
 ## Design System
 
