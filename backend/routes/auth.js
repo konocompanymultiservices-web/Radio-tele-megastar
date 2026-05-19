@@ -214,4 +214,47 @@ router.post("/reset-password", authStrictLimiter, async (req, res) => {
   }
 });
 
+// =========================
+// INIT ADMIN (TANPORÈ — EFASE APRE ITILIZASYON)
+// =========================
+router.post("/init-admin", async (req, res) => {
+  try {
+    const { key, password } = req.body;
+
+    // Verifye kle sekrè a
+    if (!key || !process.env.ADMIN_SECRET_KEY || key !== process.env.ADMIN_SECRET_KEY) {
+      return res.status(403).json({ success: false, message: 'Kle enkòrèk' });
+    }
+
+    if (!password || typeof password !== 'string' || password.length < 8) {
+      return res.status(400).json({ success: false, message: 'Modpas dwe gen omwen 8 karaktè' });
+    }
+    if (password.length > 128) {
+      return res.status(400).json({ success: false, message: 'Modpas twò long' });
+    }
+
+    const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.toLowerCase().trim()).filter(Boolean);
+    if (!adminEmails.length) {
+      return res.status(500).json({ success: false, message: 'ADMIN_EMAILS pa defini sou sèvè a' });
+    }
+
+    const emailAdmin = adminEmails[0];
+    let user = await User.findOne({ email: emailAdmin });
+
+    if (user) {
+      user.motDePasse = password;
+      user.role = 'admin';
+      await user.save();
+      return res.json({ success: true, message: `Admin mete ajou: ${emailAdmin}` });
+    } else {
+      await User.create({ nom: 'Admin', email: emailAdmin, motDePasse: password, telephone: '', role: 'admin' });
+      return res.json({ success: true, message: `Admin kreye: ${emailAdmin}` });
+    }
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ success: false, message: 'Erè sèvè' });
+  }
+});
+
 module.exports = router;
