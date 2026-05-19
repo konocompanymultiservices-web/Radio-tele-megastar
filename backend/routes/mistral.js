@@ -13,7 +13,7 @@ async function modererMessage(message) {
         'Authorization': `Bearer ${process.env.MISTRAL_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'mistral-tiny',
+        model: 'open-mistral-7b',
         messages: [{
           role: 'user',
           content: `Analize mesaj sa a epi bay yon sko moderation ant 0 ak 100.
@@ -49,7 +49,7 @@ async function reponFAQ(question) {
         'Authorization': `Bearer ${process.env.MISTRAL_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'mistral-tiny',
+        model: 'open-mistral-7b',
         messages: [{
           role: 'system',
           content: `Ou se asistan pou Radio Télé Mega Star 97.3 FM an Ayiti.
@@ -162,7 +162,7 @@ router.post('/tradui', async (req, res) => {
         'Authorization': `Bearer ${process.env.MISTRAL_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'mistral-tiny',
+        model: 'open-mistral-7b',
         messages: [{
           role: 'user',
           content: `Tradui teks sa a an ${langNon}. Repon ak tradiksyon sèlman, san eksplikasyon:\n\n"${texte}"`
