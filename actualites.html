@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Actualités — Radio Télé Mega Star</title>
+  <meta name="description" content="Toutes les dernières actualités et informations de Radio Télé Mega Star 97.3 FM."/>
+  <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="logo">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo Radio Télé Mega Star" class="logo-img" loading="lazy" decoding="async"/>
+        <div class="logo-text">
+          <h1>Radio Télé Mega Star</h1>
+          <p>97.3 FM &middot; CH. 60 &middot; Cable 116</p>
+        </div>
+      </a>
+      <button class="menu-btn" onclick="ouvrirMenu()">
+        <span class="menu-btn-icon">&#9776;</span> Menu
+      </button>
+    </div>
+  </header>
+
+  <!-- MENU OVERLAY -->
+  <div class="menu-overlay" id="menu-overlay" onclick="fermerMenuOverlay(event)">
+    <div class="menu-panel">
+      <button class="menu-close" onclick="fermerMenu()">&#10005;</button>
+      <div class="menu-logo">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" loading="lazy" decoding="async"/>
+        <p>Radio Télé Mega Star</p>
+      </div>
+      <nav class="menu-nav">
+        <a href="index.html" class="menu-nav-link">&#127968; Accueil</a>
+        <a href="actualites.html" class="menu-nav-link menu-nav-active">&#128240; Actualités</a>
+        <a href="programmes.html" class="menu-nav-link">&#128203; Programmes</a>
+        <a href="about.html" class="menu-nav-link">&#128251; À propos</a>
+        <a href="contact.html" class="menu-nav-link">&#9993; Contact</a>
+      </nav>
+      <div class="menu-divider"></div>
+      <div id="menu-auth-section">
+        <div class="menu-auth">
+          <p class="menu-auth-title">Rejoignez notre communauté</p>
+          <button class="menu-auth-btn menu-signup" onclick="window.location.href='register.html'">Créer un compte</button>
+          <button class="menu-auth-btn menu-login" onclick="window.location.href='login.html'">Se connecter</button>
+        </div>
+      </div>
+      <div class="menu-footer">
+        <p>&copy; 2026 Radio Télé Mega Star</p>
+        <p>La voix qui unit, informe et inspire Haïti &#127462;&#127481;</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIO (player flottant) -->
+  <audio id="audio-player" src="https://stream.zeno.fm/nlhqgiwj4obtv" preload="none"></audio>
+
+  <!-- PAGE HERO -->
+  <section style="background:var(--nwa);padding:56px 28px 40px;text-align:center;">
+    <h2 style="font-family:'Oswald',sans-serif;font-size:2rem;color:var(--jaune);margin-bottom:8px;">&#128240; Actualités</h2>
+    <p style="color:#ccc;font-size:.95rem;">Toutes les dernières informations de Radio Télé Mega Star</p>
+  </section>
+
+  <!-- FILTRES -->
+  <div style="background:var(--gri-1);border-bottom:1px solid var(--gri-2);padding:16px 28px;display:flex;gap:8px;flex-wrap:wrap;">
+    <button class="filtre-btn filtre-active" onclick="filtrer('all')" data-type="all">Tout</button>
+    <button class="filtre-btn" onclick="filtrer('news')" data-type="news">Nouvèl</button>
+    <button class="filtre-btn" onclick="filtrer('breaking')" data-type="breaking">Breaking</button>
+    <button class="filtre-btn" onclick="filtrer('slide')" data-type="slide">Slides</button>
+  </div>
+
+  <!-- GRILLE ACTUALITÉS -->
+  <main style="padding:40px 28px 64px;max-width:1280px;margin:0 auto;">
+    <div id="actu-grid" class="news-grid" style="margin-top:0;">
+      <div id="actu-loading" style="grid-column:1/-1;text-align:center;padding:64px 0;color:var(--gri-4);font-size:.9rem;">
+        <div style="font-size:2rem;margin-bottom:12px;">&#128240;</div>
+        Chargement des actualités...
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo-box">
+        <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo" class="footer-img" loading="lazy" decoding="async"/>
+        <div>
+          <p class="footer-name">Radio Télé Mega Star</p>
+          <p class="footer-slogan">La voix qui unit, informe et inspire Haïti &#127462;&#127481;</p>
+        </div>
+      </div>
+      <nav class="footer-nav">
+        <a href="index.html">Accueil</a>
+        <a href="actualites.html">Actualités</a>
+        <a href="programmes.html">Programmes</a>
+        <a href="about.html">À propos</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2026 Radio Télé Mega Star &mdash; Tous droits réservés.</p>
+      <p class="footer-rights">97.3 FM &middot; CH. 60 &middot; Cable 116 &middot; Haïti &#127462;&#127481;</p>
+    </div>
+  </footer>
+
+  <!-- FLOAT PLAY -->
+  <button class="float-play" id="float-play" onclick="togglePlay()" title="Écouter">
+    <span id="float-icon">&#9654;</span>
+  </button>
+
+<style>
+.filtre-btn {
+  padding: 8px 18px;
+  border: 1px solid var(--gri-2);
+  border-radius: 20px;
+  background: var(--blan);
+  color: var(--gri-5);
+  font-family: 'Lato', sans-serif;
+  font-size: .82rem;
+  cursor: pointer;
+  transition: all .2s ease;
+  font-weight: 500;
+  min-height: 44px;
+}
+.filtre-btn:hover { border-color: var(--nwa); color: var(--nwa); }
+.filtre-btn.filtre-active { background: var(--nwa); color: var(--blan); border-color: var(--nwa); }
+</style>
+
+<!-- script.js — player, menu, checkUser, escapeHtml, API_URL -->
+<script src="script.js"></script>
+
+<script>
+var _allNews = [];
+var _filtre = 'all';
+
+function filtrer(type) {
+  _filtre = type;
+  document.querySelectorAll('.filtre-btn').forEach(function(b) {
+    b.classList.toggle('filtre-active', b.dataset.type === type);
+  });
+  afficherActus(_filtre === 'all' ? _allNews : _allNews.filter(function(n){ return n.type === type; }));
+}
+
+function afficherActus(liste) {
+  var grid = document.getElementById('actu-grid');
+  if (!liste.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:64px 0;color:var(--gri-4);font-size:.9rem;"><div style="font-size:2rem;margin-bottom:12px;">&#128237;</div>Okenn aktyalite pou kounye a.</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  liste.forEach(function(n) {
+    var date = new Date(n.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    var card = document.createElement('article');
+    card.className = 'news-card';
+
+    if (n.imageUrl) {
+      try {
+        var safeUrl = new URL(n.imageUrl);
+        if (safeUrl.protocol === 'https:' || safeUrl.protocol === 'http:') {
+          var img = document.createElement('img');
+          img.src = safeUrl.href;
+          img.alt = '';
+          img.loading = 'lazy';
+          img.className = 'news-card-img';
+          card.appendChild(img);
+        }
+      } catch(e) {}
+    }
+
+    var body = document.createElement('div');
+    body.className = 'news-card-body';
+
+    if (n.type === 'breaking') {
+      var badge = document.createElement('span');
+      badge.className = 'news-card-badge breaking';
+      badge.textContent = 'BREAKING';
+      body.appendChild(badge);
+    } else if (n.type === 'slide') {
+      var badge2 = document.createElement('span');
+      badge2.className = 'news-card-badge slide';
+      badge2.textContent = 'SLIDE';
+      body.appendChild(badge2);
+    }
+
+    var h3 = document.createElement('h3');
+    h3.textContent = n.titre;
+    body.appendChild(h3);
+
+    if (n.contenu) {
+      var p = document.createElement('p');
+      p.textContent = n.contenu;
+      body.appendChild(p);
+    }
+
+    var t = document.createElement('time');
+    t.className = 'news-card-date';
+    t.textContent = date;
+    body.appendChild(t);
+
+    card.appendChild(body);
+    grid.appendChild(card);
+  });
+}
+
+// Charger toutes les actualités dès que le DOM est prêt
+fetch(API_URL + '/api/admin/news')
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    var loading = document.getElementById('actu-loading');
+    if (loading) loading.remove();
+    _allNews = (d.success && d.news) ? d.news : [];
+    afficherActus(_allNews);
+  })
+  .catch(function() {
+    var loading = document.getElementById('actu-loading');
+    if (loading) loading.innerHTML = '<div style="text-align:center;padding:64px 0;color:var(--gri-4);">Erè koneksyon — eseye ankò.</div>';
+  });
+</script>
+
+</body>
+</html>

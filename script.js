@@ -1,17 +1,25 @@
-﻿// ============================================
-// RADIO TÃ‰LÃ‰ MEGA STAR â€” SCRIPT.JS v3.0
+// ============================================
+// RADIO TÉLÉ MEGA STAR — SCRIPT.JS v3.1
 // ============================================
 
 const API_URL = "https://radio-tele-megastar.onrender.com";
 var audio = null;
 
-// ===== UTILITÃˆ =====
+// ===== UTILITÈ =====
 
 function validerEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 function validerMotDePasse(mdp) { return mdp && mdp.length >= 8; }
 function validerNom(nom) { return nom && nom.trim().length >= 2; }
+
+function escapeHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
 function afficherToast(message, type, duree) {
   type = type || 'info';
@@ -40,7 +48,7 @@ async function fetchAPI(endpoint, options) {
     return await r.json();
   } catch(err) {
     clearTimeout(tid);
-    if (err.name === 'AbortError') throw new Error('Koneksyon twÃ² long â€” eseye ankÃ²');
+    if (err.name === 'AbortError') throw new Error('Koneksyon twò long — eseye ankò');
     throw err;
   }
 }
@@ -51,7 +59,142 @@ window.addEventListener('load', function() {
   checkUser();
   initPlay();
   initPubSlider();
+  chargerEmissions();
+  chargerNews();
+  chargerOnlineCount();
 });
+
+// ===== ONLINE COUNT =====
+function chargerOnlineCount() {
+  var el = document.getElementById('online-count');
+  if (!el) return;
+  function maj() {
+    fetch(API_URL + '/api/admin/online')
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d && typeof d.count === 'number') {
+          el.textContent = d.count + ' auditeur' + (d.count !== 1 ? 's' : '') + ' en ligne';
+        }
+      })
+      .catch(function() {});
+  }
+  maj();
+  setInterval(maj, 30000);
+}
+
+// ===== CHARGER ÉMISSIONS (CAROUSEL) =====
+function chargerEmissions() {
+  var track = document.getElementById('carousel-track');
+  var dots  = document.getElementById('carousel-dots');
+  if (!track) return;
+
+  fetch(API_URL + '/api/admin/emissions')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d.success || !d.emissions || !d.emissions.length) return;
+      track.innerHTML = '';
+      if (dots) dots.innerHTML = '';
+      d.emissions.forEach(function(em, i) {
+        var card = document.createElement('div');
+        card.className = 'emission-card';
+        var circle = document.createElement('div');
+        circle.className = 'emission-circle';
+        circle.style.background = em.couleur || 'linear-gradient(135deg,#cc0000,#ff6666)';
+        circle.textContent = em.emoji || '🎙️';
+        var name = document.createElement('div');
+        name.className = 'emission-name';
+        name.textContent = em.nom || '';
+        var time = document.createElement('div');
+        time.className = 'emission-time';
+        time.textContent = (em.heureDebut || '') + ' – ' + (em.heureFin || '');
+        card.appendChild(circle);
+        card.appendChild(name);
+        card.appendChild(time);
+        track.appendChild(card);
+        if (dots) {
+          var dot = document.createElement('button');
+          dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+          dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+          (function(idx) {
+            dot.onclick = function() { if (window.allerSlide) window.allerSlide(idx); };
+          })(i);
+          dots.appendChild(dot);
+        }
+      });
+      _cardWidthCache = null;
+      initCarousel();
+    })
+    .catch(function() {});
+}
+
+// ===== CHARGER NEWS =====
+function chargerNews() {
+  var section = document.getElementById('news-section');
+  var grid    = document.getElementById('news-grid');
+  if (!section || !grid) return;
+
+  fetch(API_URL + '/api/admin/news')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d.success || !d.news || !d.news.length) return;
+      grid.innerHTML = '';
+      d.news.slice(0, 6).forEach(function(n) {
+        var date = new Date(n.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+        var card = document.createElement('article');
+        card.className = 'news-card';
+
+        // Safe image rendering
+        if (n.imageUrl) {
+          try {
+            var safeUrl = new URL(n.imageUrl);
+            if (safeUrl.protocol === 'https:' || safeUrl.protocol === 'http:') {
+              var img = document.createElement('img');
+              img.src = safeUrl.href;
+              img.alt = '';
+              img.loading = 'lazy';
+              img.className = 'news-card-img';
+              card.appendChild(img);
+            }
+          } catch(e) {}
+        }
+
+        var body = document.createElement('div');
+        body.className = 'news-card-body';
+
+        if (n.type === 'breaking') {
+          var badge = document.createElement('span');
+          badge.className = 'news-card-badge breaking';
+          badge.textContent = 'BREAKING';
+          body.appendChild(badge);
+        } else if (n.type === 'slide') {
+          var badge2 = document.createElement('span');
+          badge2.className = 'news-card-badge slide';
+          badge2.textContent = 'SLIDE';
+          body.appendChild(badge2);
+        }
+
+        var h3 = document.createElement('h3');
+        h3.textContent = n.titre;
+        body.appendChild(h3);
+
+        if (n.contenu) {
+          var p = document.createElement('p');
+          p.textContent = n.contenu.length > 150 ? n.contenu.substring(0, 150) + '…' : n.contenu;
+          body.appendChild(p);
+        }
+
+        var time = document.createElement('time');
+        time.className = 'news-card-date';
+        time.textContent = date;
+        body.appendChild(time);
+
+        card.appendChild(body);
+        grid.appendChild(card);
+      });
+      section.style.display = '';
+    })
+    .catch(function() {});
+}
 
 // ===== PLAYER =====
 function initPlay() {
@@ -89,17 +232,17 @@ function togglePlay() {
 }
 
 function meteEtatPlay() {
-  var fi = document.getElementById('float-icon'); if (fi) fi.textContent = 'â¸';
+  var fi = document.getElementById('float-icon'); if (fi) fi.textContent = '⏸';
   var ss = document.getElementById('stream-status'); if (ss) { ss.textContent = 'En direct'; ss.style.color = '#cc0000'; }
-  var pi = document.getElementById('play-icon'); if (pi) pi.textContent = 'â¸';
+  var pi = document.getElementById('header-play-icon'); if (pi) pi.textContent = '⏸';
   var pt = document.getElementById('play-text'); if (pt) pt.textContent = 'Pause';
   var fp = document.getElementById('float-play'); if (fp) fp.style.background = 'rgba(0,150,0,0.85)';
 }
 function meteEtatPause() {
-  var fi = document.getElementById('float-icon'); if (fi) fi.textContent = 'â–¶';
-  var ss = document.getElementById('stream-status'); if (ss) { ss.textContent = 'Cliquez â–º pour Ã©couter'; ss.style.color = '#aaa'; }
-  var pi = document.getElementById('play-icon'); if (pi) pi.textContent = 'â–¶';
-  var pt = document.getElementById('play-text'); if (pt) pt.textContent = 'Ã‰couter maintenant';
+  var fi = document.getElementById('float-icon'); if (fi) fi.textContent = '▶';
+  var ss = document.getElementById('stream-status'); if (ss) { ss.textContent = 'Cliquez ▶ pour écouter'; ss.style.color = '#aaa'; }
+  var pi = document.getElementById('header-play-icon'); if (pi) pi.textContent = '▶';
+  var pt = document.getElementById('play-text'); if (pt) pt.textContent = 'Écouter maintenant';
   var fp = document.getElementById('float-play'); if (fp) fp.style.background = 'rgba(204,0,0,0.85)';
 }
 function changeVolume(val) { if (audio) audio.volume = parseFloat(val); }
@@ -156,7 +299,7 @@ function initCarousel() {
   startAuto();
 }
 
-// ===== RECHÃˆCH (debounce 300ms) =====
+// ===== RECHERCHE (debounce 300ms) =====
 var _rechercheTimer = null;
 function rechercherEmission(q) {
   clearTimeout(_rechercheTimer);
@@ -195,9 +338,9 @@ async function soumettreFormulaire(e) {
   var tel   = (f.querySelector('[name="phone"]') || {}).value || '';
   var mdp   = (f.querySelector('[name="password"]') || {}).value || '';
 
-  if (!validerNom(nom))         { afficherToast('Nom dwe gen omwen 2 karaktÃ¨', 'error'); return; }
+  if (!validerNom(nom))         { afficherToast('Nom dwe gen omwen 2 karaktè', 'error'); return; }
   if (!validerEmail(email))     { afficherToast('Adresse email pa valid', 'error'); return; }
-  if (!validerMotDePasse(mdp))  { afficherToast('Modpas dwe gen omwen 6 karaktÃ¨', 'error'); return; }
+  if (!validerMotDePasse(mdp))  { afficherToast('Modpas dwe gen omwen 8 karaktè', 'error'); return; }
 
   var btn = f.querySelector('button[type="submit"]');
   if (btn) { btn.textContent = 'Chargement...'; btn.disabled = true; }
@@ -210,18 +353,18 @@ async function soumettreFormulaire(e) {
     if (data.success && data.token) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      afficherToast('Kont kreye ak siksÃ¨!', 'success');
+      afficherToast('Kont kreye ak siksè!', 'success');
       fermerModal(); checkUser(); f.reset();
       setTimeout(function() {
         window.location.href = data.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
       }, 1000);
     } else {
-      afficherToast(data.message || 'ErÃ¨ pandan enskripsyon an', 'error');
+      afficherToast(data.message || 'Erè pandan enskripsyon an', 'error');
     }
   } catch(err) {
-    afficherToast(err.message || 'ErÃ¨ rezÃ²', 'error');
+    afficherToast(err.message || 'Erè rezò', 'error');
   } finally {
-    if (btn) { btn.textContent = 'CrÃ©er mon compte â†’'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Créer mon compte →'; btn.disabled = false; }
   }
 }
 
@@ -251,12 +394,12 @@ async function soumettreLogin(e) {
         window.location.href = data.user.role === 'admin' ? 'admin.html' : 'dashboard.html';
       }, 800);
     } else {
-      afficherToast(data.message || 'Email oswa modpas enkÃ²rÃ¨k', 'error');
+      afficherToast(data.message || 'Email oswa modpas enkòrèk', 'error');
     }
   } catch(err) {
-    afficherToast(err.message || 'ErÃ¨ rezÃ²', 'error');
+    afficherToast(err.message || 'Erè rezò', 'error');
   } finally {
-    if (btn) { btn.textContent = 'Se connecter â†’'; btn.disabled = false; }
+    if (btn) { btn.textContent = 'Se connecter →'; btn.disabled = false; }
   }
 }
 
@@ -270,7 +413,7 @@ function checkUser() {
       var btnSignup = document.querySelector('.menu-signup');
       var btnLogin  = document.querySelector('.menu-login');
       if (btnSignup) { btnSignup.textContent='Mon Dashboard'; btnSignup.onclick=function(){window.location.href=user.role==='admin'?'admin.html':'dashboard.html';}; }
-      if (btnLogin)  { btnLogin.textContent='DÃ©connexion'; btnLogin.onclick=logout; }
+      if (btnLogin)  { btnLogin.textContent='Déconnexion'; btnLogin.onclick=logout; }
     } catch(e) {}
   }
 }
@@ -283,7 +426,7 @@ function logout() {
   window.location.reload();
 }
 
-// ===== MOT DE PASSE OUBLIÃ‰ =====
+// ===== MOT DE PASSE OUBLIÉ =====
 function ouvrirModalOublie() {
   fermerMenu(); fermerModal(); fermerModalLogin();
   setTimeout(function(){
@@ -306,12 +449,12 @@ async function soumettreOublie(e) {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ email })
     });
-    if (btn) { btn.textContent = 'âœ‰ï¸ Lyen voye!'; btn.disabled = false; }
-    if (data.success) { afficherToast('TchÃ¨k email ou!', 'success'); setTimeout(fermerModalOublie, 2000); }
-    else              { afficherToast(data.message || 'ErÃ¨', 'error'); }
+    if (btn) { btn.textContent = '✉️ Lyen voye!'; btn.disabled = false; }
+    if (data.success) { afficherToast('Tchèk email ou!', 'success'); setTimeout(fermerModalOublie, 2000); }
+    else              { afficherToast(data.message || 'Erè', 'error'); }
   } catch(err) {
     if (btn) { btn.textContent = 'Envoyer le lien'; btn.disabled = false; }
-    afficherToast(err.message || 'ErÃ¨ rezÃ²', 'error');
+    afficherToast(err.message || 'Erè rezò', 'error');
   }
 }
 
@@ -338,7 +481,7 @@ function initPubSlider() {
   }, 3000);
 }
 
-// ===== CHAT TOGGLE (fallback â€” index.html overrides this) =====
+// ===== CHAT TOGGLE =====
 function toggleChat() {
   var w = document.getElementById('chat-widget');
   if (!w) return;
@@ -347,5 +490,5 @@ function toggleChat() {
 
 // ===== PUB CLICK =====
 function clicPub() {
-  window.location.href = 'mailto:konocompanymultiservices@gmail.com?subject=PublicitÃ© Radio TÃ©lÃ© Mega Star';
+  window.location.href = 'mailto:konocompanymultiservices@gmail.com?subject=Publicité Radio Télé Mega Star';
 }

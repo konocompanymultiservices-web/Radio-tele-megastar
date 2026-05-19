@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8"/>
@@ -230,7 +230,7 @@
 <!-- ===== LOGIN ===== -->
 <div class="login-screen" id="login-screen" role="main" aria-label="Connexion administrateur">
   <div class="login-box">
-    <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo Radio TÃ©lÃ© Mega Star" class="login-logo"/>
+    <img src="images/radio_tele_mega_star_logo.jpg" alt="Logo Radio Télé Mega Star" class="login-logo"/>
     <h1 class="login-title">Administration</h1>
     <p class="login-sub">Radio T&eacute;l&eacute; Mega Star</p>
     <div class="login-field">
@@ -241,7 +241,7 @@
       <label for="admin-password">Mot de passe</label>
       <input type="password" id="admin-password" placeholder="Mot de passe" autocomplete="current-password" aria-required="true" onkeydown="if(event.key==='Enter')loginAdmin()"/>
     </div>
-    <button class="login-btn" id="login-btn" onclick="loginAdmin()" aria-label="AccÃ©der au panneau d'administration">&#128274; Acc&eacute;der au panneau</button>
+    <button class="login-btn" id="login-btn" onclick="loginAdmin()" aria-label="Accéder au panneau d'administration">&#128274; Acc&eacute;der au panneau</button>
     <div class="login-err" id="login-err" role="alert" aria-live="polite" aria-atomic="true"></div>
   </div>
 </div>
@@ -272,21 +272,21 @@
       <button class="admin-nav-btn" onclick="adminNav('online',this)" aria-label="Auditeurs en ligne"><span class="nav-ic" aria-hidden="true">&#128308;</span> Auditeurs en ligne</button>
 
       <p class="sidebar-group-label">Contenu</p>
-      <button class="admin-nav-btn" onclick="adminNav('news',this)" aria-label="GÃ©rer les actualitÃ©s"><span class="nav-ic" aria-hidden="true">&#128240;</span> Actualit&eacute;s</button>
+      <button class="admin-nav-btn" onclick="adminNav('news',this)" aria-label="Gérer les actualités"><span class="nav-ic" aria-hidden="true">&#128240;</span> Actualit&eacute;s</button>
       <button class="admin-nav-btn" onclick="adminNav('annonces',this)" aria-label="Annonces en direct"><span class="nav-ic" aria-hidden="true">&#128227;</span> Annonces direct</button>
-      <button class="admin-nav-btn" onclick="adminNav('schedule',this)" aria-label="Grille des Ã©missions"><span class="nav-ic" aria-hidden="true">&#128197;</span> Grille &eacute;missions</button>
-      <button class="admin-nav-btn" onclick="adminNav('animateurs',this)" aria-label="GÃ©rer les animateurs"><span class="nav-ic" aria-hidden="true">&#127908;</span> Animateurs</button>
+      <button class="admin-nav-btn" onclick="adminNav('schedule',this)" aria-label="Grille des émissions"><span class="nav-ic" aria-hidden="true">&#128197;</span> Grille &eacute;missions</button>
+      <button class="admin-nav-btn" onclick="adminNav('animateurs',this)" aria-label="Gérer les animateurs"><span class="nav-ic" aria-hidden="true">&#127908;</span> Animateurs</button>
       <button class="admin-nav-btn" onclick="adminNav('reportage',this)" aria-label="Publier un reportage"><span class="nav-ic" aria-hidden="true">&#9997;</span> R&eacute;portage</button>
 
       <p class="sidebar-group-label">Membres</p>
       <button class="admin-nav-btn" onclick="adminNav('membres',this)" aria-label="Membres inscrits"><span class="nav-ic" aria-hidden="true">&#128100;</span> Membres inscrits</button>
-      <button class="admin-nav-btn" onclick="adminNav('abonnements',this)" aria-label="GÃ©rer les abonnements"><span class="nav-ic" aria-hidden="true">&#11088;</span> Abonnements</button>
+      <button class="admin-nav-btn" onclick="adminNav('abonnements',this)" aria-label="Gérer les abonnements"><span class="nav-ic" aria-hidden="true">&#11088;</span> Abonnements</button>
 
       <p class="sidebar-group-label">Finance</p>
       <button class="admin-nav-btn" onclick="adminNav('revenus',this)" aria-label="Consulter les revenus"><span class="nav-ic" aria-hidden="true">&#128176;</span> Revenus</button>
 
       <p class="sidebar-group-label">Site</p>
-      <button class="admin-nav-btn" onclick="adminNav('site',this)" aria-label="ParamÃ¨tres du site"><span class="nav-ic" aria-hidden="true">&#9881;</span> Param&egrave;tres</button>
+      <button class="admin-nav-btn" onclick="adminNav('site',this)" aria-label="Paramètres du site"><span class="nav-ic" aria-hidden="true">&#9881;</span> Param&egrave;tres</button>
     </aside>
 
     <main class="admin-main">
@@ -408,7 +408,7 @@
             <div class="admin-field"><label>Horaire</label><input type="text" id="anim-horaire" placeholder="05h &mdash; 08h"/></div>
             <div class="admin-field"><label>Photo URL</label><input type="url" id="anim-photo" placeholder="https://..." oninput="previewAnimPhoto(this.value)"/></div>
           </div>
-          <img id="anim-preview" class="photo-preview" alt="AperÃ§u"/>
+          <img id="anim-preview" class="photo-preview" alt="Aperçu"/>
           <button class="btn-primary" onclick="ajouterAnimateur()">&#128190; Ajouter</button>
           <button class="btn-secondary" style="margin-left:8px" onclick="toggleForm('anim-form')">Annuler</button>
         </div>
@@ -589,7 +589,7 @@ function loginAdmin() {
   })
   .catch(() => {
     btn.disabled = false;
-    err.textContent = 'Erreur de connexion â€” rÃ©essayez';
+    err.textContent = 'Erreur de connexion — réessayez';
     err.style.display = 'block';
   });
 }
@@ -705,7 +705,7 @@ function publierNews() {
   const list = document.getElementById('news-list');
   if (list.querySelector('p')) list.innerHTML = '';
   list.insertBefore(item, list.firstChild);
-  showAlert('alert-news', 'ActualitÃ© publiÃ©e âœ“', 'success');
+  showAlert('alert-news', 'Actualité publiée âœ“', 'success');
   document.getElementById('news-titre').value = '';
   document.getElementById('news-contenu').value = '';
   toggleForm('news-form');
@@ -719,7 +719,7 @@ function creerAnnonce() {
   const type = document.getElementById('ann-type').value;
   const item = makeItem(t, d, type, type === 'live' ? 'live' : 'pub');
   document.getElementById('annonces-list').insertBefore(item, document.getElementById('annonces-list').firstChild);
-  showAlert('alert-annonces', 'Annonce crÃ©Ã©e âœ“', 'success');
+  showAlert('alert-annonces', 'Annonce créée âœ“', 'success');
   document.getElementById('ann-titre').value = '';
   document.getElementById('ann-desc').value = '';
   toggleForm('annonce-form');
@@ -744,11 +744,11 @@ function makeItem(titre, desc, typeLabel, dot) {
   h4.textContent = titre;
 
   const p1 = document.createElement('p');
-  p1.textContent = desc || 'â€”';
+  p1.textContent = desc || '–';
 
   const p2 = document.createElement('p');
   p2.className = 'annonce-time';
-  p2.textContent = typeLabel + ' â€¢ ' + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  p2.textContent = typeLabel + ' •' + new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 
   info.appendChild(h4);
   info.appendChild(p1);
@@ -787,7 +787,7 @@ function ajouterEmission() {
 
   const timeEl = document.createElement('span');
   timeEl.className = 'schedule-time';
-  timeEl.textContent = debut + ' â€” ' + fin;
+  timeEl.textContent = debut + ' – ' + fin;
 
   const nameEl = document.createElement('span');
   nameEl.className = 'schedule-name';
@@ -812,7 +812,7 @@ function ajouterEmission() {
   item.appendChild(actions);
 
   document.getElementById('schedule-list').appendChild(item);
-  showAlert('alert-schedule', 'Ã‰mission ajoutÃ©e âœ“', 'success');
+  showAlert('alert-schedule', 'Émission ajoutée âœ“', 'success');
   toggleForm('schedule-form');
 }
 
@@ -850,7 +850,7 @@ function ajouterAnimateur() {
   const h4 = document.createElement('h4');
   h4.textContent = nom;
   const p = document.createElement('p');
-  p.textContent = (em || 'â€”') + (hor ? ' â€¢ ' + hor : '');
+  p.textContent = (em || '–') + (hor ? ' •' + hor : '');
   infoDiv.appendChild(h4);
   infoDiv.appendChild(p);
 
@@ -871,7 +871,7 @@ function ajouterAnimateur() {
   card.appendChild(btnRow);
 
   document.getElementById('animateurs-list').insertBefore(card, document.getElementById('animateurs-list').firstChild);
-  showAlert('alert-anim', 'Animateur ajoutÃ© âœ“', 'success');
+  showAlert('alert-anim', 'Animateur ajouté âœ“', 'success');
   toggleForm('anim-form');
 }
 
@@ -916,7 +916,7 @@ function publierReportage() {
 
   const pTime = document.createElement('p');
   pTime.className = 'annonce-time';
-  pTime.textContent = (l ? l + ' â€¢ ' : '') + new Date().toLocaleDateString('fr-FR');
+  pTime.textContent = (l ? l + ' •' : '') + new Date().toLocaleDateString('fr-FR');
 
   info.appendChild(h4);
   info.appendChild(pContent);
@@ -933,19 +933,19 @@ function publierReportage() {
   const list = document.getElementById('reportages-list');
   if (list.querySelector('p')) list.innerHTML = '';
   list.insertBefore(item, list.firstChild);
-  showAlert('alert-reportage', 'RÃ©portage publiÃ© âœ“', 'success');
+  showAlert('alert-reportage', 'Réportage publié âœ“', 'success');
 }
 
-function sauvegarderBrouillon() { showAlert('alert-reportage', 'Brouillon sauvegardÃ© âœ“', 'success'); }
-function saveSiteParams()       { showAlert('alert-site', 'ParamÃ¨tres sauvegardÃ©s âœ“', 'success'); }
-function demanderRetrait()      { alert('Demande de retrait envoyÃ©e ! Confirmation par email.'); }
+function sauvegarderBrouillon() { showAlert('alert-reportage', 'Brouillon sauvegardé âœ“', 'success'); }
+function saveSiteParams()       { showAlert('alert-site', 'Paramètres sauvegardés âœ“', 'success'); }
+function demanderRetrait()      { alert('Demande de retrait envoyée ! Confirmation par email.'); }
 
 function changerModpasAdmin() {
   const p1 = document.getElementById('new-admin-pass').value;
   const p2 = document.getElementById('confirm-admin-pass').value;
   if (!p1) { showAlert('alert-site', 'Entrez un mot de passe', 'error'); return; }
-  if (p1 !== p2) { showAlert('alert-site', 'Mots de passe diffÃ©rents', 'error'); return; }
-  showAlert('alert-site', 'Mot de passe changÃ© âœ“', 'success');
+  if (p1 !== p2) { showAlert('alert-site', 'Mots de passe différents', 'error'); return; }
+  showAlert('alert-site', 'Mot de passe changé âœ“', 'success');
 }
 
 /* ===== UTILS ===== */

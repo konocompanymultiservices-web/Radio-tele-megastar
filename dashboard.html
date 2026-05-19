@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8"/>
@@ -506,7 +506,7 @@
     function changerPhoto(input) {
       const file = input.files[0];
       if (!file) return;
-      if (file.size > 2097152) { showAlert('alert-profil', 'Foto a twÃ² gwo â€” max 2MB', 'error'); return; }
+      if (file.size > 2097152) { showAlert('alert-profil', 'Foto a twò gwo â€” max 2MB', 'error'); return; }
       const reader = new FileReader();
       reader.onload = function(e) {
         const url = e.target.result;
@@ -528,10 +528,10 @@
             showAlert('alert-profil', 'Photo mise Ã  jour ! âœ“', 'success');
           } else {
             // Menm si backend echwe, foto a deja save lokalman
-            showAlert('alert-profil', 'Photo sauvegardÃ©e localement âœ“', 'success');
+            showAlert('alert-profil', 'Photo sauvegardée localement âœ“', 'success');
           }
         }).catch(() => {
-          showAlert('alert-profil', 'Photo sauvegardÃ©e localement âœ“', 'success');
+          showAlert('alert-profil', 'Photo sauvegardée localement âœ“', 'success');
         });
       };
       reader.readAsDataURL(file);
@@ -549,7 +549,7 @@
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
         body: JSON.stringify({ fotoPwofil: '' })
       }).catch(() => {});
-      showAlert('alert-profil', 'Photo supprimÃ©e âœ“', 'success');
+      showAlert('alert-profil', 'Photo supprimée âœ“', 'success');
     }
 
     function saveProfil(e) {
@@ -588,7 +588,7 @@
       const nouveau = document.getElementById('nouveau-modpas').value;
       const conf = document.getElementById('confirm-modpas').value;
       if (nouveau !== conf) { showAlert('alert-modpas', 'Les mots de passe ne correspondent pas !', 'error'); return; }
-      if (nouveau.length < 6) { showAlert('alert-modpas', 'Minimum 6 caractÃ¨res', 'error'); return; }
+      if (nouveau.length < 6) { showAlert('alert-modpas', 'Minimum 6 caractères', 'error'); return; }
       const btn = e.target.querySelector('button[type="submit"]');
       btn.textContent = 'Changement...'; btn.disabled = true;
       fetch(API_URL + '/api/user/changer-modpas', {
@@ -598,7 +598,7 @@
       })
       .then(r => r.json()).then(data => {
         btn.textContent = 'Changer le mot de passe'; btn.disabled = false;
-        if (data.success) { showAlert('alert-modpas', 'Mot de passe changÃ© ! âœ“', 'success'); e.target.reset(); }
+        if (data.success) { showAlert('alert-modpas', 'Mot de passe changé ! âœ“', 'success'); e.target.reset(); }
         else { showAlert('alert-modpas', data.message || 'Erreur', 'error'); }
       }).catch(() => { btn.textContent = 'Changer le mot de passe'; btn.disabled = false; });
     }
@@ -618,18 +618,18 @@
     }
 
     function confirmerPeman() {
-      showAlert('alert-plan', 'MÃ¨si ! Nou pral kontakte ou pa email pou finalize peman an. âœ“', 'success');
+      showAlert('alert-plan', 'Mèsi ! Nou pral kontakte ou pa email pou finalize peman an. âœ“', 'success');
       document.getElementById('peman-section').style.display = 'none';
     }
 
     function checkNotifBrowser() {
-      if (!('Notification' in window)) { document.getElementById('notif-browser-status').textContent = 'Non supportÃ©'; return; }
+      if (!('Notification' in window)) { document.getElementById('notif-browser-status').textContent = 'Non supporté'; return; }
       if (Notification.permission === 'granted') {
         const btn = document.getElementById('btn-notif-browser');
-        btn.textContent = 'âœ“ Notifications activÃ©es'; btn.style.background = '#4CAF50';
-        document.getElementById('notif-browser-status').textContent = 'ActivÃ©es';
+        btn.textContent = 'âœ“ Notifications activées'; btn.style.background = '#4CAF50';
+        document.getElementById('notif-browser-status').textContent = 'Activées';
       } else if (Notification.permission === 'denied') {
-        document.getElementById('notif-browser-status').textContent = 'BloquÃ©es par navigateur';
+        document.getElementById('notif-browser-status').textContent = 'Bloquées par navigateur';
       }
     }
 
@@ -637,10 +637,10 @@
       if (!('Notification' in window)) return;
       Notification.requestPermission().then(p => {
         if (p === 'granted') {
-          new Notification('Radio TÃ©lÃ© Mega Star', { body: 'Notifikasyon aktive !', icon: 'images/radio_tele_mega_star_logo.jpg' });
+          new Notification('Radio Télé Mega Star', { body: 'Notifikasyon aktive !', icon: 'images/radio_tele_mega_star_logo.jpg' });
           checkNotifBrowser();
-          showAlert('alert-notif', 'Notifications browser activÃ©es ! âœ“', 'success');
-        } else { showAlert('alert-notif', 'Notifications refusÃ©es.', 'error'); }
+          showAlert('alert-notif', 'Notifications browser activées ! âœ“', 'success');
+        } else { showAlert('alert-notif', 'Notifications refusées.', 'error'); }
       });
     }
 
@@ -650,7 +650,7 @@
         debat: g('notif-debat'), spirit: g('notif-spirit'), soiree: g('notif-soiree')
       };
       localStorage.setItem('notifs_' + currentUser.id, JSON.stringify(n));
-      showAlert('alert-notif', 'PrÃ©fÃ©rences sauvegardÃ©es âœ“', 'success');
+      showAlert('alert-notif', 'Préférences sauvegardées âœ“', 'success');
     }
 
     function loadNotifs() {
