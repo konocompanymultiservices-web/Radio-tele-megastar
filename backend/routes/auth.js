@@ -1,33 +1,59 @@
 const express = require('express');
 const router = express.Router();
+const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
 
-// ===== INPUT SANITIZATION HELPERS =====
-// Strip HTML/script tags from a string to prevent stored XSS via API data
-function stripTags(str) {
+// ===== SANITIZATION =====
+// Remove ALL angle brackets — no ReDoS risk, handles malformed/nested tags completely
+function sanitize(str) {
   if (typeof str !== 'string') return '';
-  return str.replace(/<[^>]*>/g, '').trim();
+  return str.slice(0, 50000).replace(/[<>]/g, '').trim();
 }
 
-// Validate email format
+// HTML-encode user data before inserting into email HTML templates
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
 }
 
-// Validate phone: allow empty, digits, spaces, +, -, ()
 function isValidPhone(phone) {
   if (!phone) return true;
   return /^[+\d\s\-().]{0,20}$/.test(phone);
 }
 
+// ===== RATE LIMITERS =====
+// Strict limiter for signup/reset (5 per 15 min — prevents account farming & email flooding)
+const authStrictLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Twòp eseye — tann 15 minit' }
+});
+
+// Moderate limiter for login (10 per 15 min)
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Twòp eseye koneksyon — tann 15 minit' }
+});
+
+// ===== EMAIL =====
 const transporter = nodemailer.createTransport({
   service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
+  auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
 });
 
 function envoyerEmailBackground(to, subject, html) {
@@ -38,51 +64,39 @@ function envoyerEmailBackground(to, subject, html) {
 }
 
 // =========================
-// INSCRIPTION (frontend rele /api/auth/inscription)
+// INSCRIPTION
 // =========================
-router.post(["/signup", "/inscription"], async (req, res) => {
+router.post(["/signup", "/inscription"], authStrictLimiter, async (req, res) => {
   try {
     const { nom, username, email, telephone, phone, motDePasse, password } = req.body;
 
-    // Normalise and sanitize
-    const nomFinal  = stripTags(nom || username || '');
-    const mdpFinal  = motDePasse || password || '';
-    const emailNorm = typeof email === 'string' ? email.toLowerCase().trim() : '';
-    const telFinal  = stripTags(telephone || phone || '');
-
-    // Guard: all top-level fields must be strings, not objects (NoSQL injection via $operators)
     if (typeof (nom || username) !== 'string' || typeof email !== 'string' || typeof (motDePasse || password) !== 'string') {
       return res.status(400).json({ success: false, message: 'Champ enkòrèk' });
     }
 
-    // Required field checks
+    const nomFinal  = sanitize(nom || username || '');
+    const mdpFinal  = motDePasse || password || '';
+    const emailNorm = email.toLowerCase().trim();
+    const telFinal  = sanitize(telephone || phone || '');
+
     if (!nomFinal || !emailNorm || !mdpFinal) {
       return res.status(400).json({ success: false, message: 'Champ manke' });
     }
-
-    // Enforce reasonable length limits
     if (nomFinal.length > 100) {
       return res.status(400).json({ success: false, message: 'Non twò long (max 100 karaktè)' });
     }
-
-    // Email format validation
     if (!isValidEmail(emailNorm)) {
       return res.status(400).json({ success: false, message: 'Format email enkòrèk' });
     }
     if (emailNorm.length > 254) {
       return res.status(400).json({ success: false, message: 'Email twò long' });
     }
-
-    // Password strength: minimum 8, maximum 128 chars
-    // Upper limit prevents bcrypt DoS (bcrypt processes full input; very long passwords are expensive)
     if (mdpFinal.length < 8) {
       return res.status(400).json({ success: false, message: 'Modpas dwe gen omwen 8 karaktè' });
     }
     if (mdpFinal.length > 128) {
       return res.status(400).json({ success: false, message: 'Modpas twò long (max 128 karaktè)' });
     }
-
-    // Phone validation
     if (!isValidPhone(telFinal)) {
       return res.status(400).json({ success: false, message: 'Nimewo telefòn enkòrèk' });
     }
@@ -95,39 +109,23 @@ router.post(["/signup", "/inscription"], async (req, res) => {
     const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.toLowerCase().trim()).filter(Boolean);
     const role = adminEmails.includes(emailNorm) ? 'admin' : 'user';
 
-    const nouvelUser = new User({
-      nom: nomFinal,
-      email: emailNorm,
-      telephone: telFinal,
-      motDePasse: mdpFinal,
-      role
-    });
-
+    const nouvelUser = new User({ nom: nomFinal, email: emailNorm, telephone: telFinal, motDePasse: mdpFinal, role });
     await nouvelUser.save();
 
-    const token = jwt.sign(
-      { id: nouvelUser._id, role: nouvelUser.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = jwt.sign({ id: nouvelUser._id, role: nouvelUser.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.status(201).json({
-      success: true,
-      token,
-      user: {
-        id: nouvelUser._id,
-        nom: nouvelUser.nom,
-        email: nouvelUser.email,
-        role: nouvelUser.role
-      }
+      success: true, token,
+      user: { id: nouvelUser._id, nom: nouvelUser.nom, email: nouvelUser.email, role: nouvelUser.role }
     });
 
-    // Send emails asynchronously after responding (fire-and-forget)
+    // HTML-encode user data before inserting into email HTML (prevents stored XSS in email clients)
+    const safeName = escapeHtml(nouvelUser.nom);
     envoyerEmailBackground(emailNorm, 'Bienvenue sou Radio Télé Mega Star!',
-      `<h2>Bonjou ${nouvelUser.nom}!</h2><p>Kont ou kreye ak siksè sou Radio Télé Mega Star 97.3 FM.</p>`);
+      `<h2>Bonjou ${safeName}!</h2><p>Kont ou kreye ak siksè sou Radio Télé Mega Star 97.3 FM.</p>`);
     if (process.env.ADMIN_EMAIL) {
       envoyerEmailBackground(process.env.ADMIN_EMAIL, 'Nouvo manm!',
-        `<p>Nouvo enskripsyon: <strong>${nouvelUser.nom}</strong> (${emailNorm})</p>`);
+        `<p>Nouvo enskripsyon: <strong>${safeName}</strong> (${escapeHtml(emailNorm)})</p>`);
     }
 
   } catch (err) {
@@ -137,55 +135,39 @@ router.post(["/signup", "/inscription"], async (req, res) => {
 });
 
 // =========================
-// KONEKSYON (frontend rele /api/auth/connexion)
+// KONEKSYON
 // =========================
-router.post(["/login", "/connexion"], async (req, res) => {
+router.post(["/login", "/connexion"], loginLimiter, async (req, res) => {
   try {
     const { email, motDePasse, password } = req.body;
 
-    // Guard: must be strings, not objects (NoSQL injection via $operators)
     if (typeof email !== 'string' || typeof (motDePasse || password || '') !== 'string') {
       return res.status(400).json({ success: false, message: 'Champ enkòrèk' });
     }
 
-    const mdpFinal   = motDePasse || password || '';
-    const emailNorm  = email.toLowerCase().trim();
+    const mdpFinal  = motDePasse || password || '';
+    const emailNorm = email.toLowerCase().trim();
 
     if (!emailNorm || !mdpFinal) {
       return res.status(400).json({ success: false, message: 'Champ manke' });
     }
-
-    // Clamp to prevent timing attacks on excessively long inputs
     if (emailNorm.length > 254 || mdpFinal.length > 128) {
       return res.status(401).json({ success: false, message: 'Email oswa modpas enkòrèk' });
     }
-
     if (!isValidEmail(emailNorm)) {
-      // Return generic error — don't reveal whether email exists
       return res.status(401).json({ success: false, message: 'Email oswa modpas enkòrèk' });
     }
 
     const user = await User.findOne({ email: emailNorm });
-    if (!user) {
-      // Use a timing-safe constant response to prevent user enumeration
-      return res.status(401).json({ success: false, message: 'Email oswa modpas enkòrèk' });
-    }
+    if (!user) return res.status(401).json({ success: false, message: 'Email oswa modpas enkòrèk' });
 
     const ok = await user.verifierMotDePasse(mdpFinal);
-    if (!ok) {
-      return res.status(401).json({ success: false, message: 'Email oswa modpas enkòrèk' });
-    }
+    if (!ok) return res.status(401).json({ success: false, message: 'Email oswa modpas enkòrèk' });
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.json({
-      success: true,
-      message: 'Koneksyon reyisi!',
-      token,
+      success: true, message: 'Koneksyon reyisi!', token,
       user: { id: user._id, nom: user.nom, email: user.email, role: user.role }
     });
 
@@ -198,38 +180,32 @@ router.post(["/login", "/connexion"], async (req, res) => {
 // =========================
 // RESET MOT DE PASSE
 // =========================
-router.post("/reset-password", async (req, res) => {
+router.post("/reset-password", authStrictLimiter, async (req, res) => {
   try {
     const rawEmail = req.body.email;
-    if (!rawEmail) return res.status(400).json({ success: false, message: 'Email requis' });
-
-    // Guard: must be a string (NoSQL injection)
-    if (typeof rawEmail !== 'string') {
-      // Always return success — don't reveal anything
+    if (!rawEmail || typeof rawEmail !== 'string') {
       return res.json({ success: true, message: 'Email voye! Verifye bwat mail ou.' });
     }
 
     const emailNorm = rawEmail.toLowerCase().trim();
     if (!isValidEmail(emailNorm)) {
-      // Always return the same success message — never confirm whether the email exists
       return res.json({ success: true, message: 'Email voye! Verifye bwat mail ou.' });
     }
 
-    // Always respond the same way regardless of whether email exists (prevent enumeration)
     const user = await User.findOne({ email: emailNorm });
     if (user) {
       const resetToken = jwt.sign({ id: user._id, purpose: 'reset' }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      const resetUrl = `${process.env.SITE_URL || 'https://radio-tele-megastar.pages.dev'}/reset.html?token=${resetToken}`;
+      const siteUrl = process.env.SITE_URL || 'https://radio-tele-megastar.pages.dev';
+      const resetUrl = `${siteUrl}/reset.html?token=${encodeURIComponent(resetToken)}`;
 
       envoyerEmailBackground(emailNorm, 'Reyinisyalizasyon modpas — Radio Télé Mega Star',
         `<h2>Reyinisyalizasyon modpas</h2>
          <p>Klike sou lyen sa a pou chanje modpas ou (valid pou 1 èdtan):</p>
-         <a href="${resetUrl}" style="background:#cc0000;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;margin:16px 0;">Chanje modpas mwen</a>
+         <a href="${escapeHtml(resetUrl)}" style="background:#cc0000;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block;margin:16px 0;">Chanje modpas mwen</a>
          <p style="color:#888;font-size:12px;">Si se pa ou ki mande sa, inyore mesaj sa a.</p>`
       );
     }
 
-    // Always return success — never leak whether email exists in the DB
     res.json({ success: true, message: 'Email voye! Verifye bwat mail ou.' });
 
   } catch (err) {

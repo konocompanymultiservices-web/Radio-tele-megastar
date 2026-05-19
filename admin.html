@@ -829,13 +829,19 @@ function ajouterAnimateur() {
 
   const photoDiv = document.createElement('div');
   photoDiv.className = 'anim-photo';
-  if (ph && /^https?:\/\//i.test(ph)) {
-    const img = document.createElement('img');
-    img.src = ph;
-    img.style.display = 'block';
-    img.alt = '';
-    photoDiv.appendChild(img);
-  } else {
+  if (ph) {
+    try {
+      const safeUrl = new URL(ph);
+      if (safeUrl.protocol === 'https:' || safeUrl.protocol === 'http:') {
+        const img = document.createElement('img');
+        img.src = safeUrl.href;
+        img.style.display = 'block';
+        img.alt = '';
+        photoDiv.appendChild(img);
+      }
+    } catch { /* invalid URL — fall through to initials */ }
+  }
+  if (!photoDiv.querySelector('img')) {
     photoDiv.textContent = nom.charAt(0).toUpperCase();
   }
 
