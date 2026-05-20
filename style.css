@@ -23,6 +23,7 @@
   --gri-4:    #808080;
   --gri-5:    #505050;
   --rouge:    #cc0000;
+  --rouge-2:  #aa0000;
   --vèt:      #22c55e;
 
   /* Text hierarchy — Refactoring UI: use rgba white on dark, not grey
@@ -45,16 +46,15 @@
   --radius-lg: 14px;
   --radius-xl: 20px;
 
-  /* Custom easing curves (Emil Kowalski / animations.dev) */
   --ease-out:     cubic-bezier(.23, 1, .32, 1);       /* strong ease-out: UI enter/hover */
-  --ease-in-out:  cubic-bezier(.77, 0, .175, 1);      /* strong ease-in-out: on-screen movement */
   --ease-drawer:  cubic-bezier(.32, .72, 0, 1);       /* iOS drawer: panels sliding in */
   --ease-bounce:  cubic-bezier(.34, 1.56, .64, 1);    /* subtle overshoot for playful elements */
 
   /* Transition shorthands — specific properties only, no `all` */
-  --trans:        color .16s var(--ease-out), background-color .16s var(--ease-out), border-color .16s var(--ease-out), box-shadow .16s var(--ease-out);
+  --trans:        color .16s var(--ease-out), background-color .16s var(--ease-out), border-color .16s var(--ease-out), box-shadow .16s var(--ease-out), transform .1s var(--ease-out);
   --trans-slow:   transform .28s var(--ease-out), box-shadow .28s var(--ease-out);
   --trans-bounce: transform .2s var(--ease-bounce);
+  --trans-active: transform 100ms var(--ease-out);
 
   /* Spacing scale — Refactoring UI: use a geometric scale (each step ~2× the previous)
      This creates clear visual grouping: related items close, unrelated items far apart */
@@ -196,8 +196,7 @@ header {
   transform: scale(1.07);
   box-shadow: 0 3px 14px rgba(255,214,0,.50);
 }
-/* Emil: buttons must feel pressed — scale down on :active for tactile feedback */
-.header-play-btn:active { transform: scale(.94); transition: transform 100ms var(--ease-out); }
+.header-play-btn:active { transform: scale(.94); transition: var(--trans-active); }
 
 .header-player-info { line-height: 1.25; }
 .header-player-title {
@@ -280,7 +279,6 @@ header {
   flex-direction: column;
   animation: slideInRight .3s var(--ease-drawer) both;
 }
-/* ease-drawer = iOS panel curve: starts fast, settles with weight */
 @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
 .menu-close {
@@ -352,10 +350,10 @@ header {
 }
 .menu-signup { background: var(--jaune); color: var(--nwa); }
 .menu-signup:hover { background: var(--jaune-2); }
-.menu-signup:active { transform: scale(.97); transition: transform 100ms var(--ease-out); }
+.menu-signup:active { transform: scale(.97); transition: var(--trans-active); }
 .menu-login { background: transparent; color: var(--blan); border: 1px solid var(--nwa-4); }
 .menu-login:hover { border-color: var(--blan); }
-.menu-login:active { transform: scale(.97); transition: transform 100ms var(--ease-out); }
+.menu-login:active { transform: scale(.97); transition: var(--trans-active); }
 
 .menu-footer { margin-top: auto; padding-top: 24px; text-align: center; color: var(--gri-4); font-size: .75rem; line-height: 1.8; }
 
@@ -383,7 +381,6 @@ header {
   position: relative;
   animation: fadeUp .24s var(--ease-out) both;
 }
-/* Emil: never start from translateY(0) flat — add slight scale for physical depth */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(14px) scale(.97); }
   to   { opacity: 1; transform: translateY(0)    scale(1);   }
@@ -455,8 +452,7 @@ header {
   border: none;
 }
 .modal-submit:hover { background: var(--jaune-2); transform: translateY(-1px); }
-/* Emil: buttons must feel pressed — instant tactile feedback via scale */
-.modal-submit:active { transform: scale(.97); transition: transform 100ms var(--ease-out); }
+.modal-submit:active { transform: scale(.97); transition: var(--trans-active); }
 
 .modal-login-text {
   text-align: center;
@@ -919,7 +915,7 @@ header {
   border: none;
 }
 .signup-submit:hover { background: var(--jaune-2); transform: translateY(-1px); }
-.signup-submit:active { transform: scale(.97); transition: transform 100ms var(--ease-out); }
+.signup-submit:active { transform: scale(.97); transition: var(--trans-active); }
 
 .signup-login {
   text-align: center;
@@ -1061,7 +1057,7 @@ header {
   flex-shrink: 0;
 }
 .chat-send:hover { background: var(--jaune-2); }
-.chat-send:active { transform: scale(.92); transition: transform 100ms var(--ease-out); }
+.chat-send:active { transform: scale(.92); transition: var(--trans-active); }
 
 /* Chat toggle button */
 .chat-toggle {
@@ -1175,7 +1171,7 @@ footer {
   transition: var(--trans);
 }
 .float-play:hover { background: var(--jaune-2); transform: scale(1.08); }
-.float-play:active { transform: scale(.93); transition: transform 100ms var(--ease-out); }
+.float-play:active { transform: scale(.93); transition: var(--trans-active); }
 .float-play.playing { animation: pulsePlay 2s ease-in-out infinite; }
 @keyframes pulsePlay {
   0%,100% { box-shadow: 0 4px 20px rgba(255,214,0,.4); }
@@ -1278,8 +1274,17 @@ button:focus-visible, a:focus-visible {
 .page-hero {
   background: var(--nwa-2);
   border-bottom: 1px solid var(--nwa-4);
-  padding: 56px 24px 48px;
+  padding: 80px 24px 64px;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 100% at 50% 0%, rgba(255,214,0,.07) 0%, transparent 70%);
+  pointer-events: none;
 }
 .page-hero-label {
   font-size: 11px;
@@ -1287,72 +1292,81 @@ button:focus-visible, a:focus-visible {
   letter-spacing: 3px;
   text-transform: uppercase;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 .page-hero-title {
   font-family: 'Oswald', sans-serif;
-  font-size: clamp(28px, 5vw, 48px);
+  font-size: clamp(36px, 6vw, 64px);
   color: var(--blan);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  text-wrap: balance;
 }
 .page-hero-sub {
-  font-size: 15px;
+  font-size: 16px;
   color: var(--text-secondary);
-  max-width: 500px;
+  max-width: 520px;
   margin: 0 auto;
+  line-height: 1.65;
 }
 
 /* ===== PROGRAMMES ===== */
 .prog-table-section {
   background: var(--nwa);
-  padding: 56px 24px;
-  min-height: 60vh;
+  padding: 56px 24px 72px;
 }
 .prog-table-inner {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 0 auto;
-  overflow-x: auto;
 }
-.prog-table-inner table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 500px;
+.prog-schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2px;
+  background: var(--nwa-4);
+  border: 1px solid var(--nwa-4);
+  border-radius: 14px;
+  overflow: hidden;
 }
-.prog-table-inner th {
+.prog-card {
   background: var(--nwa-2);
-  padding: 14px 20px;
-  text-align: left;
-  font-family: 'Oswald', sans-serif;
-  font-size: 11px;
-  color: var(--jaune);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  border-bottom: 2px solid var(--rouge);
+  padding: 28px 24px;
+  border-left: 3px solid transparent;
+  transition: var(--trans);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
-.prog-table-inner td {
-  padding: 16px 20px;
-  font-size: 14px;
-  color: var(--text-secondary);
-  border-bottom: 1px solid var(--nwa-4);
-  vertical-align: top;
-}
-.prog-table-inner tr:hover td {
+.prog-card:hover {
   background: var(--nwa-3);
-  color: var(--blan);
+  border-left-color: var(--jaune);
 }
-.prog-table-inner td:first-child {
+.prog-time {
   font-family: 'Oswald', sans-serif;
-  color: var(--rouge);
-  white-space: nowrap;
+  font-size: 12px;
+  color: var(--jaune);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+.prog-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--blan);
+  line-height: 1.2;
+}
+.prog-desc {
   font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin-top: 4px;
 }
-.prog-table-inner td:nth-child(2) {
-  font-family: 'Oswald', sans-serif;
-  color: var(--blan);
-  font-size: 15px;
+@media (max-width: 640px) {
+  .prog-schedule-grid { grid-template-columns: 1fr; gap: 1px; }
 }
 
 /* ===== À PROPOS ===== */
@@ -1394,29 +1408,35 @@ button:focus-visible, a:focus-visible {
 }
 .about-stats-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 2px;
   margin-bottom: 64px;
+  background: var(--nwa-4);
+  border-radius: 14px;
+  overflow: hidden;
 }
 .about-stat-box {
   background: var(--nwa-2);
-  border: 1px solid var(--nwa-4);
-  border-top: 2px solid var(--rouge);
-  border-radius: 12px;
-  padding: 24px 16px;
+  padding: 32px 20px;
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  transition: var(--trans);
 }
+.about-stat-box:hover { background: var(--nwa-3); }
 .about-stat-num {
   font-family: 'Oswald', sans-serif;
-  font-size: 32px;
+  font-size: clamp(36px, 4vw, 48px);
   color: var(--jaune);
+  line-height: 1;
+  letter-spacing: -1px;
 }
 .about-stat-lab {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 .about-values-title {
   font-family: 'Oswald', sans-serif;
@@ -1428,30 +1448,36 @@ button:focus-visible, a:focus-visible {
 }
 .values-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+  background: var(--nwa-4);
+  border-radius: 14px;
+  overflow: hidden;
 }
 .value-card {
   background: var(--nwa-2);
-  border: 1px solid var(--nwa-4);
-  border-radius: 12px;
-  padding: 28px 20px;
-  text-align: center;
+  border-left: 3px solid transparent;
+  padding: 32px 24px;
+  text-align: left;
   transition: var(--trans);
 }
 .value-card:hover {
-  border-color: var(--jaune);
-  transform: translateY(-4px);
+  background: var(--nwa-3);
+  border-left-color: var(--jaune);
 }
-.value-card:active { transform: scale(.98); transition: transform 100ms var(--ease-out); }
-.value-icon { font-size: 32px; margin-bottom: 12px; }
+.value-card:active { transform: scale(.98); transition: var(--trans-active); }
+.value-icon { font-size: 28px; margin-bottom: 16px; display: block; }
 .value-card h4 {
   font-family: 'Oswald', sans-serif;
-  font-size: 16px;
+  font-size: 18px;
   color: var(--blan);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  letter-spacing: .2px;
 }
-.value-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.value-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+@media (max-width: 480px) {
+  .values-grid { grid-template-columns: 1fr; }
+}
 
 /* ===== CONTACT ===== */
 .contact-page-section {
@@ -1487,8 +1513,11 @@ button:focus-visible, a:focus-visible {
   padding: 14px 16px;
   background: var(--nwa-2);
   border: 1px solid var(--nwa-4);
+  border-left: 3px solid transparent;
   border-radius: 10px;
+  transition: var(--trans);
 }
+.contact-page-item:hover { border-left-color: var(--jaune); background: var(--nwa-3); }
 .contact-page-icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
 .contact-page-item-title {
   font-family: 'Oswald', sans-serif;
@@ -1526,7 +1555,7 @@ button:focus-visible, a:focus-visible {
   transition: var(--trans);
 }
 .contact-ad-btn:hover { background: var(--jaune-2); }
-.contact-ad-btn:active { transform: scale(.96); transition: transform 100ms var(--ease-out); }
+.contact-ad-btn:active { transform: scale(.96); transition: var(--trans-active); }
 .contact-page-form-box {
   background: var(--nwa-2);
   border: 1px solid var(--nwa-4);
@@ -1555,7 +1584,7 @@ button:focus-visible, a:focus-visible {
   transition: border-color .2s;
 }
 .contact-form-field input:focus,
-.contact-form-field textarea:focus { outline: none; border-color: var(--rouge); }
+.contact-form-field textarea:focus { outline: none; border-color: var(--jaune); box-shadow: 0 0 0 3px rgba(255,214,0,.08); }
 .contact-form-field textarea { resize: vertical; min-height: 120px; }
 .contact-submit-btn {
   width: 100%;
@@ -1568,10 +1597,10 @@ button:focus-visible, a:focus-visible {
   font-size: 15px;
   letter-spacing: 1px;
   cursor: pointer;
-  transition: background .2s;
+  transition: var(--trans);
 }
-.contact-submit-btn:hover { background: #aa0000; }
-.contact-submit-btn:active { transform: scale(.97); transition: transform 100ms var(--ease-out); }
+.contact-submit-btn:hover { background: var(--rouge-2); }
+.contact-submit-btn:active { transform: scale(.97); transition: var(--trans-active); }
 
 /* ===== REDUCED MOTION (Emil Kowalski: always respect system preference) ===== */
 @media (prefers-reduced-motion: reduce) {

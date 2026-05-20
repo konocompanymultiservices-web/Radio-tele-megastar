@@ -3,9 +3,14 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Programmes — Radio Télé Mega Star</title>
+  <title>Programmes — Radio Télé Mega Star 97.3 FM</title>
+  <meta name="description" content="Découvrez toute la grille de programmes de Radio Télé Mega Star — émissions 24h/24, 7j/7 sur 97.3 FM, CH. 60 et Cable 116."/>
+  <meta property="og:title" content="Programmes — Radio Télé Mega Star"/>
+  <meta property="og:description" content="Découvrez toute la grille de programmes de Radio Télé Mega Star — 24h/24, 7j/7."/>
+  <meta property="og:image" content="images/banner_radio_megastar.jpg"/>
+  <meta property="og:type" content="website"/>
   <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
@@ -72,7 +77,7 @@
         <button class="menu-auth-btn menu-signup" onclick="ouvrirModal()">
           Créer un compte
         </button>
-        <button class="menu-auth-btn menu-login">
+        <button class="menu-auth-btn menu-login" onclick="ouvrirModalLogin()">
           Se connecter
         </button>
       </div>
@@ -136,51 +141,54 @@
   </div>
 
 
-  <!-- PROGRAMMES TABLE -->
+  <!-- PROGRAMMES SCHEDULE -->
   <section id="programmes" class="prog-table-section">
     <div class="prog-table-inner">
-      <table>
-        <tr>
-          <th>Horaire</th>
-          <th>Émission</th>
-          <th>Description</th>
-        </tr>
-        <tr>
-          <td>🌅 05:00 – 08:00</td>
-          <td>Réveil Matinal</td>
-          <td>Commencez votre journée avec les nouvelles, la musique et la prière du matin.</td>
-        </tr>
-        <tr>
-          <td>📰 08:00 – 10:00</td>
-          <td>Actualités Haiti</td>
-          <td>Toute l'actualité nationale et internationale présentée avec rigueur.</td>
-        </tr>
-        <tr>
-          <td>🎵 10:00 – 14:00</td>
-          <td>Vibes Haïtiennes</td>
-          <td>Le meilleur de la musique haïtienne : kompa, rasin, rap kreyòl et gospel.</td>
-        </tr>
-        <tr>
-          <td>🎤 14:00 – 17:00</td>
-          <td>Débat Citoyen</td>
-          <td>Un espace de dialogue ouvert où toutes les voix comptent.</td>
-        </tr>
-        <tr>
-          <td>🙏 17:00 – 19:00</td>
-          <td>Heure Spirituelle</td>
-          <td>Guidance, espoir et inspiration pour terminer votre journée en paix.</td>
-        </tr>
-        <tr>
-          <td>🌙 19:00 – 22:00</td>
-          <td>Soirée Mega Star</td>
-          <td>Détente, musique et culture haïtienne pour finir la journée en beauté.</td>
-        </tr>
-        <tr>
-          <td>🌃 22:00 – 05:00</td>
-          <td>Nuit Mega Star</td>
-          <td>Musique douce et programmes de nuit pour vous accompagner.</td>
-        </tr>
-      </table>
+      <div class="prog-schedule-grid">
+
+        <article class="prog-card">
+          <div class="prog-time">05:00 — 08:00</div>
+          <h3 class="prog-name">Réveil Matinal</h3>
+          <p class="prog-desc">Commencez votre journée avec les nouvelles, la musique et la prière du matin.</p>
+        </article>
+
+        <article class="prog-card">
+          <div class="prog-time">08:00 — 10:00</div>
+          <h3 class="prog-name">Actualités Haïti</h3>
+          <p class="prog-desc">Toute l'actualité nationale et internationale présentée avec rigueur.</p>
+        </article>
+
+        <article class="prog-card">
+          <div class="prog-time">10:00 — 14:00</div>
+          <h3 class="prog-name">Vibes Haïtiennes</h3>
+          <p class="prog-desc">Le meilleur de la musique haïtienne : kompa, rasin, rap kreyòl et gospel.</p>
+        </article>
+
+        <article class="prog-card">
+          <div class="prog-time">14:00 — 17:00</div>
+          <h3 class="prog-name">Débat Citoyen</h3>
+          <p class="prog-desc">Un espace de dialogue ouvert où toutes les voix comptent.</p>
+        </article>
+
+        <article class="prog-card">
+          <div class="prog-time">17:00 — 19:00</div>
+          <h3 class="prog-name">Heure Spirituelle</h3>
+          <p class="prog-desc">Guidance, espoir et inspiration pour terminer votre journée en paix.</p>
+        </article>
+
+        <article class="prog-card">
+          <div class="prog-time">19:00 — 22:00</div>
+          <h3 class="prog-name">Soirée Mega Star</h3>
+          <p class="prog-desc">Détente, musique et culture haïtienne pour finir la journée en beauté.</p>
+        </article>
+
+        <article class="prog-card">
+          <div class="prog-time">22:00 — 05:00</div>
+          <h3 class="prog-name">Nuit Mega Star</h3>
+          <p class="prog-desc">Musique douce et programmes de nuit pour vous accompagner.</p>
+        </article>
+
+      </div>
     </div>
   </section>
 

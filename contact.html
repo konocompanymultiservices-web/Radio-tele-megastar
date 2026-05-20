@@ -3,9 +3,14 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Contact — Radio Télé Mega Star</title>
+  <title>Contact — Radio Télé Mega Star 97.3 FM</title>
+  <meta name="description" content="Contactez Radio Télé Mega Star — nous sommes à votre écoute 24h/24, 7j/7. Questions, suggestions ou annonces publicitaires."/>
+  <meta property="og:title" content="Contact — Radio Télé Mega Star"/>
+  <meta property="og:description" content="Contactez-nous — 24h/24, 7j/7. Questions, suggestions ou annonces publicitaires."/>
+  <meta property="og:image" content="images/banner_radio_megastar.jpg"/>
+  <meta property="og:type" content="website"/>
   <link rel="icon" type="image/jpeg" href="images/radio_tele_mega_star_logo.jpg"/>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
@@ -49,7 +54,7 @@
       <div class="menu-auth">
         <p class="menu-auth-title">Rejoignez notre communauté</p>
         <button class="menu-auth-btn menu-signup" onclick="ouvrirModal()">Créer un compte</button>
-        <button class="menu-auth-btn menu-login">Se connecter</button>
+        <button class="menu-auth-btn menu-login" onclick="ouvrirModalLogin()">Se connecter</button>
       </div>
       <div class="menu-footer">
         <p>© 2026 Radio Télé Mega Star</p>
@@ -141,21 +146,21 @@
         <form class="contact-form" onsubmit="soumètContact(event)">
           <div class="contact-form-row">
             <div class="contact-form-field">
-              <label>Nom complet</label>
-              <input type="text" placeholder="Ex: Jean Pierre" required/>
+              <label for="contact-nom">Nom complet</label>
+              <input id="contact-nom" type="text" name="nom" placeholder="Ex: Jean Pierre" required/>
             </div>
             <div class="contact-form-field">
-              <label>Email</label>
-              <input type="email" placeholder="Ex: jean@email.com" required/>
+              <label for="contact-email">Email</label>
+              <input id="contact-email" type="email" name="email" placeholder="Ex: jean@email.com" required/>
             </div>
           </div>
           <div class="contact-form-field">
-            <label>Sujet</label>
-            <input type="text" placeholder="Sujet du message"/>
+            <label for="contact-sujet">Sujet</label>
+            <input id="contact-sujet" type="text" name="sujet" placeholder="Sujet du message"/>
           </div>
           <div class="contact-form-field">
-            <label>Message</label>
-            <textarea placeholder="Votre message..."></textarea>
+            <label for="contact-message">Message</label>
+            <textarea id="contact-message" name="message" placeholder="Votre message..."></textarea>
           </div>
           <button type="submit" class="contact-submit-btn">
             Envoyer le message →
