@@ -217,7 +217,7 @@ router.post("/reset-password", authStrictLimiter, async (req, res) => {
 // =========================
 // INIT ADMIN (TANPORÈ — EFASE APRE ITILIZASYON)
 // =========================
-router.post("/init-admin", async (req, res) => {
+router.post("/init-admin", authStrictLimiter, async (req, res) => {
   try {
     const { key, password } = req.body;
 
