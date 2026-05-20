@@ -16,7 +16,28 @@
       "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" diff HEAD admin.html)",
       "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" diff HEAD backend/routes/admin.js)",
       "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" diff HEAD backend/server.js)",
-      "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" fetch origin)"
+      "Bash(git -C \"c:\\\\Users\\\\konocompany\\\\Desktop\\\\Radio-tele-megastar-main\" fetch origin)",
+      "Bash(npm audit *)",
+      "Bash(npm install *)",
+      "Bash(npm view *)",
+      "Bash(node -e \"console.log\\(require\\('./node_modules/ws/package.json'\\).version\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(node --check server.js)",
+      "Bash(node --check routes/auth.js)",
+      "Bash(node --check routes/admin.js)",
+      "Bash(node --check routes/User.js)",
+      "Bash(node --check routes/mistral.js)",
+      "Bash(node -e \"require\\('./routes/admin.js'\\); console.log\\('Module charge OK'\\)\")",
+      "Bash(awk 'NR<=5 || /83[0-9]/')",
+      "Bash(node -e \"require\\('./routes/auth.js'\\); require\\('./routes/User.js'\\); console.log\\('Tout module charge OK'\\)\")",
+      "Bash(node -e \"console.log\\('ws enstale:', require\\('./node_modules/ws/package.json'\\).version\\)\")",
+      "Bash(node -e \"const s=require\\('./node_modules/socket.io/package.json'\\); console.log\\('socket.io ws dep:', s.dependencies && s.dependencies.ws || s.peerDependencies && s.peerDependencies.ws || 'not listed'\\)\")",
+      "Bash(node -e \"const e=require\\('./node_modules/engine.io/package.json'\\); console.log\\('engine.io ws dep:', JSON.stringify\\(e.dependencies && e.dependencies.ws || e.peerDependencies && e.peerDependencies.ws\\)\\)\")",
+      "Bash(node -e \"console.log\\('engine.io aktyèl:', require\\('./node_modules/engine.io/package.json'\\).version\\)\")",
+      "Bash(node -e \"console.log\\(require\\('crypto'\\).randomBytes\\(64\\).toString\\('hex'\\)\\)\")",
+      "Bash(powershell -Command ' *)",
+      "Bash(node -e \"require\\('dotenv'\\).config\\(\\); console.log\\('ADMIN_EMAILS:', process.env.ADMIN_EMAILS || '\\(pa defini\\)'\\); console.log\\('MONGODB_URI:', process.env.MONGODB_URI ? 'DEFINI' : '\\(pa defini\\)'\\)\")",
+      "Bash(nslookup -type=TXT radio-tele-megastar.pages.dev)"
     ]
   }
 }

@@ -38,13 +38,23 @@
   --shadow-lg:    0 10px 40px rgba(0,0,0,.55), 0 4px 14px rgba(0,0,0,.35);
   --shadow-jaune: 0 4px 24px rgba(255,214,0,.22);
 
-  /* Shape & motion — Microinteractions: ease-out for entrances, ease-in for exits */
+  /* Shape & motion
+     Emil Kowalski: never use `transition: all` — specify exact properties
+     Use custom cubic-bezier curves — built-ins are too weak (animations.dev) */
   --radius:    8px;
   --radius-lg: 14px;
   --radius-xl: 20px;
-  --trans:        all .18s ease;
-  --trans-slow:   all .32s cubic-bezier(.25,.46,.45,.94);
-  --trans-bounce: all .22s cubic-bezier(.34,1.56,.64,1);
+
+  /* Custom easing curves (Emil Kowalski / animations.dev) */
+  --ease-out:     cubic-bezier(.23, 1, .32, 1);       /* strong ease-out: UI enter/hover */
+  --ease-in-out:  cubic-bezier(.77, 0, .175, 1);      /* strong ease-in-out: on-screen movement */
+  --ease-drawer:  cubic-bezier(.32, .72, 0, 1);       /* iOS drawer: panels sliding in */
+  --ease-bounce:  cubic-bezier(.34, 1.56, .64, 1);    /* subtle overshoot for playful elements */
+
+  /* Transition shorthands — specific properties only, no `all` */
+  --trans:        color .16s var(--ease-out), background-color .16s var(--ease-out), border-color .16s var(--ease-out), box-shadow .16s var(--ease-out);
+  --trans-slow:   transform .28s var(--ease-out), box-shadow .28s var(--ease-out);
+  --trans-bounce: transform .2s var(--ease-bounce);
 
   /* Spacing scale — Refactoring UI: use a geometric scale (each step ~2× the previous)
      This creates clear visual grouping: related items close, unrelated items far apart */
@@ -78,7 +88,7 @@ body {
   background: var(--blan);
   color: var(--nwa);
   line-height: 1.6;
-  min-height: 100vh;
+  min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -183,10 +193,11 @@ header {
 }
 .header-play-btn:hover {
   background: var(--jaune-2);
-  transform: scale(1.10);
+  transform: scale(1.07);
   box-shadow: 0 3px 14px rgba(255,214,0,.50);
 }
-.header-play-btn:active { transform: scale(.96); }
+/* Emil: buttons must feel pressed — scale down on :active for tactile feedback */
+.header-play-btn:active { transform: scale(.94); transition: transform 100ms var(--ease-out); }
 
 .header-player-info { line-height: 1.25; }
 .header-player-title {
@@ -267,8 +278,9 @@ header {
   padding: 28px 24px;
   display: flex;
   flex-direction: column;
-  animation: slideInRight .25s ease;
+  animation: slideInRight .3s var(--ease-drawer) both;
 }
+/* ease-drawer = iOS panel curve: starts fast, settles with weight */
 @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
 .menu-close {
@@ -340,8 +352,10 @@ header {
 }
 .menu-signup { background: var(--jaune); color: var(--nwa); }
 .menu-signup:hover { background: var(--jaune-2); }
+.menu-signup:active { transform: scale(.97); transition: transform 100ms var(--ease-out); }
 .menu-login { background: transparent; color: var(--blan); border: 1px solid var(--nwa-4); }
 .menu-login:hover { border-color: var(--blan); }
+.menu-login:active { transform: scale(.97); transition: transform 100ms var(--ease-out); }
 
 .menu-footer { margin-top: auto; padding-top: 24px; text-align: center; color: var(--gri-4); font-size: .75rem; line-height: 1.8; }
 
@@ -367,9 +381,13 @@ header {
   width: 100%;
   max-width: 420px;
   position: relative;
-  animation: fadeUp .22s ease;
+  animation: fadeUp .24s var(--ease-out) both;
 }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+/* Emil: never start from translateY(0) flat — add slight scale for physical depth */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);   }
+}
 
 .modal-close {
   position: absolute;
@@ -437,7 +455,8 @@ header {
   border: none;
 }
 .modal-submit:hover { background: var(--jaune-2); transform: translateY(-1px); }
-.modal-submit:active { transform: translateY(0); }
+/* Emil: buttons must feel pressed — instant tactile feedback via scale */
+.modal-submit:active { transform: scale(.97); transition: transform 100ms var(--ease-out); }
 
 .modal-login-text {
   text-align: center;
@@ -497,12 +516,11 @@ header {
   align-items: center;
   gap: 8px;
   text-transform: uppercase;
-  /* Microinteraction: gentle entrance animation */
-  animation: fadeInDown .5s ease both;
+  animation: fadeInDown .45s var(--ease-out) both;
 }
 @keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(-10px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0)     scale(1);   }
 }
 
 /* Pulsing live dot — radio station signature microinteraction */
@@ -530,13 +548,13 @@ header {
   line-height: 1.2;
   letter-spacing: -.5px;
   text-shadow: 0 2px 20px rgba(0,0,0,.5);
-  animation: fadeInUp .55s .1s ease both;
+  animation: fadeInUp .5s .08s var(--ease-out) both;
 }
 .hero-title span { color: var(--jaune); }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(14px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(16px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);   }
 }
 
 .hero-sub {
@@ -546,7 +564,7 @@ header {
   letter-spacing: .2px;
   max-width: 520px;
   line-height: var(--lh-snug);
-  animation: fadeInUp .55s .2s ease both;
+  animation: fadeInUp .5s .16s var(--ease-out) both;
 }
 
 /* Online count — social proof (Don't Make Me Think: reinforce "live" context) */
@@ -554,7 +572,7 @@ header {
   font-size: .78rem;
   color: rgba(255,255,255,.40);
   letter-spacing: .4px;
-  animation: fadeInUp .55s .3s ease both;
+  animation: fadeInUp .5s .24s var(--ease-out) both;
 }
 
 /* ===== AD ZONE ===== */
@@ -651,7 +669,8 @@ header {
 .carousel-track {
   display: flex;
   gap: 14px;
-  transition: transform .45s cubic-bezier(.25,.46,.45,.94);
+  /* Emil: UI transitions under 300ms. Use strong ease-out for immediate response */
+  transition: transform .3s var(--ease-out);
   will-change: transform;
 }
 
@@ -900,7 +919,7 @@ header {
   border: none;
 }
 .signup-submit:hover { background: var(--jaune-2); transform: translateY(-1px); }
-.signup-submit:active { transform: translateY(0); }
+.signup-submit:active { transform: scale(.97); transition: transform 100ms var(--ease-out); }
 
 .signup-login {
   text-align: center;
@@ -1042,6 +1061,7 @@ header {
   flex-shrink: 0;
 }
 .chat-send:hover { background: var(--jaune-2); }
+.chat-send:active { transform: scale(.92); transition: transform 100ms var(--ease-out); }
 
 /* Chat toggle button */
 .chat-toggle {
@@ -1155,6 +1175,7 @@ footer {
   transition: var(--trans);
 }
 .float-play:hover { background: var(--jaune-2); transform: scale(1.08); }
+.float-play:active { transform: scale(.93); transition: transform 100ms var(--ease-out); }
 .float-play.playing { animation: pulsePlay 2s ease-in-out infinite; }
 @keyframes pulsePlay {
   0%,100% { box-shadow: 0 4px 20px rgba(255,214,0,.4); }
@@ -1422,6 +1443,7 @@ button:focus-visible, a:focus-visible {
   border-color: var(--jaune);
   transform: translateY(-4px);
 }
+.value-card:active { transform: scale(.98); transition: transform 100ms var(--ease-out); }
 .value-icon { font-size: 32px; margin-bottom: 12px; }
 .value-card h4 {
   font-family: 'Oswald', sans-serif;
@@ -1504,6 +1526,7 @@ button:focus-visible, a:focus-visible {
   transition: var(--trans);
 }
 .contact-ad-btn:hover { background: var(--jaune-2); }
+.contact-ad-btn:active { transform: scale(.96); transition: transform 100ms var(--ease-out); }
 .contact-page-form-box {
   background: var(--nwa-2);
   border: 1px solid var(--nwa-4);
@@ -1548,6 +1571,19 @@ button:focus-visible, a:focus-visible {
   transition: background .2s;
 }
 .contact-submit-btn:hover { background: #aa0000; }
+.contact-submit-btn:active { transform: scale(.97); transition: transform 100ms var(--ease-out); }
+
+/* ===== REDUCED MOTION (Emil Kowalski: always respect system preference) ===== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  .live-dot { animation: none; opacity: 1; }
+  .float-play.playing { animation: none; }
+  .chat-typing span { animation: none; opacity: .5; }
+}
 
 /* Responsive — paj enteryè */
 @media (max-width: 768px) {
