@@ -10,6 +10,8 @@ const NewsSchema = new mongoose.Schema({
   auteur: { type: String, default: 'Administrateur', maxlength: 200 }
 }, { timestamps: true });
 
+NewsSchema.index({ actif: 1, createdAt: -1 });
+
 // ===== EMISYON / SCHEDULE =====
 const EmissionSchema = new mongoose.Schema({
   nom: { type: String, required: true, maxlength: 200 },
@@ -22,6 +24,8 @@ const EmissionSchema = new mongoose.Schema({
   actif: { type: Boolean, default: true }
 }, { timestamps: true });
 
+EmissionSchema.index({ actif: 1, ordre: 1, heureDebut: 1 });
+
 // ===== PIBLISITE =====
 const PubliciteSchema = new mongoose.Schema({
   texte: { type: String, required: true, maxlength: 1000 },
@@ -29,6 +33,8 @@ const PubliciteSchema = new mongoose.Schema({
   position: { type: String, enum: ['top', 'middle', 'bottom'], default: 'top' },
   actif: { type: Boolean, default: true }
 }, { timestamps: true });
+
+PubliciteSchema.index({ actif: 1, createdAt: -1 });
 
 // ===== ANIMATEUR =====
 const AnimateurSchema = new mongoose.Schema({
@@ -39,6 +45,8 @@ const AnimateurSchema = new mongoose.Schema({
   actif: { type: Boolean, default: true }
 }, { timestamps: true });
 
+AnimateurSchema.index({ actif: 1, createdAt: -1 });
+
 // ===== REPORTAGE =====
 const ReportageSchema = new mongoose.Schema({
   titre: { type: String, required: true, maxlength: 300 },
@@ -47,6 +55,8 @@ const ReportageSchema = new mongoose.Schema({
   statut: { type: String, enum: ['draft', 'live', 'published'], default: 'draft' },
   auteur: { type: String, default: 'Administrateur', maxlength: 200 }
 }, { timestamps: true });
+
+ReportageSchema.index({ statut: 1, createdAt: -1 });
 
 // ===== ONLINE TRACKER =====
 const OnlineSchema = new mongoose.Schema({

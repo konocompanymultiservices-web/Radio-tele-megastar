@@ -1,21 +1,93 @@
 {
   "name": "Radio Télé Mega Star",
   "short_name": "Mega Star",
-  "description": "Radio Télé Mega Star 97.3 FM — La voix qui unit, informe et inspire Haïti.",
+  "description": "Radio Télé Mega Star 97.3 FM — La voix qui unit, informe et inspire Haïti. Écoutez en direct.",
   "theme_color": "#FFD600",
   "background_color": "#0a0a0a",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "start_url": "/",
+  "scope": "/",
+  "lang": "fr-HT",
+  "categories": ["music", "news", "entertainment"],
   "icons": [
     {
-      "src": "images/radio_tele_mega_star_logo.jpg",
-      "sizes": "192x192",
-      "type": "image/jpeg"
+      "src": "images/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "images/radio_tele_mega_star_logo.jpg",
+      "src": "images/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icons/icon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Écouter en direct",
+      "short_name": "Direct",
+      "description": "Lanse estasyon an dirèkteman",
+      "url": "/?play=1",
+      "icons": [{ "src": "images/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Actualités",
+      "short_name": "Nouvèl",
+      "description": "Dènye nouvèl yo",
+      "url": "/actualites.html",
+      "icons": [{ "src": "images/icons/icon-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "images/icons/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "label": "Radio Télé Mega Star — Page dakèy"
     }
   ]
 }

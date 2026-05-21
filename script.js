@@ -492,3 +492,51 @@ function toggleChat() {
 function clicPub() {
   window.location.href = 'mailto:konocompanymultiservices@gmail.com?subject=Publicité Radio Télé Mega Star';
 }
+
+// ===== SCROLL REVEAL (IntersectionObserver) =====
+// Uses .reveal CSS class (defined in style.css) — toggle .visible on viewport entry
+// Never uses window.addEventListener('scroll') — triggers continuous reflows
+(function initScrollReveals() {
+  if (!('IntersectionObserver' in window)) {
+    // Fallback for very old browsers — just show everything
+    document.querySelectorAll('.reveal').forEach(function(el) {
+      el.classList.add('visible');
+    });
+    return;
+  }
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target); // Fire once, then stop watching
+      }
+    });
+  }, {
+    threshold: 0.12,        // Trigger when 12% visible
+    rootMargin: '0px 0px -40px 0px' // Slight offset — reveals slightly before fully in view
+  });
+
+  document.querySelectorAll('.reveal').forEach(function(el) {
+    observer.observe(el);
+  });
+})();
+
+// ===== CARD SPOTLIGHT (CSS custom property mouse tracking) =====
+// Powers the spotlight border glow on .emission-card and .news-card
+// Requires CSS: .emission-card::before with radial-gradient(at var(--mouse-x) var(--mouse-y), ...)
+(function initCardSpotlight() {
+  function handleMouseMove(e) {
+    var rect = this.getBoundingClientRect();
+    var x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+    var y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+    this.style.setProperty('--mouse-x', x + '%');
+    this.style.setProperty('--mouse-y', y + '%');
+  }
+
+  // Use event delegation on document for performance — no per-card listeners
+  document.addEventListener('mousemove', function(e) {
+    var card = e.target.closest('.emission-card, .news-card');
+    if (card) handleMouseMove.call(card, e);
+  }, { passive: true });
+})();

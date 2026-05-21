@@ -8,13 +8,27 @@ dotenv.config();
 
 const { Online } = require('./models/content');
 
-// ===== STARTUP GUARDS — fail fast on missing critical env vars =====
-if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
-  console.error('FATAL: JWT_SECRET is missing or too short (min 32 chars). Set it in .env and restart.');
+// ===== STARTUP GUARDS — fail fast on missing or weak env vars =====
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 64) {
+  console.error('FATAL: JWT_SECRET manke oswa twò kout (min 64 karaktè). Jenere yon nouvo ak:');
+  console.error('  node -e "console.log(require(\'crypto\').randomBytes(64).toString(\'hex\'))"');
   process.exit(1);
 }
 if (!process.env.MONGODB_URI) {
-  console.error('FATAL: MONGODB_URI is missing. Set it in .env and restart.');
+  console.error('FATAL: MONGODB_URI manke. Mete li nan backend/.env epi redémarre.');
+  process.exit(1);
+}
+if (!process.env.ADMIN_SECRET_KEY || process.env.ADMIN_SECRET_KEY.length < 32) {
+  console.error('FATAL: ADMIN_SECRET_KEY manke oswa twò kout (min 32 karaktè). Jenere yon nouvo ak:');
+  console.error('  node -e "console.log(require(\'crypto\').randomBytes(32).toString(\'hex\'))"');
+  process.exit(1);
+}
+// Warn about common placeholder values — prevent accidental deploys with test secrets
+const BANNED_SECRETS = ['secret', 'password', 'changeme', 'kle_sekre', 'admin', 'test'];
+const jwt_lower = process.env.JWT_SECRET.toLowerCase();
+const adm_lower = process.env.ADMIN_SECRET_KEY.toLowerCase();
+if (BANNED_SECRETS.some(b => jwt_lower.includes(b)) || BANNED_SECRETS.some(b => adm_lower.includes(b))) {
+  console.error('FATAL: JWT_SECRET oswa ADMIN_SECRET_KEY sanble se yon placeholder. Chanje yo ak kle aléatwa reyèl.');
   process.exit(1);
 }
 
@@ -162,9 +176,18 @@ io.on('connection', (socket) => {
 });
 
 // ===== MONGODB =====
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, {
+  serverSelectionTimeoutMS: 8000,   // fail fast if Atlas unreachable
+  socketTimeoutMS: 45000,
+  maxPoolSize: 10,
+  retryWrites: true,
+  w: 'majority'
+})
   .then(() => console.log('MongoDB konekte!'))
-  .catch(err => console.error('MongoDB ere:', err.message));
+  .catch(err => {
+    console.error('MongoDB ere:', err.message);
+    // Don't exit — Railway restarts the process automatically
+  });
 
 // ===== ROUTES =====
 const authRoutes    = require('./routes/auth');
@@ -177,9 +200,21 @@ app.use('/api/user',    userRoutes);
 app.use('/api/admin',   adminRoutes);
 app.use('/api/mistral', mistralRateLimiter, mistralRoutes);
 
-// ===== ROUTE DEFO =====
+// ===== ROUTE DEFO + HEALTH CHECK =====
 app.get('/', (req, res) => {
-  res.json({ success: true, message: 'Radio Tele Mega Star API — En ligne!' });
+  res.json({ success: true, message: 'Radio Tele Mega Star API — En ligne!', version: '3.1' });
+});
+
+// Health check — used by Railway uptime monitoring and load balancers
+app.get('/health', (req, res) => {
+  const dbState = mongoose.connection.readyState;
+  const dbStatus = ['disconnected', 'connected', 'connecting', 'disconnecting'][dbState] || 'unknown';
+  res.status(dbState === 1 ? 200 : 503).json({
+    status: dbState === 1 ? 'ok' : 'degraded',
+    db: dbStatus,
+    uptime: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString()
+  });
 });
 
 // ===== 404 handler =====

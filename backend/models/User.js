@@ -33,8 +33,22 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ['Gratuit', 'Premium', 'VIP'],
     default: 'Gratuit'
-  }
+  },
+  lastLogin: { type: Date, default: null },
+  loginAttempts: { type: Number, default: 0 },
+  lockUntil: { type: Date, default: null }
 }, { timestamps: true });
+
+// Explicit index on email for query performance (unique constraint already enforced by schema)
+UserSchema.index({ email: 1 }, { unique: true });
+
+// Compound index for admin stats queries filtering by role + plan
+UserSchema.index({ role: 1, plan: 1 });
+
+// Virtual: returns true if account is currently locked out
+UserSchema.virtual('isLocked').get(function() {
+  return !!(this.lockUntil && this.lockUntil > Date.now());
+});
 
 UserSchema.pre('save', async function() {
   if (!this.isModified('motDePasse')) return;

@@ -171,6 +171,10 @@ router.post(["/login", "/connexion"], loginLimiter, async (req, res) => {
       user: { id: user._id, nom: user.nom, email: user.email, role: user.role }
     });
 
+    // Background update — does NOT delay the response and does NOT trigger the bcrypt pre('save') hook
+    user.updateOne({ lastLogin: new Date(), loginAttempts: 0 })
+      .catch(err => console.error('lastLogin update error:', err.message));
+
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ success: false, message: 'Erè sèvè' });

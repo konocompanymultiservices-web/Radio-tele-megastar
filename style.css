@@ -78,6 +78,15 @@
   --lh-snug:   1.45;
   --lh-base:   1.65;
   --lh-loose:  1.85;
+
+  /* Z-index scale — standardised stacking order */
+  --z-base:     1;
+  --z-dropdown: 100;
+  --z-sticky:   900;
+  --z-overlay:  1000;
+  --z-modal:    1100;
+  --z-toast:    2000;
+  --z-noise:    9999;
 }
 
 /* ===== RESET ===== */
@@ -270,7 +279,11 @@ header {
 .menu-overlay.open { display: flex; }
 
 .menu-panel {
-  background: var(--nwa-2);
+  background: rgba(10,10,10,.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-left: 1px solid rgba(255,255,255,.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), -8px 0 32px rgba(0,0,0,.5);
   width: 300px;
   height: 100%;
   overflow-y: auto;
@@ -529,9 +542,8 @@ header {
   box-shadow: 0 0 0 0 rgba(204,0,0,.7);
 }
 @keyframes livePulse {
-  0%   { box-shadow: 0 0 0 0 rgba(204,0,0,.7); opacity: 1; }
-  70%  { box-shadow: 0 0 0 7px rgba(204,0,0,0); opacity: .7; }
-  100% { box-shadow: 0 0 0 0 rgba(204,0,0,0); opacity: 1; }
+  0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(204,0,0,.7); }
+  50%       { transform: scale(1.5); opacity: .5; box-shadow: 0 0 0 4px rgba(204,0,0,.3); }
 }
 
 /* Refactoring UI: hero title should use high contrast + strong weight
@@ -690,8 +702,8 @@ header {
 }
 .emission-card:hover {
   transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 12px 32px rgba(0,0,0,.14), 0 3px 8px rgba(0,0,0,.08);
-  border-color: var(--gri-3);
+  box-shadow: 0 8px 32px rgba(255,214,0,.12), 0 2px 8px rgba(0,0,0,.4);
+  border-color: rgba(255,214,0,.3);
 }
 .emission-card:active { transform: translateY(-2px) scale(1.00); }
 
@@ -777,8 +789,8 @@ header {
 }
 .news-card:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--gri-3);
+  box-shadow: 0 8px 32px rgba(255,214,0,.12), 0 2px 8px rgba(0,0,0,.4);
+  border-color: rgba(255,214,0,.25);
 }
 .news-card-badge {
   display: inline-block;
@@ -1199,11 +1211,12 @@ footer {
 /* ===== ACCESSIBILITY ===== */
 :focus-visible {
   outline: 2px solid var(--jaune);
-  outline-offset: 2px;
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 button:focus-visible, a:focus-visible {
   outline: 2px solid var(--jaune);
-  outline-offset: 2px;
+  outline-offset: 3px;
   border-radius: 4px;
 }
 
@@ -1254,17 +1267,25 @@ button:focus-visible, a:focus-visible {
 /* ===== SKIP TO CONTENT ===== */
 .skip-link {
   position: absolute;
-  top: -40px;
-  left: 0;
+  top: -56px;
+  left: 16px;
   background: var(--jaune);
   color: var(--nwa);
-  padding: 8px 16px;
+  padding: 12px 20px;
   text-decoration: none;
-  z-index: 1000;
+  z-index: var(--z-toast);
   font-weight: 700;
   font-size: 14px;
+  border-radius: 0 0 var(--radius) var(--radius);
+  transition: top .2s var(--ease-out);
+  box-shadow: 0 4px 16px rgba(255,214,0,.4);
+  letter-spacing: .3px;
 }
-.skip-link:focus { top: 0; }
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--nwa);
+  outline-offset: -4px;
+}
 
 /* ============================================================
    PAJES ENTERYÈ — Programmes · À propos · Contact
@@ -1622,4 +1643,367 @@ button:focus-visible, a:focus-visible {
   .contact-page-form-box { padding: 20px; }
   .page-hero { padding: 40px 16px 32px; }
   .prog-table-section, .about-page-section, .contact-page-section { padding: 40px 16px; }
+}
+
+/* ============================================================
+   STYLE.CSS v5.1 — PREMIUM POLISH ADDITIONS
+   Grain overlay · Scroll animations · Toast · Skeleton ·
+   Spotlight cards · Utility classes · Button press feel
+   ============================================================ */
+
+/* ===== 1. GRAIN / NOISE OVERLAY =====
+   Fixed pseudo-element that sits above all content.
+   mix-blend-mode:screen on a dark background is nearly invisible
+   but adds organic texture that makes flat blacks feel rich. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-noise);
+  opacity: .025;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+/* ===== 2. SCROLL ENTRY ANIMATIONS =====
+   Add class="reveal" to any element. JS IntersectionObserver
+   adds "visible" when the element enters the viewport.
+   Delay variants stagger children inside a group. */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .7s cubic-bezier(.23,1,.32,1),
+              transform .7s cubic-bezier(.23,1,.32,1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: .1s; }
+.reveal-delay-2 { transition-delay: .2s; }
+.reveal-delay-3 { transition-delay: .3s; }
+.reveal-delay-4 { transition-delay: .4s; }
+.reveal-delay-5 { transition-delay: .5s; }
+
+/* ===== 3. SPOTLIGHT BORDER GLOW ON CARDS =====
+   Uses CSS custom properties --mouse-x / --mouse-y (set by JS via
+   element.style.setProperty). The radial-gradient follows the cursor,
+   creating a soft spotlight on the card border.
+   Works on any element that has position:relative. */
+.emission-card,
+.news-card,
+.prog-card,
+.value-card {
+  position: relative;
+}
+.emission-card::before,
+.news-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s ease;
+  background: radial-gradient(
+    400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255,214,0,.15),
+    transparent 60%
+  );
+  z-index: 1;
+}
+.emission-card:hover::before,
+.news-card:hover::before {
+  opacity: 1;
+}
+
+/* ===== 4. BUTTON ACTIVE PRESS FEEL ===== */
+button:active,
+.btn:active,
+.btn-primary:active,
+.btn-secondary:active {
+  transform: translateY(1px) scale(.98);
+  transition: transform 80ms ease;
+}
+
+/* ===== 5. TOAST NOTIFICATIONS =====
+   CSS classes for the toast system.
+   JS appends .toast elements to a .toast-container.
+   Variants: .toast-success · .toast-error · .toast-info */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+}
+
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--nwa-2);
+  border: 1px solid var(--nwa-4);
+  border-radius: 40px;
+  padding: 12px 20px;
+  font-size: .84rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  box-shadow: 0 8px 32px rgba(0,0,0,.55), 0 2px 8px rgba(0,0,0,.3);
+  pointer-events: auto;
+  animation: toastIn .35s var(--ease-out) both;
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  white-space: nowrap;
+  max-width: 100%;
+}
+.toast.hiding {
+  animation: toastOut .25s var(--ease-out) both;
+}
+.toast-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.toast-success {
+  border-color: rgba(34,197,94,.3);
+  background: rgba(17,25,17,.92);
+}
+.toast-success .toast-icon { color: var(--vèt); }
+.toast-error {
+  border-color: rgba(204,0,0,.35);
+  background: rgba(25,10,10,.92);
+}
+.toast-error .toast-icon { color: #ff5555; }
+.toast-info {
+  border-color: rgba(255,214,0,.25);
+  background: rgba(18,16,0,.92);
+}
+.toast-info .toast-icon { color: var(--jaune); }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(12px) scale(.94); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);   }
+}
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0)    scale(1);   }
+  to   { opacity: 0; transform: translateY(8px)  scale(.94); }
+}
+
+/* ===== 6. SKELETON LOADERS =====
+   Apply .skeleton to a block-level container.
+   Use .skeleton-text for inline text placeholder lines.
+   The shimmer sweeps left-to-right indicating loading state. */
+@keyframes shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--nwa-3) 25%,
+    var(--nwa-4) 50%,
+    var(--nwa-3) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+  border-radius: var(--radius);
+  color: transparent !important;
+  pointer-events: none;
+  user-select: none;
+}
+.skeleton * { visibility: hidden; }
+
+.skeleton-text {
+  display: block;
+  height: 1em;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--nwa-3) 25%,
+    var(--nwa-4) 50%,
+    var(--nwa-3) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+.skeleton-text + .skeleton-text { margin-top: 8px; }
+.skeleton-text.w-3-4  { width: 75%; }
+.skeleton-text.w-1-2  { width: 50%; }
+.skeleton-text.w-1-4  { width: 25%; }
+
+/* ===== 7. UTILITY CLASSES =====
+   Used across HTML pages for common layout / typography patterns. */
+
+/* Layout container — matches header-inner max-width */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+@media (max-width: 600px) {
+  .container { padding: 0 16px; }
+}
+
+/* Section eyebrow — pill label above section headings */
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,214,0,.08);
+  border: 1px solid rgba(255,214,0,.2);
+  color: var(--jaune);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
+/* Section title — h2 used below eyebrow */
+.section-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(1.75rem, 3.5vw, 2.6rem);
+  font-weight: 700;
+  color: var(--blan);
+  line-height: var(--lh-tight);
+  letter-spacing: -.3px;
+  text-wrap: balance;
+  margin-bottom: 12px;
+}
+.section-title.dark { color: var(--nwa); }
+.section-title span { color: var(--jaune); }
+
+/* Section subtitle — supporting text below the title */
+.section-sub {
+  font-size: .95rem;
+  color: var(--text-secondary);
+  line-height: var(--lh-base);
+  max-width: 560px;
+  text-wrap: pretty;
+}
+.section-sub.centered { margin: 0 auto; text-align: center; }
+
+/* Primary button — yellow fill */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--jaune);
+  color: var(--nwa);
+  border: none;
+  border-radius: var(--radius);
+  padding: 13px 28px;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  font-size: .95rem;
+  letter-spacing: .4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .16s var(--ease-out),
+              box-shadow .16s var(--ease-out),
+              transform .1s var(--ease-out);
+  box-shadow: 0 2px 8px rgba(255,214,0,.3);
+  min-height: 44px;
+  white-space: nowrap;
+}
+.btn-primary:hover {
+  background: var(--jaune-2);
+  box-shadow: 0 4px 20px rgba(255,214,0,.45);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(1px) scale(.98);
+  box-shadow: 0 1px 4px rgba(255,214,0,.2);
+}
+
+/* Secondary button — ghost / outline */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--blan);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: var(--radius);
+  padding: 13px 28px;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  font-size: .95rem;
+  letter-spacing: .4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .16s var(--ease-out),
+              border-color .16s var(--ease-out),
+              transform .1s var(--ease-out);
+  min-height: 44px;
+  white-space: nowrap;
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.4);
+  transform: translateY(-1px);
+}
+.btn-secondary:active {
+  transform: translateY(1px) scale(.98);
+}
+
+/* Spacing helpers */
+.mt-0  { margin-top: 0; }
+.mt-8  { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mt-32 { margin-top: 32px; }
+.mt-48 { margin-top: 48px; }
+
+.text-center { text-align: center; }
+.text-muted  { color: var(--text-muted); }
+.text-jaune  { color: var(--jaune); }
+
+/* Visually hidden (screen-reader only) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ===== 8. REDUCED MOTION — extend for new additions ===== */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .skeleton,
+  .skeleton-text {
+    animation: none;
+    background: var(--nwa-4);
+  }
+  .toast {
+    animation: none;
+  }
+  body::after {
+    display: none;
+  }
 }
