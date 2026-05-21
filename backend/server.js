@@ -233,7 +233,7 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Seve ap kouri sou po ${PORT}`);
-  console.log(`Radio Tele Mega Star Backend v3.0 pre!`);
+  console.log(`Radio Tele Mega Star Backend v3.1 pre!`);
   console.log(`Socket.io ready!`);
   console.log(`Mistral API: ${process.env.MISTRAL_API_KEY ? 'KONFIGURE' : 'MANKE — mete nan .env'}`);
 });
